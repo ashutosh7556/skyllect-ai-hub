@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Original video masters (~212MB; one file is 63MB). Build inputs only — the
+# site loads the transcoded clips in public/videos/cards/ instead. Kept on disk,
+# deliberately out of the repo so history isn't permanently bloated.
+/public/videos/*.mp4
