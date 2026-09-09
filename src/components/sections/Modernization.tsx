@@ -14,9 +14,12 @@ const EXAMPLES = [
 
 const TRANSFORMATION = ["Legacy System", "Connected System", "AI-Enabled System"];
 
+// A leaf only shows a taste of each list — the rest lives behind View More.
+const PREVIEW_COUNT = 4;
+
 export function Modernization() {
   return (
-    <section id="modernization" className="w-full px-5 py-10 sm:px-6 sm:py-12">
+    <section id="modernization" className="w-full px-5 py-8 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="Modernization"
@@ -38,7 +41,7 @@ export function Modernization() {
         </div>
 
         <ul className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-3 lg:grid-cols-4">
-          {EXAMPLES.map((example) => (
+          {EXAMPLES.slice(0, PREVIEW_COUNT).map((example) => (
             <li
               key={example}
               className="rounded-xl border border-white/10 p-3 text-xs text-white/70 sm:rounded-2xl sm:p-4 sm:text-sm"
@@ -48,9 +51,12 @@ export function Modernization() {
           ))}
         </ul>
 
-        <Button href="#contact" className="mt-5 sm:mt-8">
-          Modernize Your Software
-        </Button>
+        <div className="mt-5 flex flex-wrap gap-3 sm:mt-8">
+          <Button href="#contact">Modernize Your Software</Button>
+          <Button href="" variant="secondary">
+            View More
+          </Button>
+        </div>
       </div>
     </section>
   );

@@ -7,6 +7,10 @@ import { INDUSTRIES } from "@/data/industries";
  * screen can hold, and in the book stack each page has to fit the viewport —
  * so the caller pages through them by slug.
  */
+// A leaf only shows a taste of each agent's run — the rest lives behind
+// View More.
+const PREVIEW_STEPS = 3;
+
 export function Industries({ slug, showHeading }: { slug: string; showHeading?: boolean }) {
   const industry = INDUSTRIES.find((item) => item.slug === slug);
   if (!industry) return null;
@@ -14,7 +18,7 @@ export function Industries({ slug, showHeading }: { slug: string; showHeading?: 
   return (
     <section
       id={showHeading ? "industries" : undefined}
-      className="w-full px-5 py-10 sm:px-6 sm:py-12"
+      className="w-full px-5 py-8 sm:px-8 sm:py-10"
     >
       <div className="mx-auto max-w-6xl">
         {showHeading ? (
@@ -43,7 +47,7 @@ export function Industries({ slug, showHeading }: { slug: string; showHeading?: 
                   {agent.description}
                 </p>
                 <ol className="mt-3 flex flex-col gap-1 sm:mt-4 sm:gap-1.5">
-                  {agent.steps.map((step) => (
+                  {agent.steps.slice(0, PREVIEW_STEPS).map((step) => (
                     <li key={step} className="text-xs text-white/60 sm:text-sm">
                       {step}
                     </li>
@@ -53,9 +57,14 @@ export function Industries({ slug, showHeading }: { slug: string; showHeading?: 
             ))}
           </div>
 
-          <Button href="#contact" variant="secondary" className="mt-5 sm:mt-8">
-            {industry.ctaLabel}
-          </Button>
+          <div className="mt-5 flex flex-wrap gap-3 sm:mt-8">
+            <Button href="#contact" variant="secondary">
+              {industry.ctaLabel}
+            </Button>
+            <Button href="" variant="secondary">
+              View More
+            </Button>
+          </div>
         </div>
       </div>
     </section>

@@ -22,9 +22,13 @@ const IDENTIFIES = [
   "Opportunities for AI-assisted decision making",
 ];
 
+// A leaf only shows a taste of each list — the rest lives behind View More.
+const PREVIEW_AREAS = 5;
+const PREVIEW_IDENTIFIES = 3;
+
 export function WorkflowAssessment() {
   return (
-    <section className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
+    <section className="w-full px-5 py-8 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="AI workflow assessment"
@@ -38,7 +42,7 @@ export function WorkflowAssessment() {
               We analyze
             </p>
             <ul className="flex flex-wrap gap-2 sm:gap-3">
-              {AREAS.map((area) => (
+              {AREAS.slice(0, PREVIEW_AREAS).map((area) => (
                 <li
                   key={area}
                   className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm"
@@ -54,7 +58,7 @@ export function WorkflowAssessment() {
               Then identify
             </p>
             <ul className="flex flex-col gap-1.5 sm:gap-2">
-              {IDENTIFIES.map((item) => (
+              {IDENTIFIES.slice(0, PREVIEW_IDENTIFIES).map((item) => (
                 <li key={item} className="text-xs text-white/60 sm:text-sm">
                   {item}
                 </li>
@@ -67,9 +71,12 @@ export function WorkflowAssessment() {
           You receive a practical automation roadmap based on business impact.
         </p>
 
-        <Button href="#contact" className="mt-5 sm:mt-6">
-          Book an AI Workflow Assessment
-        </Button>
+        <div className="mt-5 flex flex-wrap gap-3 sm:mt-6">
+          <Button href="#contact">Book an AI Workflow Assessment</Button>
+          <Button href="" variant="secondary">
+            View More
+          </Button>
+        </div>
       </div>
     </section>
   );

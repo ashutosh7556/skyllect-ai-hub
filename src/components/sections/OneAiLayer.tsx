@@ -1,4 +1,5 @@
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Button } from "@/components/ui/Button";
 
 const QUESTIONS = [
   "What customer orders are delayed?",
@@ -9,14 +10,17 @@ const QUESTIONS = [
   "Which leads should sales contact today?",
 ];
 
+// A leaf only shows a taste of each list — the rest lives behind View More.
+const PREVIEW_COUNT = 4;
+
 export function OneAiLayer() {
   return (
-    <section className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
+    <section className="w-full px-5 py-8 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <SectionHeading eyebrow="One assistant" title="One AI Layer Across Your Business" />
 
         <div className="mt-6 grid gap-2 sm:mt-16 sm:grid-cols-2 sm:gap-3">
-          {QUESTIONS.map((question) => (
+          {QUESTIONS.slice(0, PREVIEW_COUNT).map((question) => (
             <p
               key={question}
               className="rounded-xl border border-white/10 p-3 text-xs text-white/70 sm:rounded-2xl sm:p-5 sm:text-base"
@@ -31,6 +35,10 @@ export function OneAiLayer() {
           assistant. The AI retrieves information from your actual systems and gives
           your team actionable answers.
         </p>
+
+        <Button href="" variant="secondary" className="mt-5 sm:mt-8">
+          View More
+        </Button>
       </div>
     </section>
   );

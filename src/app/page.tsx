@@ -37,9 +37,8 @@ export default function Home() {
         <HowWeWork />
         <StartSmall />
         <WhySkyllect />
+        <FinalCta />
       </BookStack>
-
-      <FinalCta />
     </>
   );
 }

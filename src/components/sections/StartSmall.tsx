@@ -1,4 +1,5 @@
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Button } from "@/components/ui/Button";
 
 const EXAMPLES = [
   "Automate incoming quotations",
@@ -9,9 +10,12 @@ const EXAMPLES = [
   "Automate internal reporting",
 ];
 
+// A leaf only shows a taste of each list — the rest lives behind View More.
+const PREVIEW_COUNT = 4;
+
 export function StartSmall() {
   return (
-    <section className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
+    <section className="w-full px-5 py-8 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="Start small"
@@ -20,7 +24,7 @@ export function StartSmall() {
         />
 
         <ul className="mt-6 grid grid-cols-2 gap-2 sm:mt-10 sm:gap-3 lg:grid-cols-3">
-          {EXAMPLES.map((example) => (
+          {EXAMPLES.slice(0, PREVIEW_COUNT).map((example) => (
             <li
               key={example}
               className="rounded-xl border border-white/10 p-3 text-xs text-white/70 sm:rounded-2xl sm:p-4 sm:text-sm"
@@ -33,6 +37,10 @@ export function StartSmall() {
         <p className="mt-6 max-w-2xl text-sm text-white/50 sm:mt-10 sm:text-base">
           Once the workflow proves its value, expand from there.
         </p>
+
+        <Button href="" variant="secondary" className="mt-5 sm:mt-8">
+          View More
+        </Button>
       </div>
     </section>
   );

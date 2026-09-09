@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/Button";
 
 export function FinalCta() {
   return (
-    <section className="px-5 py-20 sm:px-6 sm:py-32">
+    <section className="w-full px-5 py-8 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-4xl text-center">
         <h2 className="text-2xl font-medium leading-[1.15] tracking-tight text-white sm:text-4xl sm:leading-[1.1] md:text-6xl">
           The Future Isn&apos;t AI Replacing Your Business.

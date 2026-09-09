@@ -1,4 +1,5 @@
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Button } from "@/components/ui/Button";
 import { PERMISSION_ACTIONS } from "@/data/permissions";
 import { cn } from "@/lib/utils";
 import type { PermissionLevel } from "@/types";
@@ -15,11 +16,14 @@ const LEVEL_STYLE: Record<PermissionLevel, string> = {
   restricted: "border-white/5 text-white/30",
 };
 
+// A leaf only shows a taste of each list — the rest lives behind View More.
+const PREVIEW_COUNT = 3;
+
 export function HumanControlledAi() {
   const levels: PermissionLevel[] = ["automatic", "approval", "restricted"];
 
   return (
-    <section className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
+    <section className="w-full px-5 py-8 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="Human-controlled AI"
@@ -32,8 +36,9 @@ export function HumanControlledAi() {
             <div key={level} className="rounded-2xl border border-white/10 p-4 sm:rounded-3xl sm:p-6">
               <h3 className="text-base font-medium text-white sm:text-lg">{LEVEL_LABEL[level]}</h3>
               <ul className="mt-3 flex flex-col gap-1.5 sm:mt-4 sm:gap-2">
-                {PERMISSION_ACTIONS.filter((action) => action.level === level).map(
-                  (action) => (
+                {PERMISSION_ACTIONS.filter((action) => action.level === level)
+                  .slice(0, PREVIEW_COUNT)
+                  .map((action) => (
                     <li
                       key={action.label}
                       className={cn(
@@ -43,8 +48,7 @@ export function HumanControlledAi() {
                     >
                       {action.label}
                     </li>
-                  ),
-                )}
+                  ))}
                 {level === "restricted" ? (
                   <li className="text-xs text-white/30 sm:text-sm">
                     Sensitive actions remain unavailable to AI unless specifically
@@ -55,6 +59,10 @@ export function HumanControlledAi() {
             </div>
           ))}
         </div>
+
+        <Button href="" variant="secondary" className="mt-5 sm:mt-8">
+          View More
+        </Button>
       </div>
     </section>
   );

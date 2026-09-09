@@ -17,9 +17,12 @@ const CAPABILITIES = [
 
 const JOURNEY = ["Idea", "Architecture", "AI", "Development", "Launch", "Scale"];
 
+// A leaf only shows a taste of each list — the rest lives behind View More.
+const PREVIEW_COUNT = 5;
+
 export function SaasDevelopment() {
   return (
-    <section id="saas" className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
+    <section id="saas" className="w-full px-5 py-8 sm:px-8 sm:py-10">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="AI-enabled SaaS"
@@ -28,7 +31,7 @@ export function SaasDevelopment() {
         />
 
         <ul className="mt-6 flex flex-wrap gap-2 sm:mt-10 sm:gap-3">
-          {CAPABILITIES.map((capability) => (
+          {CAPABILITIES.slice(0, PREVIEW_COUNT).map((capability) => (
             <li
               key={capability}
               className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm"
@@ -38,7 +41,7 @@ export function SaasDevelopment() {
           ))}
         </ul>
 
-        <div className="mt-8 flex flex-wrap items-center gap-2 sm:mt-16 sm:gap-3">
+        <div className="mt-6 flex flex-wrap items-center gap-2 sm:mt-10 sm:gap-3">
           {JOURNEY.map((stage, index) => (
             <div key={stage} className="flex items-center gap-2 sm:gap-3">
               <span className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm">
@@ -51,9 +54,12 @@ export function SaasDevelopment() {
           ))}
         </div>
 
-        <Button href="#contact" className="mt-6 sm:mt-10">
-          Build Your AI Product
-        </Button>
+        <div className="mt-6 flex flex-wrap gap-3 sm:mt-10">
+          <Button href="#contact">Build Your AI Product</Button>
+          <Button href="" variant="secondary">
+            View More
+          </Button>
+        </div>
       </div>
     </section>
   );

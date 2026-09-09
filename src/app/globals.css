@@ -107,6 +107,19 @@ body {
   }
 }
 
+@layer components {
+  /*
+   * The book is one pinned screen with every leaf stacked at the same document
+   * position, so a fragment jump to #saas or #industries would land on the
+   * first leaf. BookStack sets --leaf-scroll-offset per leaf to that leaf's
+   * index in viewports; a negative scroll margin turns it into the extra
+   * scroll needed to reach that leaf's turn.
+   */
+  [style*="--leaf-scroll-offset"] > section {
+    scroll-margin-top: var(--leaf-scroll-offset, 0px);
+  }
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0%);
