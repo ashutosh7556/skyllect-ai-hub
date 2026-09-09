@@ -14,25 +14,37 @@ export function Industries({ slug, showHeading }: { slug: string; showHeading?: 
   return (
     <section
       id={showHeading ? "industries" : undefined}
-      className="w-full px-6 py-12"
+      className="w-full px-5 py-10 sm:px-6 sm:py-12"
     >
       <div className="mx-auto max-w-6xl">
         {showHeading ? (
           <SectionHeading eyebrow="Industries" title="AI Solutions for Real Industries" />
         ) : null}
 
-        <div className={showHeading ? "mt-10" : ""}>
-          <h3 className="text-3xl font-medium tracking-tight text-white">{industry.name}</h3>
-          <p className="mt-2 max-w-xl text-white/50">{industry.headline}</p>
+        <div className={showHeading ? "mt-6 sm:mt-10" : ""}>
+          <h3 className="text-xl font-medium tracking-tight text-white sm:text-3xl">
+            {industry.name}
+          </h3>
+          <p className="mt-1.5 max-w-xl text-sm text-white/50 sm:mt-2 sm:text-base">
+            {industry.headline}
+          </p>
 
-          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+          {/* Three dense cards do not fit a phone page in the book stack, so
+              below sm they become a snapping horizontal row instead of a
+              column that would overflow the viewport. */}
+          <div className="-mx-5 mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 sm:mx-0 sm:mt-8 sm:grid sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
             {industry.agents.map((agent) => (
-              <div key={agent.name} className="rounded-3xl border border-white/10 p-6">
-                <h4 className="text-lg font-medium text-white">{agent.name}</h4>
-                <p className="mt-2 text-sm text-white/50">{agent.description}</p>
-                <ol className="mt-4 flex flex-col gap-1.5">
+              <div
+                key={agent.name}
+                className="w-[78vw] shrink-0 snap-start rounded-2xl border border-white/10 p-4 sm:w-auto sm:shrink sm:rounded-3xl sm:p-6"
+              >
+                <h4 className="text-base font-medium text-white sm:text-lg">{agent.name}</h4>
+                <p className="mt-1.5 text-xs text-white/50 sm:mt-2 sm:text-sm">
+                  {agent.description}
+                </p>
+                <ol className="mt-3 flex flex-col gap-1 sm:mt-4 sm:gap-1.5">
                   {agent.steps.map((step) => (
-                    <li key={step} className="text-sm text-white/60">
+                    <li key={step} className="text-xs text-white/60 sm:text-sm">
                       {step}
                     </li>
                   ))}
@@ -41,7 +53,7 @@ export function Industries({ slug, showHeading }: { slug: string; showHeading?: 
             ))}
           </div>
 
-          <Button href="#contact" variant="secondary" className="mt-8">
+          <Button href="#contact" variant="secondary" className="mt-5 sm:mt-8">
             {industry.ctaLabel}
           </Button>
         </div>

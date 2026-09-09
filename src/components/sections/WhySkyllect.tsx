@@ -13,7 +13,7 @@ const CAPABILITIES = [
 
 export function WhySkyllect() {
   return (
-    <section className="px-6 py-28">
+    <section className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="Why Skyllect"
@@ -21,11 +21,11 @@ export function WhySkyllect() {
           description="They require real software engineering. This allows us to build AI systems that work inside existing business operations — not isolated AI experiments."
         />
 
-        <ul className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-6 grid grid-cols-2 gap-2 sm:mt-16 sm:gap-4 lg:grid-cols-4">
           {CAPABILITIES.map((capability) => (
             <li
               key={capability}
-              className="rounded-2xl border border-white/10 p-5 text-center text-sm text-white/70"
+              className="rounded-xl border border-white/10 p-3 text-center text-xs text-white/70 sm:rounded-2xl sm:p-5 sm:text-sm"
             >
               {capability}
             </li>

@@ -19,7 +19,7 @@ export function HumanControlledAi() {
   const levels: PermissionLevel[] = ["automatic", "approval", "restricted"];
 
   return (
-    <section className="px-6 py-28">
+    <section className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="Human-controlled AI"
@@ -27,17 +27,17 @@ export function HumanControlledAi() {
           description="Your team controls what AI can see, what it can do, and when approval is required."
         />
 
-        <div className="mt-16 grid gap-6 lg:grid-cols-3">
+        <div className="mt-6 grid gap-3 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {levels.map((level) => (
-            <div key={level} className="rounded-3xl border border-white/10 p-6">
-              <h3 className="text-lg font-medium text-white">{LEVEL_LABEL[level]}</h3>
-              <ul className="mt-4 flex flex-col gap-2">
+            <div key={level} className="rounded-2xl border border-white/10 p-4 sm:rounded-3xl sm:p-6">
+              <h3 className="text-base font-medium text-white sm:text-lg">{LEVEL_LABEL[level]}</h3>
+              <ul className="mt-3 flex flex-col gap-1.5 sm:mt-4 sm:gap-2">
                 {PERMISSION_ACTIONS.filter((action) => action.level === level).map(
                   (action) => (
                     <li
                       key={action.label}
                       className={cn(
-                        "rounded-full border px-3 py-1.5 text-sm",
+                        "rounded-full border px-3 py-1 text-xs sm:py-1.5 sm:text-sm",
                         LEVEL_STYLE[level],
                       )}
                     >
@@ -46,7 +46,7 @@ export function HumanControlledAi() {
                   ),
                 )}
                 {level === "restricted" ? (
-                  <li className="text-sm text-white/30">
+                  <li className="text-xs text-white/30 sm:text-sm">
                     Sensitive actions remain unavailable to AI unless specifically
                     authorized.
                   </li>

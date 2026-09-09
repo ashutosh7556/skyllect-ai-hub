@@ -16,7 +16,7 @@ const SYSTEMS = [
 
 export function Integrations() {
   return (
-    <section id="integrations" className="px-6 py-28">
+    <section id="integrations" className="w-full px-5 py-14 sm:px-6 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="AI integrations"
@@ -30,18 +30,18 @@ export function Integrations() {
           description="We integrate AI into your existing technology stack. AI becomes an intelligent layer across your existing systems."
         />
 
-        <ul className="mt-10 flex flex-wrap gap-3">
+        <ul className="mt-6 flex flex-wrap gap-2 sm:mt-10 sm:gap-3">
           {SYSTEMS.map((system) => (
             <li
               key={system}
-              className="rounded-full border border-white/10 px-4 py-2 text-sm text-white/70"
+              className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm"
             >
               {system}
             </li>
           ))}
         </ul>
 
-        <Button href="#contact" className="mt-10">
+        <Button href="#contact" className="mt-6 sm:mt-10">
           Discuss an Integration
         </Button>
       </div>

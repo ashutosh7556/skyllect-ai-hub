@@ -16,7 +16,7 @@ const TRANSFORMATION = ["Legacy System", "Connected System", "AI-Enabled System"
 
 export function Modernization() {
   return (
-    <section id="modernization" className="w-full px-6 py-12">
+    <section id="modernization" className="w-full px-5 py-10 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="Modernization"
@@ -24,10 +24,10 @@ export function Modernization() {
           description="We modernize older applications and introduce AI capabilities without rebuilding everything from scratch."
         />
 
-        <div className="mt-8 flex flex-wrap items-center gap-3">
+        <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-8 sm:gap-3">
           {TRANSFORMATION.map((stage, index) => (
-            <div key={stage} className="flex items-center gap-3">
-              <span className="rounded-full border border-white/10 px-4 py-2 text-sm text-white/70">
+            <div key={stage} className="flex items-center gap-2 sm:gap-3">
+              <span className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm">
                 {stage}
               </span>
               {index < TRANSFORMATION.length - 1 ? (
@@ -37,18 +37,18 @@ export function Modernization() {
           ))}
         </div>
 
-        <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-3 lg:grid-cols-4">
           {EXAMPLES.map((example) => (
             <li
               key={example}
-              className="rounded-2xl border border-white/10 p-4 text-sm text-white/70"
+              className="rounded-xl border border-white/10 p-3 text-xs text-white/70 sm:rounded-2xl sm:p-4 sm:text-sm"
             >
               {example}
             </li>
           ))}
         </ul>
 
-        <Button href="#contact" className="mt-8">
+        <Button href="#contact" className="mt-5 sm:mt-8">
           Modernize Your Software
         </Button>
       </div>

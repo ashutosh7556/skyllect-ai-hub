@@ -87,7 +87,7 @@ export function SystemsIntegration() {
 
   const stagePanelClass = (staticFallback: boolean) =>
     cn(
-      "flex h-full w-full flex-col justify-center p-8 sm:p-12",
+      "flex h-full w-full flex-col justify-center p-6 sm:p-12",
       !staticFallback && "absolute inset-0",
     );
 
@@ -104,19 +104,26 @@ export function SystemsIntegration() {
 
       <div
         ref={pinRef}
-        className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 py-24"
+        className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-20 sm:px-6 sm:py-24"
       >
-        <p className="mb-8 text-sm font-medium uppercase tracking-[0.3em] text-foreground/50">
+        <p className="mb-5 text-xs font-medium uppercase tracking-[0.3em] text-foreground/50 sm:mb-8 sm:text-sm">
           Beyond chat
         </p>
 
-        <TiltCard className={cn("w-full max-w-3xl", reduced ? "" : "h-[560px]")}>
-          <div className={cn("relative h-full w-full", reduced && "flex flex-col gap-10 p-8 sm:p-12")}>
+        <TiltCard
+          className={cn("w-full max-w-3xl", reduced ? "" : "h-[min(560px,68dvh)]")}
+        >
+          <div
+            className={cn(
+              "relative h-full w-full",
+              reduced && "flex flex-col gap-8 p-6 sm:gap-10 sm:p-12",
+            )}
+          >
             <div ref={stage0Ref} className={stagePanelClass(reduced)}>
-              <h2 className="font-display text-3xl leading-tight tracking-tight text-foreground md:text-5xl">
+              <h2 className="font-display text-2xl leading-tight tracking-tight text-foreground sm:text-3xl md:text-5xl">
                 AI That Works With Your Real Business Systems
               </h2>
-              <p className="mt-6 max-w-xl text-lg leading-relaxed text-hero-sub opacity-80">
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-hero-sub opacity-80 sm:mt-6 sm:text-lg">
                 Most AI tools stop at answering questions.{" "}
                 <span className="text-foreground">We go further.</span> Skyllect
                 connects AI with the systems your business already uses.
@@ -124,15 +131,15 @@ export function SystemsIntegration() {
             </div>
 
             <div ref={stage1Ref} className={stagePanelClass(reduced)}>
-              <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-foreground/40">
+              <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-foreground/40 sm:mb-6 sm:text-xs">
                 Connected systems
               </p>
-              <ul className="flex flex-wrap gap-3">
+              <ul className="flex flex-wrap gap-2 sm:gap-3">
                 {CONNECTED_SYSTEMS.map((system) => (
                   <li
                     key={system}
                     data-chip
-                    className="rounded-full border border-white/10 px-4 py-2 text-sm text-foreground/80"
+                    className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-foreground/80 sm:px-4 sm:py-2 sm:text-sm"
                   >
                     {system}
                   </li>
@@ -141,12 +148,16 @@ export function SystemsIntegration() {
             </div>
 
             <div ref={stage2Ref} className={stagePanelClass(reduced)}>
-              <p className="mb-6 text-xs font-medium uppercase tracking-[0.2em] text-foreground/40">
+              <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-foreground/40 sm:mb-6 sm:text-xs">
                 Your AI can
               </p>
-              <ul className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+              <ul className="grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2 sm:gap-y-2">
                 {CAPABILITIES.map((capability) => (
-                  <li key={capability} data-item className="text-sm leading-relaxed text-foreground/70">
+                  <li
+                    key={capability}
+                    data-item
+                    className="text-xs leading-relaxed text-foreground/70 sm:text-sm"
+                  >
                     {capability}
                   </li>
                 ))}
@@ -154,7 +165,7 @@ export function SystemsIntegration() {
             </div>
 
             <div ref={stage3Ref} className={stagePanelClass(reduced)}>
-              <p className="max-w-lg text-2xl leading-snug tracking-tight text-foreground md:text-3xl">
+              <p className="max-w-lg text-xl leading-snug tracking-tight text-foreground sm:text-2xl md:text-3xl">
                 Your employees remain in control while AI handles repetitive
                 operational work.
               </p>

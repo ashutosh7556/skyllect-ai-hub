@@ -182,13 +182,17 @@ export function WorkflowTopic() {
       >
         <div
           ref={chapterRef}
-          className={cn(reduced ? "relative max-w-xl text-center" : "absolute top-20 left-1/2 -translate-x-1/2 text-center")}
+          className={cn(
+            reduced
+              ? "relative max-w-xl text-center"
+              : "absolute top-20 left-1/2 w-full max-w-xl -translate-x-1/2 px-6 text-center",
+          )}
         >
-          <p className="text-xs font-medium uppercase tracking-[0.4em] text-foreground/40">02</p>
-          <h2 className="font-display mt-2 text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
+          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-foreground/40">02</p>
+          <h2 className="font-display mt-2 text-xl font-medium tracking-tight text-foreground sm:text-3xl">
             AI Workflow Automation
           </h2>
-          <p className="mt-2 text-sm text-hero-sub opacity-70">
+          <p className="mt-2 text-xs text-hero-sub opacity-70 sm:text-sm">
             Replace repetitive manual processes with intelligent workflows.
           </p>
         </div>
@@ -204,7 +208,7 @@ export function WorkflowTopic() {
         ) : (
           <div
             ref={sceneRef}
-            className="relative mt-24 w-full max-w-4xl"
+            className="relative mt-28 w-full max-w-4xl sm:mt-24"
             style={{ aspectRatio: `${VIEWBOX.w} / ${VIEWBOX.h}` }}
           >
             <svg
@@ -246,7 +250,7 @@ export function WorkflowTopic() {
             {Object.entries(NODES).map(([key, node]) => (
               <div
                 key={key}
-                className="liquid-glass absolute flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border border-white/10 text-xs font-medium text-foreground/80"
+                className="liquid-glass absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border border-white/10 text-[11px] font-medium text-foreground/80 sm:h-16 sm:w-16 sm:rounded-2xl sm:text-xs"
                 style={{ left: pct(node.x, "w"), top: pct(node.y, "h") }}
               >
                 {node.label}
@@ -277,7 +281,7 @@ export function WorkflowTopic() {
               {["Customer", "SKU", "Amount"].map((chip) => (
                 <span
                   key={chip}
-                  className="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-[11px] text-foreground/70"
+                  className="rounded-full border border-white/15 bg-black/40 px-2 py-0.5 text-[11px] text-foreground/70 sm:px-3 sm:py-1 sm:text-[11px]"
                 >
                   {chip}
                 </span>
@@ -286,7 +290,7 @@ export function WorkflowTopic() {
 
             <div
               ref={approvalRef}
-              className="liquid-glass absolute flex -translate-x-1/2 -translate-y-[220%] items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs text-foreground/80"
+              className="liquid-glass absolute flex -translate-x-1/2 -translate-y-[220%] items-center gap-2 whitespace-nowrap rounded-full border border-white/10 px-3 py-1.5 text-[11px] text-foreground/80 sm:px-4 sm:py-2 sm:text-xs"
               style={{ left: pct(NODES.ai.x, "w"), top: pct(NODES.ai.y, "h") }}
             >
               Approval requested
@@ -294,7 +298,7 @@ export function WorkflowTopic() {
 
             <div
               ref={followUpRef}
-              className="liquid-glass absolute -translate-x-1/2 translate-y-[120%] rounded-full border border-white/10 px-4 py-2 text-xs text-foreground/80"
+              className="liquid-glass absolute -translate-x-1/2 translate-y-[120%] whitespace-nowrap rounded-full border border-white/10 px-3 py-1.5 text-[11px] text-foreground/80 sm:px-4 sm:py-2 sm:text-xs"
               style={{ left: pct(NODES.email.x, "w"), top: pct(NODES.email.y, "h") }}
             >
               Follow-up created
@@ -303,14 +307,14 @@ export function WorkflowTopic() {
         )}
 
         {!reduced && (
-          <div className="relative mt-16 h-8">
+          <div className="relative mt-10 h-14 w-full max-w-md px-6 sm:mt-16 sm:h-8 sm:max-w-none sm:px-0">
             {WORKFLOW_STEPS.map((step, i) => (
               <p
                 key={step}
                 ref={(el) => {
                   labelRefs.current[i] = el;
                 }}
-                className="absolute inset-0 text-center text-base font-medium text-foreground/80"
+                className="absolute inset-x-6 top-0 text-center text-sm font-medium text-foreground/80 sm:inset-x-0 sm:text-base"
               >
                 {step}
               </p>

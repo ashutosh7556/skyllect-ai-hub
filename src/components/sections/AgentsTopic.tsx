@@ -32,6 +32,12 @@ const TURN = 1.15;
 // Cards emerge around the bulb's rim rather than dead centre, so the bulb
 // stays visible as the source instead of being covered by the nearest card.
 const BASE_RADIUS = 255;
+// The width the lateral constants below were tuned against, and the card width
+// they were tuned around. Narrower viewports have proportionally less room to
+// spend on sideways spread once the card itself is subtracted, so the helix
+// tightens toward a vertical column rather than flinging cards off-screen.
+const DESIGN_WIDTH = 1440;
+const DESIGN_CARD_WIDTH = 470;
 // Lateral radius growth per unit of age — this is what makes it flare outward
 // as it climbs rather than staying a straight column.
 const EXPAND = 200;
@@ -40,13 +46,16 @@ const Z_AMP = 300;
 const Z_RECEDE = 90;
 // Upward travel per unit of age.
 const RISE = 165;
-// Slight per-card phase offset so the stream isn't perfectly mechanical.
-const PHASE_JITTER = [0, 0.12, -0.1, 0.15, -0.08, 0.1, -0.14];
-// Per-card depth and lift bias. Some cards swing right up to the camera while
-// others hang back and ride higher, so the stream has obvious near/far layers
-// instead of every card tracing the same curve.
-const DEPTH_BIAS = [1, 0.62, 1.25, 0.7, 1.15, 0.55, 0.95];
-const LIFT_BIAS = [1, 1.3, 0.85, 1.35, 0.9, 1.45, 1.05];
+// Phase, depth and lift used to vary per card, which split the stream into a
+// near layer and a shy far layer: the far cards sat deep enough that depthFade
+// and the depth blur left them dim and soft, their high lift carried them out
+// of the top of the frame before they were readable, and the mixed-sign phase
+// offset parked them up to ~90px further right at their prime. Every card now
+// rides one identical curve, so each arrives at the same spot, depth and size
+// as the one before it.
+const PHASE = -0.1;
+const DEPTH_BIAS = 1.25;
+const LIFT_BIAS = 0.85;
 
 
 const { clamp, mapRange } = gsap.utils;
@@ -86,6 +95,19 @@ export function AgentsTopic() {
         mapRange(FORM_END, TRAVEL_END, 0, AGENTS.length - 1, progress),
       );
 
+      // Room left for sideways travel once the card itself is accounted for,
+      // as a fraction of the room the desktop layout had. Reaches 1 at
+      // DESIGN_WIDTH, so the desktop composition is unchanged.
+      const cardWidth = Math.min(DESIGN_CARD_WIDTH, window.innerWidth * 0.8);
+      const spread = clamp(
+        0,
+        1,
+        (window.innerWidth - cardWidth) / (DESIGN_WIDTH - DESIGN_CARD_WIDTH),
+      );
+      // Depth keeps a floor so narrow screens still read as layered rather
+      // than perfectly flat.
+      const depthScale = 0.4 + 0.6 * spread;
+
       cards.forEach((card, i) => {
         // How far this card has climbed the vortex. Offsetting by PRIME_AGE
         // means a card hits its readable moment exactly as focus reaches it.
@@ -107,11 +129,10 @@ export function AgentsTopic() {
           else if (!shouldPlay && !video.paused) video.pause();
         }
 
-        const theta = age * TURN + PHASE_JITTER[i];
-        const radius = BASE_RADIUS + EXPAND * age;
-        // Depth bias > 1 brings a card right up to the camera; < 1 keeps it
-        // hanging back in the field. Lift bias sends the shy ones higher.
-        const depth = (Math.cos(theta) * Z_AMP - age * Z_RECEDE) * DEPTH_BIAS[i];
+        const theta = age * TURN + PHASE;
+        const radius = (BASE_RADIUS + EXPAND * age) * spread;
+        const depth =
+          (Math.cos(theta) * Z_AMP - age * Z_RECEDE) * DEPTH_BIAS * depthScale;
 
         // Emerges out of the bulb, then fades once it is high above it.
         // Reaches full size quickly so there is always a dominant card, rather
@@ -126,7 +147,7 @@ export function AgentsTopic() {
           yPercent: -50,
           x: Math.sin(theta) * radius,
           // Climbs away from the bulb, which anchors the base of the vortex.
-          y: BULB_Y_OFFSET - RISE * age * LIFT_BIAS[i],
+          y: BULB_Y_OFFSET - RISE * age * LIFT_BIAS,
           z: depth,
           rotateY: (theta * 180) / Math.PI / 3,
           rotateX: -age * 5,
@@ -172,14 +193,14 @@ export function AgentsTopic() {
           ref={headingRef}
           className={cn(
             "text-center",
-            reduced ? "relative" : "absolute top-24 left-1/2 z-[60] -translate-x-1/2",
+            reduced ? "relative" : "absolute top-20 left-1/2 z-[60] w-full max-w-md -translate-x-1/2 px-6 sm:top-24",
           )}
         >
-          <p className="text-xs font-medium uppercase tracking-[0.4em] text-foreground/40">01</p>
-          <h2 className="font-display mt-3 text-3xl font-normal tracking-tight text-foreground sm:text-4xl">
+          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-foreground/40">01</p>
+          <h2 className="font-display mt-2 text-2xl font-normal tracking-tight text-foreground sm:mt-3 sm:text-4xl">
             AI Agents
           </h2>
-          <p className="mt-2 max-w-md text-sm text-hero-sub opacity-70">
+          <p className="mx-auto mt-2 max-w-md text-xs text-hero-sub opacity-70 sm:text-sm">
             AI assistants designed around your actual business processes.
           </p>
         </div>
@@ -201,8 +222,8 @@ export function AgentsTopic() {
                 className={cn(
                   "liquid-glass agent-card overflow-hidden rounded-3xl border",
                   !reduced &&
-                    "absolute top-1/2 left-1/2 h-[280px] w-[470px] bg-[#0c0718]/70",
-                  reduced ? "border-white/10 p-8" : "p-8",
+                    "absolute top-1/2 left-1/2 h-[min(280px,48vw)] w-[min(470px,80vw)] bg-[#0c0718]/70",
+                  reduced ? "border-white/10 p-6 sm:p-8" : "p-5 sm:p-8",
                 )}
                 style={
                   reduced
@@ -245,15 +266,17 @@ export function AgentsTopic() {
                 )}
                 <div className="relative">
                   <p
-                    className="text-[10px] font-medium uppercase tracking-[0.3em]"
+                    className="text-[11px] font-medium uppercase tracking-[0.25em] sm:tracking-[0.3em]"
                     style={reduced ? undefined : { color: agent.accent }}
                   >
                     Agent {String(i + 1).padStart(2, "0")}
                   </p>
-                  <h3 className="font-display mt-3 text-2xl font-normal leading-tight tracking-tight text-foreground">
+                  <h3 className="font-display mt-2 text-lg font-normal leading-tight tracking-tight text-foreground sm:mt-3 sm:text-2xl">
                     {agent.name}
                   </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-white/70">{agent.description}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-white/70 sm:mt-3 sm:text-sm">
+                    {agent.description}
+                  </p>
                 </div>
               </div>
             ))}
