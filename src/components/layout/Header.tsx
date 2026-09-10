@@ -1,38 +1,216 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { NAV_ITEMS, PRIMARY_CTA } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/layout/Logo";
+import { NavIcon, monogram } from "@/components/layout/NavIcons";
+import type { NavItem, NavLink } from "@/types";
 
-export function Header() {
-  const [open, setOpen] = useState(false);
+/**
+ * The menus sit on their own raised surface rather than on the page colour.
+ * The site background is near-black, so a translucent panel disappeared into
+ * it — this is a lifted slate with a hairline edge and a soft top sheen.
+ */
+const PANEL_SURFACE: React.CSSProperties = {
+  background:
+    "linear-gradient(180deg, rgba(31,26,58,0.98) 0%, rgba(20,16,40,0.98) 45%, rgba(14,11,28,0.98) 100%)",
+  boxShadow:
+    "0 40px 90px -28px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.09)",
+};
+
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 12 12"
+      className={cn(
+        "h-2.5 w-2.5 transition-transform duration-200",
+        open && "rotate-180",
+      )}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M2.5 4.5 6 8l3.5-3.5" />
+    </svg>
+  );
+}
+
+function DropdownLink({ link, onDone }: { link: NavLink; onDone: () => void }) {
+  return (
+    <Link
+      href={link.href}
+      onClick={onDone}
+      className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-200 hover:bg-white/[0.07]"
+    >
+      {link.icon ? (
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/12 bg-white/[0.05] text-foreground/65 transition-colors duration-200 group-hover:border-white/25 group-hover:bg-white/[0.10] group-hover:text-foreground">
+          <NavIcon name={link.icon} />
+        </span>
+      ) : null}
+      <span className="text-sm text-foreground/80 transition-colors duration-200 group-hover:text-foreground">
+        {link.label}
+      </span>
+    </Link>
+  );
+}
+
+/** The panel body, shared by the desktop dropdown and the mobile accordion. */
+function NavItemPanel({ item, onDone }: { item: NavItem; onDone: () => void }) {
+  if (item.groups) {
+    return (
+      <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+        {item.groups.map((group) => (
+          <div key={group.label}>
+            {/* Only the category is a destination. */}
+            <Link
+              href={group.href}
+              onClick={onDone}
+              className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-white/[0.07]"
+            >
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/12 bg-white/[0.05] text-foreground/65 transition-colors duration-200 group-hover:border-white/25 group-hover:text-foreground">
+                <NavIcon name={group.icon} className="h-[13px] w-[13px]" />
+              </span>
+              <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/55 transition-colors duration-200 group-hover:text-foreground">
+                {group.label}
+              </span>
+            </Link>
+
+            {/* Technologies are labels, not links — nothing here is clickable. */}
+            <ul className="flex flex-col gap-0.5">
+              {group.items.map((tech) => (
+                <li
+                  key={tech}
+                  className="flex items-center gap-2.5 rounded-lg px-2 py-1 text-sm text-foreground/65"
+                >
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-white/10 bg-white/[0.04] text-[9px] font-semibold tracking-tight text-foreground/50">
+                    {monogram(tech)}
+                  </span>
+                  {tech}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <div className="flex flex-col">
+      {item.links?.map((link) => (
+        <DropdownLink key={link.label} link={link} onDone={onDone} />
+      ))}
+    </div>
+  );
+}
+
+export function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  // Which top-level entry is expanded. Shared by both layouts, since only one
+  // of them is ever on screen.
+  const [openItem, setOpenItem] = useState<string | null>(null);
+  const navRef = useRef<HTMLElement>(null);
+
+  // Escape closes whatever is open, and a click outside the header dismisses
+  // the dropdowns — otherwise a menu opened by tap on a touch device has no
+  // way to be dismissed.
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setOpenItem(null);
+      setMenuOpen(false);
+    }
+    function onPointerDown(event: PointerEvent) {
+      if (navRef.current?.contains(event.target as Node)) return;
+      setOpenItem(null);
+    }
+    document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
+  }, []);
+
+  const closeAll = () => {
+    setOpenItem(null);
+    setMenuOpen(false);
+  };
+
+  return (
+    <header ref={navRef} className="fixed inset-x-0 top-0 z-50">
       <div className="flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
-        <Link href="#home" className="flex items-center gap-2.5">
+        <Link href="/#home" className="flex items-center gap-2.5" onClick={closeAll}>
           <Logo variant="icon" />
           <span className="text-sm font-semibold tracking-tight text-foreground">
             Skyllect
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-sm text-foreground/90 transition-colors duration-200 hover:text-foreground"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <nav className="hidden lg:block">
+          <ul className="flex items-center gap-2">
+            {NAV_ITEMS.map((item) => {
+              const open = openItem === item.label;
+              return (
+                <li
+                  key={item.label}
+                  className="relative"
+                  // Guarded on pointer type so a tap does not both hover-open
+                  // and click-toggle, which would leave the menu shut.
+                  onPointerEnter={(event) => {
+                    if (event.pointerType === "mouse") setOpenItem(item.label);
+                  }}
+                  onPointerLeave={(event) => {
+                    if (event.pointerType === "mouse") setOpenItem(null);
+                  }}
+                >
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    aria-haspopup="true"
+                    onClick={() => setOpenItem(open ? null : item.label)}
+                    className={cn(
+                      "flex items-center gap-1.5 rounded-full px-3 py-2 text-sm transition-colors duration-200",
+                      open ? "text-foreground" : "text-foreground/90 hover:text-foreground",
+                    )}
+                  >
+                    {item.label}
+                    <Chevron open={open} />
+                  </button>
+
+                  {open ? (
+                    // pt-3 rather than a margin keeps the pointer inside the
+                    // item while it travels from the trigger to the panel.
+                    <div
+                      className={cn(
+                        "absolute top-full left-1/2 -translate-x-1/2 pt-3",
+                        item.groups
+                          ? "w-[min(880px,calc(100vw-4rem))]"
+                          : "w-[min(320px,calc(100vw-4rem))]",
+                      )}
+                    >
+                      <div
+                        className="rounded-2xl border border-white/12 p-3 backdrop-blur-xl"
+                        style={PANEL_SURFACE}
+                      >
+                        <NavItemPanel item={item} onDone={closeAll} />
+                      </div>
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
         </nav>
 
         <Link
           href={PRIMARY_CTA.href}
+          onClick={closeAll}
           className="liquid-glass hidden rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:text-foreground lg:inline-flex"
         >
           {PRIMARY_CTA.label}
@@ -40,21 +218,24 @@ export function Header() {
 
         <button
           type="button"
-          onClick={() => setOpen((value) => !value)}
+          onClick={() => {
+            setMenuOpen((value) => !value);
+            setOpenItem(null);
+          }}
           className="-mr-2 flex h-11 w-11 flex-col items-center justify-center gap-1.5 lg:hidden"
           aria-label="Toggle navigation"
-          aria-expanded={open}
+          aria-expanded={menuOpen}
         >
           <span
             className={cn(
               "h-px w-5 bg-foreground transition-transform duration-300",
-              open && "translate-y-[3.5px] rotate-45",
+              menuOpen && "translate-y-[3.5px] rotate-45",
             )}
           />
           <span
             className={cn(
               "h-px w-5 bg-foreground transition-transform duration-300",
-              open && "-translate-y-[3.5px] -rotate-45",
+              menuOpen && "-translate-y-[3.5px] -rotate-45",
             )}
           />
         </button>
@@ -62,23 +243,39 @@ export function Header() {
 
       <div className="mt-[3px] h-px w-full bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
 
-      {open ? (
-        <div className="absolute inset-x-4 top-[64px] max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain rounded-3xl border border-white/10 bg-background/95 p-5 backdrop-blur-md sm:top-[72px] sm:p-6 lg:hidden">
+      {menuOpen ? (
+        <div
+          className="absolute inset-x-4 top-[64px] max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain rounded-3xl border border-white/12 p-4 backdrop-blur-xl sm:top-[72px] lg:hidden"
+          style={PANEL_SURFACE}
+        >
           <nav className="flex flex-col">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className="flex min-h-11 items-center text-base text-foreground/80 transition-colors duration-200 hover:text-foreground"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const open = openItem === item.label;
+              return (
+                <div key={item.label} className="border-b border-white/5 last:border-b-0">
+                  <button
+                    type="button"
+                    aria-expanded={open}
+                    onClick={() => setOpenItem(open ? null : item.label)}
+                    className="flex min-h-12 w-full items-center justify-between gap-2 text-left text-base text-foreground/85 transition-colors duration-200 hover:text-foreground"
+                  >
+                    {item.label}
+                    <Chevron open={open} />
+                  </button>
+
+                  {open ? (
+                    <div className="pb-3">
+                      <NavItemPanel item={item} onDone={closeAll} />
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+
             <Link
               href={PRIMARY_CTA.href}
-              onClick={() => setOpen(false)}
-              className="liquid-glass mt-3 rounded-full px-5 py-3.5 text-center text-sm font-medium text-foreground"
+              onClick={closeAll}
+              className="liquid-glass mt-4 rounded-full px-5 py-3.5 text-center text-sm font-medium text-foreground"
             >
               {PRIMARY_CTA.label}
             </Link>

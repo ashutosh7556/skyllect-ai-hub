@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NAV_ITEMS } from "@/data/navigation";
+import { FOOTER_LINKS } from "@/data/navigation";
 import { Logo } from "@/components/layout/Logo";
 
 const SERVICE_LINKS = [
@@ -29,7 +29,7 @@ export function Footer() {
               Navigation
             </p>
             <ul className="flex flex-col gap-1 sm:gap-3">
-              {NAV_ITEMS.map((item) => (
+              {FOOTER_LINKS.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
