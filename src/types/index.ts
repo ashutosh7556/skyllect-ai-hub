@@ -17,7 +17,11 @@ export type NavIconName =
   | "prototype"
   | "build"
   | "quality"
-  | "launch";
+  | "launch"
+  | "ecommerce"
+  | "chat"
+  | "voice"
+  | "healthcare";
 
 export interface NavLink {
   label: string;
@@ -42,10 +46,32 @@ export interface NavGroup {
  * flat `links` list or, for the wider technologies menu, `groups` of columns —
  * never both.
  */
+/** A large dropdown entry: logo, name, one-line pitch and an Explore link. */
+export interface NavCard {
+  label: string;
+  href: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+}
+
+/**
+ * An icon, a name and a line of explanation, laid out two to a row. The whole
+ * tile is one link — the icon and description are not separately clickable.
+ */
+export interface NavFeature {
+  label: string;
+  href: string;
+  description: string;
+  icon: NavIconName;
+}
+
 export interface NavItem {
   label: string;
   links?: NavLink[];
   groups?: NavGroup[];
+  cards?: NavCard[];
+  features?: NavFeature[];
 }
 
 export interface IndustryAgent {
@@ -156,6 +182,54 @@ export interface TechnologyPageContent {
   testimonials: TechSectionCopy & { items: TechTestimonial[] };
   faq: TechSectionCopy & { items: TechFaqItem[] };
   cta: TechSectionCopy & { body: string };
+}
+
+/**
+ * One AI solution. All three render through the same shell, so this is the
+ * only thing that differs between them — the surrounding chrome, rail and
+ * layout are shared.
+ */
+export interface SolutionContent {
+  slug: string;
+  navLabel: string;
+  icon: NavIconName;
+  metaTitle: string;
+  metaDescription: string;
+  /** Short label for the switcher rail. */
+  railLabel: string;
+  heading: string;
+  accent: string;
+  summary: string;
+  /**
+   * Drop a file at this path in /public to use a photograph. Left undefined,
+   * the shell renders its own generated panel instead of a broken image.
+   */
+  image?: string;
+  imageAlt: string;
+  /** The headline things this solution handles. */
+  handles: string[];
+  useCases: TechNamed[];
+  howItWorks: TechNamed[];
+  integrations: string[];
+  outcomes: { value: string; label: string }[];
+}
+
+export interface CaseStudyContent {
+  slug: string;
+  name: string;
+  tagline: string;
+  metaTitle: string;
+  metaDescription: string;
+  /** Client mark, shown contained on a panel rather than cropped. */
+  logo: string;
+  logoAlt: string;
+  siteUrl: string;
+  summary: string;
+  facts: { label: string; value: string }[];
+  challenge: { heading: string; accent: string; body: string[] };
+  delivered: { heading: string; accent: string; items: TechNamed[] };
+  stack: string[];
+  outcomes: string[];
 }
 
 export type PermissionLevel = "automatic" | "approval" | "restricted";

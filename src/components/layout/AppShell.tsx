@@ -12,10 +12,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
   const pathname = usePathname();
 
-  // The bulb is the home page's motif — it lifts out of the logo and anchors
-  // the AI Agents vortex. The technology pages have neither, so it would just
-  // be a glow sitting behind unrelated copy.
-  const showBulb = !pathname?.startsWith("/technology");
+  // The bulb belongs to the home page alone: it lifts out of the header logo
+  // and anchors the AI Agents vortex, neither of which exists anywhere else.
+  // On any other route it would just be a glow behind unrelated copy.
+  const showBulb = pathname === "/";
 
   return (
     <>

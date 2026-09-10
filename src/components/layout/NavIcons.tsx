@@ -112,6 +112,35 @@ const PATHS: Record<NavIconName, React.ReactNode> = {
       <path d="M9.4 14.6 5 19M4.6 14.2 3 21l6.8-1.6" />
     </>
   ),
+
+  // Support channels.
+  ecommerce: (
+    <>
+      <path d="M2.5 3.5h2.6l2.2 10.4a1.8 1.8 0 0 0 1.8 1.4h7.6a1.8 1.8 0 0 0 1.8-1.4l1.4-6.4H6.2" />
+      <circle cx="9.5" cy="19.5" r="1.4" />
+      <circle cx="17" cy="19.5" r="1.4" />
+    </>
+  ),
+  chat: (
+    <>
+      <path d="M20.5 11.6a7.9 7.9 0 0 1-11.4 7.1L3.5 20.5l1.8-5.5A7.9 7.9 0 1 1 20.5 11.6z" />
+      <path d="M9 10.5h.01M12.5 10.5h.01M16 10.5h.01" />
+    </>
+  ),
+  voice: (
+    <>
+      <rect x="9" y="2.5" width="6" height="11.5" rx="3" />
+      <path d="M5 11.5a7 7 0 0 0 14 0M12 18.5v3M9 21.5h6" />
+    </>
+  ),
+
+  // Industries.
+  healthcare: (
+    <>
+      <path d="M20.4 6.2a5 5 0 0 0-8.4-1.9 5 5 0 0 0-8.4 5.3c1.7 3.4 8.4 8.9 8.4 8.9s6.7-5.5 8.4-8.9a5 5 0 0 0 0-3.4z" />
+      <path d="M2.6 12.2h4l1.6-2.7 2.3 4.6 1.8-3.1h5.1" />
+    </>
+  ),
 };
 
 export function NavIcon({ name, className }: { name: NavIconName; className?: string }) {

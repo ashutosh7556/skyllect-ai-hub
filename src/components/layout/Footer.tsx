@@ -15,15 +15,20 @@ export function Footer() {
     <footer id="contact" className="border-t border-white/10 bg-black px-5 py-12 sm:px-6 sm:py-16">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 sm:gap-12 lg:flex-row lg:justify-between">
         <div className="max-w-sm">
-          <div className="inline-block rounded-2xl bg-white px-5 py-4">
-            <Logo className="h-8 w-auto" />
-          </div>
+          {/*
+           * The lockup is transparent and its wordmark is brand blue/orange,
+           * so it reads on the dark footer without the white chip it used to
+           * sit on. It carries its own wordmark, so no text beside it.
+           */}
+          <Link href="/#home" className="inline-flex items-center">
+            <Logo variant="full" height={40} />
+          </Link>
           <p className="mt-4 text-sm leading-relaxed text-white/50">
             Engineering AI into real business operations.
           </p>
         </div>
 
-        <div className="grid grow grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8">
+        <div className="grid grow grid-cols-2 gap-6 sm:grid-cols-3 sm:gap-8 [&>div:last-child]:col-span-2 sm:[&>div:last-child]:col-span-1">
           <div>
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-white/40">
               Navigation
@@ -57,10 +62,43 @@ export function Footer() {
 
           <div>
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-white/40">
-              Contact
+              Contact Us
             </p>
-            <ul className="flex flex-col gap-3 text-sm text-white/60">
-              <li>hello@skyllect.com</li>
+            <ul className="flex flex-col gap-4 text-sm text-white/60">
+              <li>
+                <a
+                  href="https://maps.google.com/?q=5425+Capay+Valley+Ln,+Antioch,+CA+94531"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="not-italic leading-relaxed transition-colors duration-200 hover:text-white"
+                >
+                  <address className="not-italic">
+                    5425 Capay Valley Ln, Antioch CA 94531
+                  </address>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://maps.google.com/?q=339+Golden+Square,+Mota+Varachha,+Surat+394101,+Gujarat,+India"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="leading-relaxed transition-colors duration-200 hover:text-white"
+                >
+                  <address className="not-italic">
+                    339 Golden Square, Mota Varachha (Digital Valley), Surat 394101,
+                    Gujarat, India
+                  </address>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:info@skyllect.com"
+                  className="transition-colors duration-200 hover:text-white"
+                >
+                  info@skyllect.com
+                </a>
+              </li>
+              <li className="text-white/45">Working Hours: 10:00 – 19:00</li>
             </ul>
           </div>
         </div>

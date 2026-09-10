@@ -59,8 +59,89 @@ function DropdownLink({ link, onDone }: { link: NavLink; onDone: () => void }) {
   );
 }
 
+/**
+ * Large card entries, used by Case Studies. The client marks are small logo
+ * files, so they sit contained on a branded panel rather than being cropped
+ * to fill like a photograph would be.
+ */
+function NavCards({ item, onDone }: { item: NavItem; onDone: () => void }) {
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {item.cards?.map((card) => (
+        <Link
+          key={card.href}
+          href={card.href}
+          onClick={onDone}
+          className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition-colors duration-300 hover:border-white/25 hover:bg-white/[0.06]"
+        >
+          <span
+            className="flex h-24 items-center justify-center border-b border-white/10 px-6"
+            style={{
+              background:
+                "radial-gradient(120% 140% at 30% 0%, rgba(99,102,241,0.22) 0%, rgba(168,85,247,0.10) 45%, rgba(12,9,25,0) 85%)",
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={card.image}
+              alt={card.imageAlt}
+              className="max-h-9 w-auto max-w-[140px] object-contain"
+            />
+          </span>
+
+          <span className="flex flex-1 flex-col p-4">
+            <span className="text-sm font-medium text-foreground">{card.label}</span>
+            <span className="mt-1.5 text-xs leading-relaxed text-foreground/55">
+              {card.description}
+            </span>
+            <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-indigo-200/80 transition-colors duration-200 group-hover:text-indigo-100">
+              Explore
+              <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5">
+                →
+              </span>
+            </span>
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Icon, name and one line of explanation, two to a row with a rule beneath
+ * each. The whole tile is a single link, so nothing inside it is separately
+ * focusable or clickable.
+ */
+function NavFeatures({ item, onDone }: { item: NavItem; onDone: () => void }) {
+  return (
+    <div className="grid gap-x-8 sm:grid-cols-2">
+      {item.features?.map((feature) => (
+        <Link
+          key={feature.href}
+          href={feature.href}
+          onClick={onDone}
+          className="group flex flex-col border-b border-white/10 px-2 py-4 transition-colors duration-200 last:border-b-0 hover:border-white/20 sm:[&:nth-last-child(-n+2)]:border-b-0"
+        >
+          <span className="flex items-center gap-2.5">
+            <span className="text-indigo-200/80 transition-colors duration-200 group-hover:text-indigo-100">
+              <NavIcon name={feature.icon} className="h-[17px] w-[17px]" />
+            </span>
+            <span className="text-sm font-semibold text-foreground">{feature.label}</span>
+          </span>
+          <span className="mt-2 text-xs leading-relaxed text-foreground/60 transition-colors duration-200 group-hover:text-foreground/80">
+            {feature.description}
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
 /** The panel body, shared by the desktop dropdown and the mobile accordion. */
 function NavItemPanel({ item, onDone }: { item: NavItem; onDone: () => void }) {
+  if (item.cards) return <NavCards item={item} onDone={onDone} />;
+  if (item.features) return <NavFeatures item={item} onDone={onDone} />;
+
   if (item.groups) {
     return (
       <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -145,11 +226,9 @@ export function Header() {
   return (
     <header ref={navRef} className="fixed inset-x-0 top-0 z-50">
       <div className="flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
-        <Link href="/#home" className="flex items-center gap-2.5" onClick={closeAll}>
-          <Logo variant="icon" />
-          <span className="text-sm font-semibold tracking-tight text-foreground">
-            Skyllect
-          </span>
+        {/* The full lockup carries its own wordmark, so no text beside it. */}
+        <Link href="/#home" className="flex items-center" onClick={closeAll}>
+          <Logo variant="full" height={34} bulbOrigin />
         </Link>
 
         <nav className="hidden lg:block">
@@ -189,9 +268,13 @@ export function Header() {
                     <div
                       className={cn(
                         "absolute top-full left-1/2 -translate-x-1/2 pt-3",
-                        item.groups
-                          ? "w-[min(880px,calc(100vw-4rem))]"
-                          : "w-[min(320px,calc(100vw-4rem))]",
+                        item.groups && "w-[min(880px,calc(100vw-4rem))]",
+                        item.cards && "w-[min(660px,calc(100vw-4rem))]",
+                        item.features && "w-[min(600px,calc(100vw-4rem))]",
+                        !item.groups &&
+                          !item.cards &&
+                          !item.features &&
+                          "w-[min(320px,calc(100vw-4rem))]",
                       )}
                     >
                       <div

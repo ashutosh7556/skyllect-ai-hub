@@ -20,9 +20,6 @@ export function Hero() {
 
       <div className="relative z-10 flex flex-1 flex-col">
         <div className="flex flex-1 flex-col justify-center px-6 pt-24 pb-10 sm:px-8 sm:pt-28 sm:pb-16">
-          <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-foreground/50 sm:mb-6 sm:text-sm">
-            Skyllect
-          </p>
 
           <h1 className="font-display max-w-4xl text-[clamp(2.75rem,8vw,6.5rem)] font-normal leading-[1.02] tracking-[-0.024em] text-foreground">
 
@@ -38,17 +35,6 @@ export function Hero() {
             </span>{" "}
             to Work Inside Your Business
           </h1>
-
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-hero-sub opacity-80 sm:mt-8 sm:text-lg md:text-xl">
-            We build AI agents, automation systems, and custom software that connect
-            with your existing tools, data, and workflows.
-          </p>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-hero-sub opacity-60 sm:mt-4 sm:text-base">
-            From logistics and supply operations to manufacturing, sales, customer
-            support, and internal processes — Skyllect helps businesses reduce
-            repetitive work, improve response times, and operate more efficiently.
-          </p>
-
           <div className="mt-7 flex flex-col gap-3 sm:mt-10 sm:flex-row sm:gap-4">
             <Button href="#contact">Book an AI Workflow Consultation</Button>
             <Button href="#automation" variant="glass">

@@ -1,16 +1,17 @@
-import type { NavGroup, NavItem, NavLink } from "@/types";
+import type { NavCard, NavFeature, NavGroup, NavItem, NavLink } from "@/types";
 
 /**
- * AI solutions point at the sections that already exist on the page.
- * Everything else has no destination yet and carries an empty href until
- * those pages are built.
+ * The AI Solutions menu. Each entry has its own page under /solutions, and
+ * those pages share one shell — moving between them swaps only the content.
  */
 const AI_SOLUTIONS: NavLink[] = [
-  { label: "AI Agents", href: "/#ai-agents", icon: "agents" },
-  { label: "AI Workflow Automation", href: "/#automation", icon: "automation" },
-  { label: "AI Integrations", href: "/#integrations", icon: "integrations" },
-  { label: "AI SaaS Development", href: "/#saas", icon: "saas" },
-  { label: "Legacy Software Modernization", href: "/#modernization", icon: "modernization" },
+  {
+    label: "E-commerce Customer Support AI",
+    href: "/solutions/ecommerce-customer-support",
+    icon: "ecommerce",
+  },
+  { label: "WhatsApp Support AI Solutions", href: "/solutions/whatsapp-support", icon: "chat" },
+  { label: "Voice Agent AI Solutions", href: "/solutions/voice-agent", icon: "voice" },
 ];
 
 /** Only the category is a destination; `items` are labels, not links. */
@@ -53,21 +54,49 @@ const TECHNOLOGIES: NavGroup[] = [
   },
 ];
 
-const INDUSTRIES: NavLink[] = [
-  { label: "Healthcare", href: "" },
-  { label: "E-commerce", href: "" },
+/** Two to a row, each tile a single link. */
+const INDUSTRIES: NavFeature[] = [
+  {
+    label: "Healthcare",
+    href: "/industries/healthcare",
+    description:
+      "AI solutions for patient workflows, healthcare operations, support, and intelligent automation.",
+    icon: "healthcare",
+  },
+  {
+    label: "E-Commerce",
+    href: "/industries/ecommerce",
+    description:
+      "AI-powered e-commerce solutions for customer support, sales, orders, and business automation.",
+    icon: "ecommerce",
+  },
 ];
 
-const CASE_STUDIES: NavLink[] = [
-  { label: "Freight quoting cut from hours to minutes", href: "" },
-  { label: "Order enquiries answered without staff time", href: "" },
+/** Rendered as large cards rather than text links. */
+const CASE_STUDIES: NavCard[] = [
+  {
+    label: "Kwot Music",
+    href: "/case-studies/kwot-music",
+    description:
+      "African music, podcast, video and radio streaming built for content discovery and global audiences.",
+    image: "/images/kwot.png",
+    imageAlt: "Kwot",
+  },
+  {
+    label: "JobTalk AI",
+    href: "/case-studies/jobtalk-ai",
+    description:
+      "AI recruiting platform automating voice-first candidate screening, engagement, scheduling and workflow.",
+    image: "/images/jobtalk.avif",
+    imageAlt: "JobTalk AI",
+  },
 ];
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "AI Solutions", links: AI_SOLUTIONS },
   { label: "Technologies", groups: TECHNOLOGIES },
-  { label: "Industries", links: INDUSTRIES },
-  { label: "Case Studies", links: CASE_STUDIES },
+  { label: "Industries", features: INDUSTRIES },
+  { label: "Case Studies", cards: CASE_STUDIES },
 ];
 
 /** The footer lists destinations that exist, rather than mirroring the menu. */
