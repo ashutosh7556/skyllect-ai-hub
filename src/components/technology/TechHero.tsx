@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
-import { NodeNetwork } from "@/components/animation/NodeNetwork";
+import { NavIcon } from "@/components/layout/NavIcons";
 import { AccentHeading } from "@/components/technology/SectionShell";
 import type { TechnologyPageContent } from "@/types";
 
@@ -13,14 +13,6 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
 
   return (
     <section className="relative overflow-hidden px-5 pt-32 pb-16 sm:px-8 sm:pt-40 sm:pb-24">
-      <div className="absolute inset-0 -z-10">
-        <NodeNetwork
-          className="h-full w-full"
-          density={1 / 26000}
-          lineColor="150, 180, 255"
-          dotColor="200, 215, 255"
-        />
-      </div>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute top-0 left-1/2 -z-10 h-[min(520px,70vw)] w-[min(900px,100vw)] -translate-x-1/2 -translate-y-1/3 rounded-full bg-indigo-500/10 blur-[90px]"
@@ -51,7 +43,7 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <Button href="/#contact">Start a Front-end Project</Button>
+            <Button href="/#contact">Start a {content.navLabel} Project</Button>
             <Button href="#technology-stack" variant="glass">
               See the Stack
             </Button>
@@ -64,24 +56,47 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
          * `priority` because this is the page's largest contentful paint.
          */}
         <div className="relative mt-12 aspect-[16/9] w-full overflow-hidden rounded-xl border border-white/10 sm:mt-16 sm:rounded-3xl">
-          <Image
-            src={hero.image}
-            alt={hero.imageAlt}
-            fill
-            priority
-            sizes="(max-width: 1240px) 100vw, 1200px"
-            className="object-cover"
-          />
-          {/* Ties the photograph into the dark page rather than leaving it as
-              a bright rectangle pasted on top. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(180deg, rgba(10,7,20,0.20) 0%, rgba(10,7,20,0.05) 45%, rgba(10,7,20,0.55) 100%)",
-            }}
-          />
+          {hero.image ? (
+            <>
+              <Image
+                src={hero.image}
+                alt={hero.imageAlt}
+                fill
+                priority
+                sizes="(max-width: 1240px) 100vw, 1200px"
+                className="object-cover"
+              />
+              {/* Ties the photograph into the dark page rather than leaving it
+                  as a bright rectangle pasted on top. */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(10,7,20,0.20) 0%, rgba(10,7,20,0.05) 45%, rgba(10,7,20,0.55) 100%)",
+                }}
+              />
+            </>
+          ) : (
+            /*
+             * No banner supplied yet. A generated panel carrying the
+             * discipline's own icon, rather than a broken image or a
+             * borrowed photograph from another page.
+             */
+            <div
+              role="img"
+              aria-label={hero.imageAlt}
+              className="flex h-full w-full items-center justify-center"
+              style={{
+                background:
+                  "radial-gradient(110% 130% at 30% 0%, rgba(99,102,241,0.26) 0%, rgba(168,85,247,0.13) 42%, rgba(12,9,25,1) 82%)",
+              }}
+            >
+              <span className="text-white/20">
+                <NavIcon name={content.icon} className="h-24 w-24 sm:h-36 sm:w-36" />
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </section>

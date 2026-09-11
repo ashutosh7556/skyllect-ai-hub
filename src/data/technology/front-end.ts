@@ -3,6 +3,7 @@ import type { TechnologyPageContent } from "@/types";
 export const FRONT_END: TechnologyPageContent = {
   slug: "front-end",
   navLabel: "Front-end",
+  icon: "frontend",
   metaTitle: "Front-end Development Services — Skyllect",
   metaDescription:
     "Skyllect builds fast, accessible front-ends for AI products: agent consoles, operator dashboards, and customer applications that stay responsive while models stream and data changes underneath.",
@@ -265,70 +266,6 @@ export const FRONT_END: TechnologyPageContent = {
         title: "You Keep the Code",
         description:
           "Your repository, your dependencies, your documentation. No proprietary runtime and nothing that requires us to stay.",
-      },
-    ],
-  },
-
-  testimonials: {
-    heading: "What Clients Say",
-    accent: "Clients",
-    description: "Feedback from teams we have delivered front-end work for.",
-    items: [
-      {
-        quote:
-          "They pushed back on our original spec, which nobody else had done. The version we shipped was smaller than what we asked for and did more of what we actually needed.",
-        author: "Operations Director",
-        role: "Freight forwarding group",
-      },
-      {
-        quote:
-          "Our dashboard used to take eleven seconds to become usable. It is under two now, and the performance budget they set means it has stayed there for a year.",
-        author: "Head of Engineering",
-        role: "Supply chain platform",
-      },
-      {
-        quote:
-          "The handover was the part that surprised me. Documentation, tests, and a walkthrough — our own team picked it up without needing them on retainer.",
-        author: "CTO",
-        role: "B2B SaaS company",
-      },
-    ],
-  },
-
-  faq: {
-    heading: "Frequently Asked Questions",
-    accent: "Questions",
-    description: "The things teams usually want settled before starting.",
-    items: [
-      {
-        question: "Can you work with our existing front-end?",
-        answer:
-          "Usually, yes. We start with an audit and propose the smallest change that gets you where you need to be. Incremental migration is almost always safer than a rewrite, and we will say so plainly if a rewrite genuinely is the better option.",
-      },
-      {
-        question: "Which framework will you use?",
-        answer:
-          "Whichever fits the project and your team's ability to maintain it. If you already run React or Angular, we work in that. For new products we most often reach for React with Next.js, but we will explain the trade-offs rather than assert a default.",
-      },
-      {
-        question: "Do you handle design as well as engineering?",
-        answer:
-          "We handle interface design, design systems, and the engineering. If you already have a design partner or an established brand system, we build to it.",
-      },
-      {
-        question: "How do you keep an AI interface fast?",
-        answer:
-          "Streaming responses so something useful appears immediately, optimistic updates for actions that are safe to assume, and strict separation between the parts of the screen waiting on a model and the parts that are not.",
-      },
-      {
-        question: "What does engagement look like?",
-        answer:
-          "Either a scoped project with a fixed set of deliverables, or engineers embedded in your team on a rolling basis. Both start with a short discovery so the estimate is grounded in something real.",
-      },
-      {
-        question: "Who owns the code?",
-        answer:
-          "You do, from the first commit. It lives in your repository, uses standard open dependencies, and comes with the documentation needed to run it without us.",
       },
     ],
   },

@@ -223,8 +223,38 @@ export function Header() {
     setMenuOpen(false);
   };
 
+  // The bar is transparent so the home hero reads full-bleed behind it, but
+  // that means anything scrolling underneath collides with the nav labels.
+  // Once the page moves at all, a scrim goes in behind the bar. Lenis drives
+  // the window scroll, so a plain scroll listener tracks it.
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // An open mobile sheet needs the scrim regardless of scroll position.
+  const solid = scrolled || menuOpen;
+
   return (
     <header ref={navRef} className="fixed inset-x-0 top-0 z-50">
+      <div
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-0 -z-10 transition-opacity duration-300",
+          solid ? "opacity-100" : "opacity-0",
+        )}
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(8,5,18,0.92) 0%, rgba(8,5,18,0.80) 60%, rgba(8,5,18,0) 100%)",
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+        }}
+      />
+
       <div className="flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
         {/* The full lockup carries its own wordmark, so no text beside it. */}
         <Link href="/#home" className="flex items-center" onClick={closeAll}>

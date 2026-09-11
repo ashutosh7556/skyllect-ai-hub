@@ -123,14 +123,17 @@ export interface TechCapability {
 }
 
 /**
- * A technology tile. `slug` selects the brand mark; the label comes from the
- * icon itself unless overridden — simple-icons already carries the correct
- * display name for each brand.
+ * A technology tile. `slug` selects the brand mark and supplies the display
+ * name, which `label` can override.
+ *
+ * Some brands have no mark available — Adobe, AWS and Azure were withdrawn
+ * from simple-icons at the trademark holders' request. Those tiles carry a
+ * `label` alone and render as a monogram, so the stack stays accurate rather
+ * than dropping them or substituting a different product.
  */
-export interface TechStackItem {
-  slug: TechLogoSlug;
-  label?: string;
-}
+export type TechStackItem =
+  | { slug: TechLogoSlug; label?: string }
+  | { slug?: undefined; label: string };
 
 export interface TechProcessStep {
   title: string;
@@ -165,13 +168,18 @@ export interface TechnologyPageContent {
   slug: string;
   /** Matches the category label in the Technologies menu. */
   navLabel: string;
+  /** Used for the hero fallback panel when no banner image exists yet. */
+  icon: NavIconName;
   metaTitle: string;
   metaDescription: string;
   hero: TechSectionCopy & {
     eyebrow: string;
     body: string;
-    /** Banner served from /public. */
-    image: string;
+    /**
+     * Banner served from /public. Optional: without it the hero renders a
+     * generated panel rather than a broken image.
+     */
+    image?: string;
     imageAlt: string;
   };
   capabilities: TechSectionCopy & { items: TechCapability[] };
@@ -179,8 +187,6 @@ export interface TechnologyPageContent {
   stack: TechSectionCopy & { items: TechStackItem[] };
   process: TechSectionCopy & { steps: TechProcessStep[] };
   whyUs: TechSectionCopy & { items: TechNamed[] };
-  testimonials: TechSectionCopy & { items: TechTestimonial[] };
-  faq: TechSectionCopy & { items: TechFaqItem[] };
   cta: TechSectionCopy & { body: string };
 }
 
