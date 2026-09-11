@@ -13,9 +13,21 @@ export function Hero() {
         />
       </div>
 
+      {/*
+       * Headline legibility scrim. This used to be a 984px circle centred in
+       * the hero, which sat right on the fingertip contact and the holographic
+       * rings of the hero clip and read as a black blob. Anchored to the left
+       * instead, so it only darkens what actually sits behind the text.
+       */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[min(527px,60vw)] w-[min(984px,100vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-950 opacity-90 blur-[82px]"
+        className="pointer-events-none absolute inset-y-0 left-0 -z-10 w-[min(920px,88vw)] bg-[radial-gradient(ellipse_at_left_center,rgba(4,0,14,0.94)_0%,rgba(4,0,14,0.6)_45%,transparent_78%)]"
+      />
+
+      {/* Lifts the near-black midpoint where the two hands meet. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-[46%] left-[52%] -z-10 h-[min(680px,72vw)] w-[min(680px,72vw)] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(151,106,255,0.22)_0%,rgba(99,102,241,0.11)_45%,transparent_70%)] blur-[64px]"
       />
 
       <div className="relative z-10 flex flex-1 flex-col">
