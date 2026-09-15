@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FOOTER_LINKS } from "@/data/navigation";
 import { Logo } from "@/components/layout/Logo";
+import { HomeLink } from "@/components/layout/HomeLink";
 
 const SERVICE_LINKS = [
   "AI Automation",
@@ -20,9 +21,9 @@ export function Footer() {
            * so it reads on the dark footer without the white chip it used to
            * sit on. It carries its own wordmark, so no text beside it.
            */}
-          <Link href="/#home" className="inline-flex items-center">
+          <HomeLink className="inline-flex items-center">
             <Logo variant="full" height={40} />
-          </Link>
+          </HomeLink>
           <p className="mt-4 text-sm leading-relaxed text-muted">
             Engineering AI into real business operations.
           </p>

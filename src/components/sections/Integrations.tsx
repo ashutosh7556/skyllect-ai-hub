@@ -14,12 +14,17 @@ const SYSTEMS = [
   "Third-party APIs",
 ];
 
-// A leaf only shows a taste of each list — the rest lives behind View More.
+// A topic only shows a taste of each list — the rest lives behind View More.
 const PREVIEW_COUNT = 5;
 
+/**
+ * One topic on the shared stage. It owns no animation of its own: the stage
+ * fades it in and out, and the gateway behind it is the stage's.
+ */
 export function Integrations() {
   return (
     <section id="integrations" className="w-full px-5 py-8 sm:px-8 sm:py-10">
+      {/* Held to the left half so the gateway behind has the other. */}
       <div className="mx-auto max-w-6xl">
         <SectionHeading
           eyebrow="AI integrations"
@@ -31,9 +36,10 @@ export function Integrations() {
             </>
           }
           description="We integrate AI into your existing technology stack. AI becomes an intelligent layer across your existing systems."
+          className="max-w-2xl"
         />
 
-        <ul className="mt-6 flex flex-wrap gap-2 sm:mt-10 sm:gap-3">
+        <ul className="mt-6 flex max-w-2xl flex-wrap gap-2 sm:mt-10 sm:gap-3">
           {SYSTEMS.slice(0, PREVIEW_COUNT).map((system) => (
             <li
               key={system}

@@ -1,4 +1,4 @@
-import { BookStack } from "@/components/animation/BookStack";
+import { TopicStage } from "@/components/animation/TopicStage";
 import { Hero } from "@/components/sections/Hero";
 import { AgentsTopic } from "@/components/sections/AgentsTopic";
 import { SystemsIntegration } from "@/components/sections/SystemsIntegration";
@@ -22,9 +22,13 @@ export default function Home() {
       <AgentsTopic />
       <SystemsIntegration />
       <WorkflowTopic />
-      {/* From here the page becomes a stack: each section is a full screen
-          that tips away as the next one slides over it. */}
-      <BookStack>
+      {/*
+        From here every remaining topic shares one screen. The stage pins
+        once, holds a single gateway behind all of them, and hands over from
+        one topic to the next in place as the scroll continues — rather than
+        giving each its own section to scroll past.
+      */}
+      <TopicStage>
         <Integrations />
         <SaasDevelopment />
         <Modernization />
@@ -38,7 +42,7 @@ export default function Home() {
         <StartSmall />
         <WhySkyllect />
         <FinalCta />
-      </BookStack>
+      </TopicStage>
     </>
   );
 }

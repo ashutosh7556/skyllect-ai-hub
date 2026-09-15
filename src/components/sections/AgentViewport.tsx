@@ -281,6 +281,35 @@ export function AgentViewport({ src, variant, active, index }: AgentViewportProp
         0,
       );
 
+      // The wider band the hard line rides in.
+      timeline.fromTo(
+        "[data-scan]",
+        { yPercent: -120, opacity: 0 },
+        {
+          yPercent: 460,
+          opacity: 1,
+          duration: 3.6,
+          repeat: -1,
+          repeatDelay: 1.4,
+          ease: "power1.inOut",
+        },
+        0,
+      );
+
+      // Charge arriving from the machine, in at both ports.
+      timeline.fromTo(
+        '[data-charge="left"]',
+        { x: 0, opacity: 0 },
+        { x: 22, opacity: 1, duration: 1.1, repeat: -1, repeatDelay: 0.9, ease: "power2.out" },
+        0,
+      );
+      timeline.fromTo(
+        '[data-charge="right"]',
+        { x: 0, opacity: 0 },
+        { x: -22, opacity: 1, duration: 1.1, repeat: -1, repeatDelay: 0.9, ease: "power2.out" },
+        0.55,
+      );
+
       // The light running the frame. `pathLength` normalises the perimeter to
       // 1, so the dash fractions hold at any card width.
       timeline.to(
@@ -565,6 +594,17 @@ export function AgentViewport({ src, variant, active, index }: AgentViewportProp
         }),
         gsap.to(perimeter, { strokeOpacity: 0.95, duration: 0.5 }),
         gsap.to(statusDot, { scale: 1.4, duration: 0.4, ease: "power2.out" }),
+        // The frame lighting up as the charge arrives. A one-shot flash that
+        // settles to a held glow, rather than a state the border sits in.
+        gsap.fromTo(
+          root,
+          { boxShadow: "0 0 0 0 rgba(92,200,232,0)" },
+          {
+            boxShadow: "0 0 30px -6px rgba(92,200,232,0.6)",
+            duration: 0.55,
+            ease: "power2.out",
+          },
+        ),
       );
 
       // The read-out walks its states for as long as the pointer stays.
@@ -615,6 +655,11 @@ export function AgentViewport({ src, variant, active, index }: AgentViewportProp
         }),
         gsap.to(perimeter, { strokeOpacity: 0.55, duration: 0.6 }),
         gsap.to(statusDot, { scale: 1, duration: 0.5, ease: "power2.out" }),
+        gsap.to(root, {
+          boxShadow: "0 0 0 0 rgba(92,200,232,0)",
+          duration: 0.7,
+          ease: "power2.out",
+        }),
       );
     }
 
@@ -628,6 +673,12 @@ export function AgentViewport({ src, variant, active, index }: AgentViewportProp
     <div
       ref={rootRef}
       data-agent-stage={index}
+      /*
+       * Read by MachineCore: this element is both the rectangle its cable
+       * docks onto and the flag that tells it which module is live. An empty
+       * string rather than "true" so `dataset.active === ""` is the test.
+       */
+      data-active={active ? "" : undefined}
       className="relative mb-5 h-24 w-full overflow-hidden rounded-lg border border-edge bg-surface"
     >
       <video
@@ -711,11 +762,42 @@ export function AgentViewport({ src, variant, active, index }: AgentViewportProp
         ))}
       </div>
 
-      {/* The pass of light. */}
+      {/* The pass of light: a soft band with a hard line at its head, so the
+          scan reads as a beam crossing the frame rather than as a hairline. */}
+      <span
+        data-scan
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-7 bg-gradient-to-b from-transparent via-accent/12 to-transparent"
+      />
       <span
         data-sweep
         aria-hidden="true"
         className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent-soft/80 to-transparent"
+      />
+
+      {/*
+       * Dock ports. This is where MachineCore lands its cable — it picks
+       * whichever side faces the machine, so both are here and both are live.
+       * The charge arriving is a dot running a short way in from the port,
+       * which is what ties the panel to the cable feeding it.
+       */}
+      <span
+        aria-hidden="true"
+        className="absolute top-1/2 left-0 h-5 w-[3px] -translate-y-1/2 rounded-r-sm bg-accent/55 shadow-[0_0_8px_1px_rgba(92,200,232,0.4)]"
+      />
+      <span
+        aria-hidden="true"
+        className="absolute top-1/2 right-0 h-5 w-[3px] -translate-y-1/2 rounded-l-sm bg-accent/55 shadow-[0_0_8px_1px_rgba(92,200,232,0.4)]"
+      />
+      <span
+        data-charge="left"
+        aria-hidden="true"
+        className="absolute top-1/2 left-1 h-1 w-1 -translate-y-1/2 rounded-full bg-accent-soft shadow-[0_0_6px_1px_rgba(92,200,232,0.6)]"
+      />
+      <span
+        data-charge="right"
+        aria-hidden="true"
+        className="absolute top-1/2 right-1 h-1 w-1 -translate-y-1/2 rounded-full bg-accent-soft shadow-[0_0_6px_1px_rgba(92,200,232,0.6)]"
       />
 
       {/* Loose data points. */}

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { NAV_ITEMS, PRIMARY_CTA } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/layout/Logo";
+import { HomeLink } from "@/components/layout/HomeLink";
 import { NavIcon, monogram } from "@/components/layout/NavIcons";
 import type { NavItem, NavLink } from "@/types";
 
@@ -257,9 +258,9 @@ export function Header() {
 
       <div className="flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
         {/* The full lockup carries its own wordmark, so no text beside it. */}
-        <Link href="/#home" className="flex items-center" onClick={closeAll}>
+        <HomeLink className="flex items-center" onNavigate={closeAll}>
           <Logo variant="full" height={34} />
-        </Link>
+        </HomeLink>
 
         <nav className="hidden lg:block">
           <ul className="flex items-center gap-2">
