@@ -27,7 +27,7 @@ export function Integrations() {
             <>
               Already using software that works well?
               <br />
-              <span className="text-white/50">You don&apos;t need to replace it.</span>
+              <span className="text-muted">You don&apos;t need to replace it.</span>
             </>
           }
           description="We integrate AI into your existing technology stack. AI becomes an intelligent layer across your existing systems."
@@ -37,7 +37,7 @@ export function Integrations() {
           {SYSTEMS.slice(0, PREVIEW_COUNT).map((system) => (
             <li
               key={system}
-              className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm"
+              className="rounded-full border border-edge px-3 py-1.5 text-xs text-hero-sub sm:px-4 sm:py-2 sm:text-sm"
             >
               {system}
             </li>

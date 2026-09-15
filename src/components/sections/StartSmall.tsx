@@ -27,14 +27,14 @@ export function StartSmall() {
           {EXAMPLES.slice(0, PREVIEW_COUNT).map((example) => (
             <li
               key={example}
-              className="rounded-xl border border-white/10 p-3 text-xs text-white/70 sm:rounded-2xl sm:p-4 sm:text-sm"
+              className="rounded-xl border border-edge p-3 text-xs text-hero-sub sm:rounded-2xl sm:p-4 sm:text-sm"
             >
               {example}
             </li>
           ))}
         </ul>
 
-        <p className="mt-6 max-w-2xl text-sm text-white/50 sm:mt-10 sm:text-base">
+        <p className="mt-6 max-w-2xl text-sm text-muted sm:mt-10 sm:text-base">
           Once the workflow proves its value, expand from there.
         </p>
 

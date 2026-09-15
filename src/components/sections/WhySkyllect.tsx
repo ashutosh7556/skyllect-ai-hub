@@ -29,7 +29,7 @@ export function WhySkyllect() {
           {CAPABILITIES.slice(0, PREVIEW_COUNT).map((capability) => (
             <li
               key={capability}
-              className="rounded-xl border border-white/10 p-3 text-center text-xs text-white/70 sm:rounded-2xl sm:p-5 sm:text-sm"
+              className="rounded-xl border border-edge p-3 text-center text-xs text-hero-sub sm:rounded-2xl sm:p-5 sm:text-sm"
             >
               {capability}
             </li>

@@ -11,9 +11,9 @@ const LEVEL_LABEL: Record<PermissionLevel, string> = {
 };
 
 const LEVEL_STYLE: Record<PermissionLevel, string> = {
-  automatic: "border-white/20 text-white/80",
-  approval: "border-white/10 text-white/60",
-  restricted: "border-white/5 text-white/30",
+  automatic: "border-edge-strong text-hero-sub",
+  approval: "border-edge text-muted",
+  restricted: "border-edge text-muted/70",
 };
 
 // A leaf only shows a taste of each list — the rest lives behind View More.
@@ -33,8 +33,8 @@ export function HumanControlledAi() {
 
         <div className="mt-6 grid gap-3 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           {levels.map((level) => (
-            <div key={level} className="rounded-2xl border border-white/10 p-4 sm:rounded-3xl sm:p-6">
-              <h3 className="text-base font-medium text-white sm:text-lg">{LEVEL_LABEL[level]}</h3>
+            <div key={level} className="rounded-2xl border border-edge p-4 sm:rounded-3xl sm:p-6">
+              <h3 className="text-base font-medium text-foreground sm:text-lg">{LEVEL_LABEL[level]}</h3>
               <ul className="mt-3 flex flex-col gap-1.5 sm:mt-4 sm:gap-2">
                 {PERMISSION_ACTIONS.filter((action) => action.level === level)
                   .slice(0, PREVIEW_COUNT)
@@ -50,7 +50,7 @@ export function HumanControlledAi() {
                     </li>
                   ))}
                 {level === "restricted" ? (
-                  <li className="text-xs text-white/30 sm:text-sm">
+                  <li className="text-xs text-muted/70 sm:text-sm">
                     Sensitive actions remain unavailable to AI unless specifically
                     authorized.
                   </li>

@@ -4,7 +4,6 @@ import { Children, useRef, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { BULB_SRC } from "@/lib/bulb";
 import { cn } from "@/lib/utils";
 
 /**
@@ -18,26 +17,27 @@ const FLAP_END_DEG = -179;
 const LEAF_RADIUS = 22;
 
 /**
- * The face of a leaf. Layered back to front: the paper, a warm bounce from the
- * bulb sitting below the stack, a highlight along the outer edge, and the
- * shadow the binding casts down the spine.
+ * The face of a leaf — a machined plate rather than paper. Layered back to
+ * front: the plate itself, a cool bounce from the machine below the stack, a
+ * highlight along the outer edge, and the shadow the binding casts down the
+ * spine.
  */
 const SHEET_SURFACE = [
-  "linear-gradient(to right, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.20) 3.5%, rgba(0,0,0,0) 10%)",
-  "linear-gradient(to left, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 1.4%)",
-  "radial-gradient(125% 78% at 50% 112%, rgba(255,190,110,0.10) 0%, rgba(255,190,110,0) 68%)",
-  "linear-gradient(118deg, #0c0919 0%, #100c20 46%, #0a0714 100%)",
+  "linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.22) 3.5%, rgba(0,0,0,0) 10%)",
+  "linear-gradient(to left, rgba(190,225,255,0.09) 0%, rgba(190,225,255,0) 1.4%)",
+  "radial-gradient(125% 78% at 50% 112%, rgba(92,200,232,0.08) 0%, rgba(92,200,232,0) 68%)",
+  "linear-gradient(118deg, #070a11 0%, #0c131e 46%, #05080e 100%)",
 ].join(", ");
 
 /**
- * The reverse of the paper, seen once the edge lifts. `to left` because the
+ * The reverse of the plate, seen once the edge lifts. `to left` because the
  * fold mirrors the flap: its local right edge is the crease, so that is where
  * the light has to break. The opaque base matters — without it the page's own
  * copy, and the page below, read straight through the flap.
  */
 const FLAP_SURFACE = [
-  "linear-gradient(to left, rgba(255,255,255,0.17) 0%, rgba(188,178,220,0.10) 4%, rgba(30,24,50,0.93) 26%, rgba(13,9,25,0.98) 68%, rgba(9,6,18,1) 100%)",
-  "linear-gradient(#0b0817, #0b0817)",
+  "linear-gradient(to left, rgba(200,230,255,0.18) 0%, rgba(140,175,215,0.10) 4%, rgba(20,30,44,0.93) 26%, rgba(8,12,20,0.98) 68%, rgba(4,6,11,1) 100%)",
+  "linear-gradient(#070a11, #070a11)",
 ].join(", ");
 
 /**
@@ -50,12 +50,12 @@ const CREASE_SHADOW =
   "linear-gradient(to left, rgba(0,0,0,0.66) 0%, rgba(0,0,0,0.34) 5%, rgba(0,0,0,0.12) 12%, rgba(0,0,0,0) 20%)";
 
 /**
- * The light the bulb throws across a leaf. Same amber-to-indigo ramp the page
- * backdrop uses, at a fraction of the strength — enough to warm the paper
- * without lifting it toward the copy sitting on top.
+ * The light the machine throws up across a leaf from below the stack. Cyan
+ * falling to violet, at a fraction of the strength of the core itself —
+ * enough to lift the plate without competing with the copy on top of it.
  */
-const BULB_GLOW =
-  "radial-gradient(circle, rgba(255,201,92,0.17) 0%, rgba(251,158,54,0.105) 18%, rgba(214,120,80,0.06) 36%, rgba(99,102,241,0.04) 55%, rgba(99,102,241,0) 74%)";
+const MACHINE_GLOW =
+  "radial-gradient(circle, rgba(92,200,232,0.13) 0%, rgba(92,200,232,0.07) 20%, rgba(106,92,224,0.045) 45%, rgba(106,92,224,0) 74%)";
 
 /**
  * Turns a run of sections into the leaves of a book.
@@ -212,12 +212,11 @@ export function BookStack({ children }: { children: ReactNode }) {
               }}
             >
               {/*
-               * The bulb, printed into the leaf itself. It has to live here
-               * rather than show through from the page backdrop, because the
-               * leaves are opaque — anything behind them is invisible. Being
-               * the first child it sits under the copy, so the page stays
-               * fully legible, and it is clipped by the peel along with the
-               * rest of the face.
+               * The machine's light, printed into the leaf itself. It has to
+               * live here rather than show through from behind, because the
+               * leaves are opaque. Being the first child it sits under the
+               * copy, so the page stays fully legible, and it is clipped by
+               * the peel along with the rest of the face.
                */}
               <div
                 aria-hidden="true"
@@ -225,13 +224,7 @@ export function BookStack({ children }: { children: ReactNode }) {
               >
                 <div
                   className="absolute bottom-0 left-1/2 h-[130%] w-[130%] -translate-x-1/2 translate-y-[22%] rounded-full"
-                  style={{ background: BULB_GLOW }}
-                />
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={BULB_SRC}
-                  alt=""
-                  className="absolute bottom-[-7%] left-1/2 h-[66%] w-auto -translate-x-1/2 opacity-[0.17]"
+                  style={{ background: MACHINE_GLOW }}
                 />
               </div>
 

@@ -38,14 +38,14 @@ export function WorkflowAssessment() {
 
         <div className="mt-6 grid gap-6 sm:mt-16 sm:gap-10 lg:grid-cols-2">
           <div>
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/40 sm:mb-4 sm:text-xs">
+            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.2em] text-muted/70 sm:mb-4 sm:text-xs">
               We analyze
             </p>
             <ul className="flex flex-wrap gap-2 sm:gap-3">
               {AREAS.slice(0, PREVIEW_AREAS).map((area) => (
                 <li
                   key={area}
-                  className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm"
+                  className="rounded-full border border-edge px-3 py-1.5 text-xs text-hero-sub sm:px-4 sm:py-2 sm:text-sm"
                 >
                   {area}
                 </li>
@@ -54,12 +54,12 @@ export function WorkflowAssessment() {
           </div>
 
           <div>
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.2em] text-white/40 sm:mb-4 sm:text-xs">
+            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.2em] text-muted/70 sm:mb-4 sm:text-xs">
               Then identify
             </p>
             <ul className="flex flex-col gap-1.5 sm:gap-2">
               {IDENTIFIES.slice(0, PREVIEW_IDENTIFIES).map((item) => (
-                <li key={item} className="text-xs text-white/60 sm:text-sm">
+                <li key={item} className="text-xs text-muted sm:text-sm">
                   {item}
                 </li>
               ))}
@@ -67,7 +67,7 @@ export function WorkflowAssessment() {
           </div>
         </div>
 
-        <p className="mt-6 max-w-2xl text-sm text-white/50 sm:mt-10 sm:text-base">
+        <p className="mt-6 max-w-2xl text-sm text-muted sm:mt-10 sm:text-base">
           You receive a practical automation roadmap based on business impact.
         </p>
 

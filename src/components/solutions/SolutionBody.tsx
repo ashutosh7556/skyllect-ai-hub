@@ -7,7 +7,7 @@ import type { SolutionContent } from "@/types";
 /** Section heading used inside the swapping content area. */
 function BlockHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="font-display text-xl font-medium tracking-tight text-white sm:text-2xl">
+    <h2 className="font-display text-xl font-medium tracking-tight text-foreground sm:text-2xl">
       {children}
     </h2>
   );
@@ -18,7 +18,7 @@ function Tick() {
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="mt-[3px] h-3.5 w-3.5 shrink-0 text-indigo-300/80"
+      className="mt-[3px] h-3.5 w-3.5 shrink-0 text-accent/80"
       fill="none"
       stroke="currentColor"
       strokeWidth={1.6}
@@ -50,7 +50,7 @@ export function SolutionBody({ solution }: { solution: SolutionContent }) {
 
           <ul className="mt-7 flex flex-col gap-2.5">
             {solution.handles.map((item) => (
-              <li key={item} className="flex gap-3 text-sm text-white/70 sm:text-base">
+              <li key={item} className="flex gap-3 text-sm text-hero-sub sm:text-base">
                 <Tick />
                 {item}
               </li>
@@ -65,7 +65,7 @@ export function SolutionBody({ solution }: { solution: SolutionContent }) {
           </div>
         </div>
 
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-white/10 sm:rounded-3xl">
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-edge sm:rounded-3xl">
           {solution.image ? (
             <Image
               src={solution.image}
@@ -87,10 +87,10 @@ export function SolutionBody({ solution }: { solution: SolutionContent }) {
               className="flex h-full w-full items-center justify-center"
               style={{
                 background:
-                  "radial-gradient(120% 120% at 25% 0%, rgba(99,102,241,0.28) 0%, rgba(168,85,247,0.14) 40%, rgba(12,9,25,1) 80%)",
+                  "radial-gradient(120% 120% at 25% 0%, rgba(92,200,232,0.20) 0%, rgba(106,92,224,0.10) 40%, rgba(4,6,11,1) 80%)",
               }}
             >
-              <span className="text-white/25">
+              <span className="text-muted/70">
                 <NavIcon name={solution.icon} className="h-24 w-24 sm:h-32 sm:w-32" />
               </span>
             </div>
@@ -104,14 +104,14 @@ export function SolutionBody({ solution }: { solution: SolutionContent }) {
           {solution.outcomes.map((outcome) => (
             <div
               key={outcome.label}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5"
+              className="rounded-2xl border border-edge bg-surface-2/60 p-4 sm:p-5"
             >
               <dt className="sr-only">{outcome.label}</dt>
               <dd>
-                <span className="font-display block text-xl font-medium tracking-tight text-white sm:text-2xl">
+                <span className="font-display block text-xl font-medium tracking-tight text-foreground sm:text-2xl">
                   {outcome.value}
                 </span>
-                <span className="mt-1.5 block text-xs leading-relaxed text-white/45 sm:text-sm">
+                <span className="mt-1.5 block text-xs leading-relaxed text-muted/70 sm:text-sm">
                   {outcome.label}
                 </span>
               </dd>
@@ -127,12 +127,12 @@ export function SolutionBody({ solution }: { solution: SolutionContent }) {
           {solution.useCases.map((useCase) => (
             <article
               key={useCase.title}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:rounded-3xl sm:p-6"
+              className="rounded-2xl border border-edge bg-surface-2/60 p-5 transition-colors duration-300 hover:border-edge-strong hover:bg-surface-3/70 sm:rounded-3xl sm:p-6"
             >
-              <h3 className="font-display text-base font-medium tracking-tight text-white sm:text-lg">
+              <h3 className="font-display text-base font-medium tracking-tight text-foreground sm:text-lg">
                 {useCase.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/55">
+              <p className="mt-2 text-sm leading-relaxed text-muted">
                 {useCase.description}
               </p>
             </article>
@@ -147,15 +147,15 @@ export function SolutionBody({ solution }: { solution: SolutionContent }) {
           {solution.howItWorks.map((step, i) => (
             <li
               key={step.title}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-3xl"
+              className="rounded-2xl border border-edge bg-surface-2/60 p-5 sm:rounded-3xl"
             >
-              <p className="font-mono text-xs text-white/30">
+              <p className="font-mono text-xs text-muted/70">
                 {String(i + 1).padStart(2, "0")}
               </p>
-              <h3 className="font-display mt-1.5 text-base font-medium tracking-tight text-white">
+              <h3 className="font-display mt-1.5 text-base font-medium tracking-tight text-foreground">
                 {step.title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/55">{step.description}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{step.description}</p>
             </li>
           ))}
         </ol>
@@ -168,7 +168,7 @@ export function SolutionBody({ solution }: { solution: SolutionContent }) {
           {solution.integrations.map((integration) => (
             <li
               key={integration}
-              className="rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-white/65 sm:text-sm"
+              className="rounded-full border border-edge bg-surface-2/60 px-3.5 py-2 text-xs text-hero-sub sm:text-sm"
             >
               {integration}
             </li>

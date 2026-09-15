@@ -17,14 +17,14 @@ export function HowWeWork() {
           {PROCESS_STEPS.slice(0, PREVIEW_COUNT).map((step) => (
             <li
               key={step.index}
-              className="flex gap-3 border-t border-white/10 pt-3 sm:gap-4 sm:pt-5"
+              className="flex gap-3 border-t border-edge pt-3 sm:gap-4 sm:pt-5"
             >
-              <span className="font-mono text-xs text-white/30 sm:text-sm">
+              <span className="font-mono text-xs text-muted/70 sm:text-sm">
                 {String(step.index).padStart(2, "0")}
               </span>
               <div>
-                <h3 className="text-sm font-medium text-white sm:text-lg">{step.title}</h3>
-                <p className="mt-1 text-xs text-white/50 sm:mt-1.5 sm:text-sm">
+                <h3 className="text-sm font-medium text-foreground sm:text-lg">{step.title}</h3>
+                <p className="mt-1 text-xs text-muted sm:mt-1.5 sm:text-sm">
                   {step.description}
                 </p>
               </div>

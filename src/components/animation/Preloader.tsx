@@ -62,21 +62,21 @@ export function Preloader({ onDone }: { onDone?: () => void }) {
   return (
     <div
       className={
-        "fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black transition-opacity duration-700 " +
+        "fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background transition-opacity duration-700 " +
         (done ? "pointer-events-none opacity-0" : "opacity-100")
       }
       aria-hidden={done}
     >
-      <span className="mb-6 text-sm font-medium uppercase tracking-[0.3em] text-white/60">
+      <span className="mb-6 text-sm font-medium uppercase tracking-[0.3em] text-muted">
         Skyllect
       </span>
-      <div className="h-px w-48 overflow-hidden bg-white/10">
+      <div className="h-px w-48 overflow-hidden bg-edge">
         <div
-          className="h-full bg-white transition-[width] duration-150 ease-out"
+          className="h-full bg-accent shadow-[0_0_12px_2px_rgba(92,200,232,0.5)] transition-[width] duration-150 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>
-      <span className="mt-4 font-mono text-xs text-white/40">{progress}%</span>
+      <span className="mt-4 font-mono text-xs text-muted/70">{progress}%</span>
     </div>
   );
 }

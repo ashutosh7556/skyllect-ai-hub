@@ -33,7 +33,7 @@ export function TechStack({
           return (
             <li
               key={name}
-              className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-6 text-center transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.06]"
+              className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-edge bg-surface-2/60 px-3 py-6 text-center transition-colors duration-300 hover:border-edge-strong hover:bg-surface-3/70"
             >
               {item.slug ? (
                 <TechLogo slug={item.slug} className="h-8 w-8" />
@@ -42,12 +42,12 @@ export function TechStack({
                 // monogram treatment the header menu already uses.
                 <span
                   aria-hidden="true"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/12 bg-white/[0.05] text-[11px] font-semibold tracking-tight text-white/60"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-edge bg-surface-3/70 text-[11px] font-semibold tracking-tight text-muted"
                 >
                   {monogram(name)}
                 </span>
               )}
-              <span className="text-xs leading-tight text-white/70 sm:text-sm">{name}</span>
+              <span className="text-xs leading-tight text-hero-sub sm:text-sm">{name}</span>
             </li>
           );
         })}

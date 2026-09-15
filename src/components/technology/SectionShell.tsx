@@ -1,13 +1,14 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/** The one gradient the site uses to pick a word out of a heading. */
-const ACCENT_GRADIENT = "linear-gradient(to left, #6366f1, #a855f7, #fcd34d)";
-
 /**
- * Renders `text` with the first occurrence of `accent` in the brand gradient.
- * Falls back to plain text when the accent is not present, so a typo in the
- * content never blanks a heading.
+ * Renders `text` with the first occurrence of `accent` picked out in the one
+ * accent colour the site uses. Falls back to plain text when the accent is
+ * not present, so a typo in the content never blanks a heading.
+ *
+ * A flat colour rather than the three-stop gradient this used to be: on a
+ * near-black page a gradient word reads as decoration, and the technical
+ * register wants emphasis, not ornament.
  */
 export function AccentHeading({ text, accent }: { text: string; accent: string }) {
   const at = accent ? text.indexOf(accent) : -1;
@@ -16,9 +17,7 @@ export function AccentHeading({ text, accent }: { text: string; accent: string }
   return (
     <>
       {text.slice(0, at)}
-      <span className="bg-clip-text text-transparent" style={{ backgroundImage: ACCENT_GRADIENT }}>
-        {accent}
-      </span>
+      <span className="text-accent-soft">{accent}</span>
       {text.slice(at + accent.length)}
     </>
   );
@@ -59,7 +58,7 @@ export function SectionShell({
       id={id}
       className={cn(
         "px-5 py-13 sm:px-8 xl:py-25",
-        muted && "border-y border-white/5 bg-white/[0.02]",
+        muted && "border-y border-edge bg-surface-2/60",
         className,
       )}
     >
@@ -71,15 +70,15 @@ export function SectionShell({
           )}
         >
           {eyebrow ? (
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.24em] text-white/45 sm:text-xs">
+            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.24em] text-muted/70 sm:text-xs">
               {eyebrow}
             </p>
           ) : null}
-          <h2 className="font-display text-[clamp(1.6rem,4vw,2.75rem)] font-medium leading-[1.15] tracking-tight text-white">
+          <h2 className="font-display text-[clamp(1.6rem,4vw,2.75rem)] font-medium leading-[1.15] tracking-tight text-foreground">
             <AccentHeading text={heading} accent={accent} />
           </h2>
           {description ? (
-            <p className="mt-4 text-sm leading-relaxed text-white/55 sm:text-base">
+            <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
               {description}
             </p>
           ) : null}

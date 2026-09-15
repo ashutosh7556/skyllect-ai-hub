@@ -9,10 +9,18 @@ interface ButtonProps {
   className?: string;
 }
 
+/*
+ * Controls on a machine, not buttons on a marketing page. The primary is the
+ * only lit one: a dark body with a cyan edge and a low glow behind it, so it
+ * reads as the powered control rather than as a white pill dropped onto the
+ * page. The other two are unlit housings.
+ */
 const VARIANT_STYLES: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "bg-white text-black hover:bg-white/85",
-  secondary: "border border-white/20 text-foreground hover:border-white/50",
-  glass: "liquid-glass text-foreground hover:text-foreground",
+  primary:
+    "border border-accent/45 bg-accent/10 text-accent-soft shadow-[inset_0_1px_0_rgba(190,235,255,0.16),0_0_30px_-10px_rgba(92,200,232,0.65)] hover:border-accent/80 hover:bg-accent/18 hover:text-foreground",
+  secondary:
+    "border border-edge text-foreground/85 hover:border-edge-strong hover:text-foreground",
+  glass: "liquid-glass text-foreground/85 hover:text-foreground",
 };
 
 export function Button({ href, children, variant = "primary", className }: ButtonProps) {

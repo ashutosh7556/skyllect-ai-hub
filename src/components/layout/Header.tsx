@@ -15,9 +15,9 @@ import type { NavItem, NavLink } from "@/types";
  */
 const PANEL_SURFACE: React.CSSProperties = {
   background:
-    "linear-gradient(180deg, rgba(31,26,58,0.98) 0%, rgba(20,16,40,0.98) 45%, rgba(14,11,28,0.98) 100%)",
+    "linear-gradient(180deg, rgba(17,26,39,0.98) 0%, rgba(11,17,27,0.98) 45%, rgba(6,9,15,0.98) 100%)",
   boxShadow:
-    "0 40px 90px -28px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.09)",
+    "0 40px 90px -28px rgba(0,0,0,0.95), inset 0 1px 0 rgba(190,220,255,0.09)",
 };
 
 function Chevron({ open }: { open: boolean }) {
@@ -45,10 +45,10 @@ function DropdownLink({ link, onDone }: { link: NavLink; onDone: () => void }) {
     <Link
       href={link.href}
       onClick={onDone}
-      className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-200 hover:bg-white/[0.07]"
+      className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-200 hover:bg-surface-3/70"
     >
       {link.icon ? (
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/12 bg-white/[0.05] text-foreground/65 transition-colors duration-200 group-hover:border-white/25 group-hover:bg-white/[0.10] group-hover:text-foreground">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-edge bg-surface-3/70 text-foreground/65 transition-colors duration-200 group-hover:border-edge-strong group-hover:bg-surface-3/80 group-hover:text-foreground">
           <NavIcon name={link.icon} />
         </span>
       ) : null}
@@ -72,13 +72,13 @@ function NavCards({ item, onDone }: { item: NavItem; onDone: () => void }) {
           key={card.href}
           href={card.href}
           onClick={onDone}
-          className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition-colors duration-300 hover:border-white/25 hover:bg-white/[0.06]"
+          className="group flex flex-col overflow-hidden rounded-xl border border-edge bg-surface-2/60 transition-colors duration-300 hover:border-edge-strong hover:bg-surface-3/70"
         >
           <span
-            className="flex h-24 items-center justify-center border-b border-white/10 px-6"
+            className="flex h-24 items-center justify-center border-b border-edge px-6"
             style={{
               background:
-                "radial-gradient(120% 140% at 30% 0%, rgba(99,102,241,0.22) 0%, rgba(168,85,247,0.10) 45%, rgba(12,9,25,0) 85%)",
+                "radial-gradient(120% 140% at 30% 0%, rgba(92,200,232,0.16) 0%, rgba(106,92,224,0.08) 45%, rgba(4,6,11,0) 85%)",
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -94,7 +94,7 @@ function NavCards({ item, onDone }: { item: NavItem; onDone: () => void }) {
             <span className="mt-1.5 text-xs leading-relaxed text-foreground/55">
               {card.description}
             </span>
-            <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-indigo-200/80 transition-colors duration-200 group-hover:text-indigo-100">
+            <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-accent/85 transition-colors duration-200 group-hover:text-accent-soft">
               Explore
               <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5">
                 →
@@ -120,10 +120,10 @@ function NavFeatures({ item, onDone }: { item: NavItem; onDone: () => void }) {
           key={feature.href}
           href={feature.href}
           onClick={onDone}
-          className="group flex flex-col border-b border-white/10 px-2 py-4 transition-colors duration-200 last:border-b-0 hover:border-white/20 sm:[&:nth-last-child(-n+2)]:border-b-0"
+          className="group flex flex-col border-b border-edge px-2 py-4 transition-colors duration-200 last:border-b-0 hover:border-edge-strong sm:[&:nth-last-child(-n+2)]:border-b-0"
         >
           <span className="flex items-center gap-2.5">
-            <span className="text-indigo-200/80 transition-colors duration-200 group-hover:text-indigo-100">
+            <span className="text-accent/85 transition-colors duration-200 group-hover:text-accent-soft">
               <NavIcon name={feature.icon} className="h-[17px] w-[17px]" />
             </span>
             <span className="text-sm font-semibold text-foreground">{feature.label}</span>
@@ -151,9 +151,9 @@ function NavItemPanel({ item, onDone }: { item: NavItem; onDone: () => void }) {
             <Link
               href={group.href}
               onClick={onDone}
-              className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-white/[0.07]"
+              className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-surface-3/70"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/12 bg-white/[0.05] text-foreground/65 transition-colors duration-200 group-hover:border-white/25 group-hover:text-foreground">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-edge bg-surface-3/70 text-foreground/65 transition-colors duration-200 group-hover:border-edge-strong group-hover:text-foreground">
                 <NavIcon name={group.icon} className="h-[13px] w-[13px]" />
               </span>
               <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/55 transition-colors duration-200 group-hover:text-foreground">
@@ -168,7 +168,7 @@ function NavItemPanel({ item, onDone }: { item: NavItem; onDone: () => void }) {
                   key={tech}
                   className="flex items-center gap-2.5 rounded-lg px-2 py-1 text-sm text-foreground/65"
                 >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-white/10 bg-white/[0.04] text-[9px] font-semibold tracking-tight text-foreground/50">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-edge bg-surface-2/60 text-[9px] font-semibold tracking-tight text-foreground/50">
                     {monogram(tech)}
                   </span>
                   {tech}
@@ -249,7 +249,7 @@ export function Header() {
         )}
         style={{
           background:
-            "linear-gradient(180deg, rgba(8,5,18,0.92) 0%, rgba(8,5,18,0.80) 60%, rgba(8,5,18,0) 100%)",
+            "linear-gradient(180deg, rgba(4,6,11,0.94) 0%, rgba(4,6,11,0.82) 60%, rgba(4,6,11,0) 100%)",
           backdropFilter: "blur(14px)",
           WebkitBackdropFilter: "blur(14px)",
         }}
@@ -258,7 +258,7 @@ export function Header() {
       <div className="flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
         {/* The full lockup carries its own wordmark, so no text beside it. */}
         <Link href="/#home" className="flex items-center" onClick={closeAll}>
-          <Logo variant="full" height={34} bulbOrigin />
+          <Logo variant="full" height={34} />
         </Link>
 
         <nav className="hidden lg:block">
@@ -308,7 +308,7 @@ export function Header() {
                       )}
                     >
                       <div
-                        className="rounded-2xl border border-white/12 p-3 backdrop-blur-xl"
+                        className="rounded-2xl border border-edge p-3 backdrop-blur-xl"
                         style={PANEL_SURFACE}
                       >
                         <NavItemPanel item={item} onDone={closeAll} />
@@ -358,14 +358,14 @@ export function Header() {
 
       {menuOpen ? (
         <div
-          className="absolute inset-x-4 top-[64px] max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain rounded-3xl border border-white/12 p-4 backdrop-blur-xl sm:top-[72px] lg:hidden"
+          className="absolute inset-x-4 top-[64px] max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain rounded-3xl border border-edge p-4 backdrop-blur-xl sm:top-[72px] lg:hidden"
           style={PANEL_SURFACE}
         >
           <nav className="flex flex-col">
             {NAV_ITEMS.map((item) => {
               const open = openItem === item.label;
               return (
-                <div key={item.label} className="border-b border-white/5 last:border-b-0">
+                <div key={item.label} className="border-b border-edge last:border-b-0">
                   <button
                     type="button"
                     aria-expanded={open}

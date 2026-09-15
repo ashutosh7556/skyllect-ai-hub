@@ -30,11 +30,11 @@ export function Modernization() {
         <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-8 sm:gap-3">
           {TRANSFORMATION.map((stage, index) => (
             <div key={stage} className="flex items-center gap-2 sm:gap-3">
-              <span className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm">
+              <span className="rounded-full border border-edge px-3 py-1.5 text-xs text-hero-sub sm:px-4 sm:py-2 sm:text-sm">
                 {stage}
               </span>
               {index < TRANSFORMATION.length - 1 ? (
-                <span className="text-white/30">→</span>
+                <span className="text-muted/70">→</span>
               ) : null}
             </div>
           ))}
@@ -44,7 +44,7 @@ export function Modernization() {
           {EXAMPLES.slice(0, PREVIEW_COUNT).map((example) => (
             <li
               key={example}
-              className="rounded-xl border border-white/10 p-3 text-xs text-white/70 sm:rounded-2xl sm:p-4 sm:text-sm"
+              className="rounded-xl border border-edge p-3 text-xs text-hero-sub sm:rounded-2xl sm:p-4 sm:text-sm"
             >
               {example}
             </li>

@@ -1,286 +1,126 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { useGSAP } from "@gsap/react";
 import { gsap } from "@/lib/gsap";
-import { usePinnedTimeline } from "@/hooks/usePinnedTimeline";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
-import { NodeNetwork } from "@/components/animation/NodeNetwork";
+import { AgentScenes } from "@/components/animation/AgentScenes";
+import { AgentViewport } from "@/components/sections/AgentViewport";
 import { AGENTS } from "@/data/agents";
-import { cn } from "@/lib/utils";
-// The vortex spawns its cards from wherever the page-level bulb sits.
-import { BULB_Y_OFFSET } from "@/lib/bulb";
 
-const TOTAL_UNITS = AGENTS.length;
-
-// Cards enter, travel the corridor, then the whole composition leaves — as
-// fractions of the pinned scroll.
-const FORM_END = 0.08;
-const TRAVEL_END = 0.84;
-const EXIT_START = 0.86;
-
-// The vortex. Each card is born at the bulb and spirals up and outward from
-// it, so the bulb reads as the source of the flow rather than something the
-// cards merely pass. A card's "age" is how far it has travelled up the helix.
-//
-//   age 0        -> at the bulb, small
-//   age PRIME    -> swung toward the camera, largest and readable
-//   age MAX_AGE  -> high above and behind, faded out
-const PRIME_AGE = 0.5;
-const MAX_AGE = 4;
-// Radians of spin per unit of age.
-const TURN = 1.15;
-// Cards emerge around the bulb's rim rather than dead centre, so the bulb
-// stays visible as the source instead of being covered by the nearest card.
-const BASE_RADIUS = 255;
-// The width the lateral constants below were tuned against, and the card width
-// they were tuned around. Narrower viewports have proportionally less room to
-// spend on sideways spread once the card itself is subtracted, so the helix
-// tightens toward a vertical column rather than flinging cards off-screen.
-const DESIGN_WIDTH = 1440;
-const DESIGN_CARD_WIDTH = 470;
-// Lateral radius growth per unit of age — this is what makes it flare outward
-// as it climbs rather than staying a straight column.
-const EXPAND = 200;
-// Near/far swing of the helix, plus a steady drift away as a card rises.
-const Z_AMP = 300;
-const Z_RECEDE = 90;
-// Upward travel per unit of age.
-const RISE = 165;
-// Phase, depth and lift used to vary per card, which split the stream into a
-// near layer and a shy far layer: the far cards sat deep enough that depthFade
-// and the depth blur left them dim and soft, their high lift carried them out
-// of the top of the frame before they were readable, and the mixed-sign phase
-// offset parked them up to ~90px further right at their prime. Every card now
-// rides one identical curve, so each arrives at the same spot, depth and size
-// as the one before it.
-const PHASE = -0.1;
-const DEPTH_BIAS = 1.25;
-const LIFT_BIAS = 0.85;
-
-
-const { clamp, mapRange } = gsap.utils;
-
+/**
+ * The agents, read as modules of the machine.
+ *
+ * Deliberately not a carousel, a vortex or a pinned scene: the hero owns the
+ * motion on this page, and what follows it should behave like a spec sheet
+ * for what is inside. Each module is a fixed panel on a bus rail, revealed
+ * once as it enters, and never moved again.
+ *
+ * Each module's clip is the subject of its panel: it runs whenever the panel
+ * is on screen, framed by a HUD that reads as the machine inspecting it. See
+ * AgentViewport for that read-out, and for the off-screen pausing that keeps
+ * seven clips affordable.
+ */
 export function AgentsTopic() {
-  const headingRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const videoRefs = useRef<Array<HTMLVideoElement | null>>([]);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  // Which module the pointer is over. Held here rather than per card so a
+  // module's frame and its viewport read-out always agree on the state.
+  const [hovered, setHovered] = useState<number | null>(null);
   const reduced = useReducedMotion();
 
-  const { wrapperRef, pinRef, heightVh } = usePinnedTimeline(
-    TOTAL_UNITS,
-    null,
-    [],
-    (progress) => {
-      const stage = stageRef.current;
-      const heading = headingRef.current;
-      const cards = cardRefs.current;
-      if (!stage || !heading || cards.some((card) => !card)) return;
+  useGSAP(
+    () => {
+      if (reduced) return;
 
-      const formIn = clamp(0, 1, mapRange(0, FORM_END, 0, 1, progress));
-      const exit = clamp(0, 1, mapRange(EXIT_START, 1, 0, 1, progress));
-
-      gsap.set(heading, { autoAlpha: formIn * (1 - exit), y: (1 - formIn) * -12 });
-      // The tail of the scroll carries the whole stream out, so the section
-      // hands off in motion instead of freezing then cutting.
-      gsap.set(stage, {
-        autoAlpha: formIn * (1 - exit),
-        y: exit * window.innerHeight * 0.55,
+      gsap.from("[data-module]", {
+        autoAlpha: 0,
+        y: 26,
+        duration: 0.7,
+        ease: "power2.out",
+        stagger: 0.06,
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 72%",
+          once: true,
+        },
       });
 
-
-      const focus = clamp(
-        0,
-        AGENTS.length - 1,
-        mapRange(FORM_END, TRAVEL_END, 0, AGENTS.length - 1, progress),
-      );
-
-      // Room left for sideways travel once the card itself is accounted for,
-      // as a fraction of the room the desktop layout had. Reaches 1 at
-      // DESIGN_WIDTH, so the desktop composition is unchanged.
-      const cardWidth = Math.min(DESIGN_CARD_WIDTH, window.innerWidth * 0.8);
-      const spread = clamp(
-        0,
-        1,
-        (window.innerWidth - cardWidth) / (DESIGN_WIDTH - DESIGN_CARD_WIDTH),
-      );
-      // Depth keeps a floor so narrow screens still read as layered rather
-      // than perfectly flat.
-      const depthScale = 0.4 + 0.6 * spread;
-
-      cards.forEach((card, i) => {
-        // How far this card has climbed the vortex. Offsetting by PRIME_AGE
-        // means a card hits its readable moment exactly as focus reaches it.
-        const age = focus - i + PRIME_AGE;
-
-        const video = videoRefs.current[i];
-
-        if (age < 0 || age > MAX_AGE) {
-          gsap.set(card, { opacity: 0 });
-          if (video && !video.paused) video.pause();
-          return;
-        }
-
-        // Only the cards actually near the camera bother fetching and playing.
-        // With preload="none" the file isn't requested until this fires.
-        const shouldPlay = age < 1.6;
-        if (video) {
-          if (shouldPlay && video.paused) video.play().catch(() => {});
-          else if (!shouldPlay && !video.paused) video.pause();
-        }
-
-        const theta = age * TURN + PHASE;
-        const radius = (BASE_RADIUS + EXPAND * age) * spread;
-        const depth =
-          (Math.cos(theta) * Z_AMP - age * Z_RECEDE) * DEPTH_BIAS * depthScale;
-
-        // Emerges out of the bulb, then fades once it is high above it.
-        // Reaches full size quickly so there is always a dominant card, rather
-        // than a gap while one recedes and the next is still emerging.
-        const birth = clamp(0, 1, age / 0.3);
-        const fadeOut = clamp(0, 1, (MAX_AGE - age) / 0.9);
-        // Further away reads dimmer and softer.
-        const depthFade = clamp(0.25, 1, (depth + 900) / 1100);
-
-        gsap.set(card, {
-          xPercent: -50,
-          yPercent: -50,
-          x: Math.sin(theta) * radius,
-          // Climbs away from the bulb, which anchors the base of the vortex.
-          y: BULB_Y_OFFSET - RISE * age * LIFT_BIAS,
-          z: depth,
-          rotateY: (theta * 180) / Math.PI / 3,
-          rotateX: -age * 5,
-          scale: 0.35 + birth * 0.65,
-          opacity: birth * fadeOut * depthFade * formIn,
-          filter: `blur(${clamp(0, 6, (200 - depth) / 120)}px)`,
-          // Always above the bulb, which is a backdrop for the whole section.
-          zIndex: clamp(1, 90, Math.round(40 + depth / 12)),
-          // Receded cards are faint and overlapping, so only the near one is
-          // allowed to take the hover.
-          pointerEvents: age < 1.1 ? "auto" : "none",
-        });
+      gsap.from("[data-rail]", {
+        scaleX: 0,
+        transformOrigin: "left center",
+        duration: 1.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 78%",
+          once: true,
+        },
       });
     },
+    { scope: sectionRef, dependencies: [reduced] },
   );
 
-
   return (
-    <div
-      id="ai-agents"
-      ref={wrapperRef}
-      className="relative"
-      style={reduced ? undefined : { height: `${heightVh}vh` }}
-    >
-      <div className="absolute inset-0 -z-10">
-        <NodeNetwork
-          className="h-full w-full"
-          density={1 / 32000}
-          lineColor="150, 180, 255"
-          dotColor="200, 215, 255"
-        />
-      </div>
+    <div id="ai-agents" ref={sectionRef} className="relative px-5 py-24 sm:px-8 sm:py-32">
+      {/* One WebGL canvas, scissor-drawn into each module's viewport: every
+          card runs its own small machine over its clip. */}
+      <AgentScenes containerRef={sectionRef} focus={hovered} />
 
-
-      <div
-        ref={pinRef}
-        className={cn(
-          "relative z-10 flex flex-col items-center px-6",
-          reduced ? "gap-12 py-24" : "h-screen justify-center overflow-hidden",
-        )}
-      >
-        <div
-          ref={headingRef}
-          className={cn(
-            "text-center",
-            reduced ? "relative" : "absolute top-20 left-1/2 z-[60] w-full max-w-md -translate-x-1/2 px-6 sm:top-24",
-          )}
-        >
-          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-foreground/40">01</p>
-          <h2 className="font-display mt-2 text-2xl font-normal tracking-tight text-foreground sm:mt-3 sm:text-4xl">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="max-w-2xl">
+          <p className="font-mono text-[11px] tracking-[0.4em] text-muted uppercase">01 / Modules</p>
+          <h2 className="font-display mt-3 text-[clamp(1.9rem,4.5vw,3.25rem)] leading-[1.1] font-normal tracking-tight text-foreground">
             AI Agents
           </h2>
-          <p className="mx-auto mt-2 max-w-md text-xs text-hero-sub opacity-70 sm:text-sm">
-            AI assistants designed around your actual business processes.
+          <p className="mt-4 text-sm leading-relaxed text-hero-sub sm:text-base">
+            Each agent is a working part of the same system — assembled around
+            your actual business processes, not a chat window bolted onto them.
           </p>
         </div>
 
+        {/* The bus every module hangs off. */}
         <div
-          ref={stageRef}
-          className={cn(reduced ? "flex w-full max-w-xl flex-col gap-6" : "absolute inset-0")}
-        >
-          <div
-            className={cn(!reduced && "absolute inset-0")}
-            style={reduced ? undefined : { perspective: 1000 }}
-          >
-            {AGENTS.map((agent, i) => (
-              <div
-                key={agent.name}
-                ref={(el) => {
-                  cardRefs.current[i] = el;
-                }}
-                className={cn(
-                  "liquid-glass agent-card overflow-hidden rounded-3xl border",
-                  !reduced &&
-                    "absolute top-1/2 left-1/2 h-[min(280px,48vw)] w-[min(470px,80vw)] bg-[#0c0718]/70",
-                  reduced ? "border-white/10 p-6 sm:p-8" : "p-5 sm:p-8",
-                )}
-                style={
-                  reduced
-                    ? undefined
-                    : {
-                        willChange: "transform, filter, opacity",
-                        // Each agent carries its own accent while the body stays
-                        // dark, so the stream reads as one system. Read by the
-                        // .agent-card border and hover rules.
-                        ["--agent-accent" as string]: agent.accent,
-                      }
-                }
-              >
-                {!reduced && (
-                  <>
-                    {/* Sits faintly behind the copy. Muted and metadata-only
-                        until the card is close enough to be worth playing. */}
-                    <video
-                      ref={(el) => {
-                        videoRefs.current[i] = el;
-                      }}
-                      src={agent.video}
-                      muted
-                      loop
-                      playsInline
-                      preload="none"
-                      aria-hidden="true"
-                      className="agent-card__video pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0"
-                      style={{
-                        // Enough scrim to keep the copy legible, but light
-                        // enough that the clip still reads through it.
-                        background: `linear-gradient(135deg, ${agent.accent}33, rgba(12,7,24,0.55) 58%)`,
-                      }}
-                    />
-                  </>
-                )}
-                <div className="relative">
-                  <p
-                    className="text-[11px] font-medium uppercase tracking-[0.25em] sm:tracking-[0.3em]"
-                    style={reduced ? undefined : { color: agent.accent }}
-                  >
-                    Agent {String(i + 1).padStart(2, "0")}
-                  </p>
-                  <h3 className="font-display mt-2 text-lg font-normal leading-tight tracking-tight text-foreground sm:mt-3 sm:text-2xl">
-                    {agent.name}
-                  </h3>
-                  <p className="mt-2 text-xs leading-relaxed text-white/70 sm:mt-3 sm:text-sm">
-                    {agent.description}
-                  </p>
-                </div>
+          data-rail
+          aria-hidden="true"
+          className="mt-12 h-px w-full bg-gradient-to-r from-accent/40 via-edge to-transparent"
+        />
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {AGENTS.map((agent, i) => (
+            <article
+              key={agent.name}
+              data-module
+              onPointerEnter={(event) => {
+                if (event.pointerType === "mouse") setHovered(i);
+              }}
+              onPointerLeave={(event) => {
+                if (event.pointerType === "mouse") setHovered(null);
+              }}
+              className="liquid-glass machine-module flex flex-col rounded-2xl p-5 sm:p-6"
+            >
+              <AgentViewport
+                src={agent.video}
+                variant={agent.hud}
+                active={hovered === i}
+                index={i}
+              />
+
+              <div className="flex items-center justify-between gap-3">
+                <p className="font-mono text-[10px] tracking-[0.28em] text-muted uppercase">
+                  Agent {String(i + 1).padStart(2, "0")}
+                </p>
+                <span
+                  aria-hidden="true"
+                  className="h-1 w-1 rounded-full bg-accent shadow-[0_0_8px_1px_rgba(92,200,232,0.5)]"
+                />
               </div>
-            ))}
-          </div>
+
+              <h3 className="font-display mt-2.5 text-lg leading-tight font-normal tracking-tight text-foreground">
+                {agent.name}
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{agent.description}</p>
+            </article>
+          ))}
         </div>
       </div>
     </div>

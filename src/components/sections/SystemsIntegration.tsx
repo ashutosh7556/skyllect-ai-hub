@@ -47,16 +47,16 @@ export function SystemsIntegration() {
   useGSAP(
     () => {
       if (reduced) {
-        // The bulb backdrop is a still image under reduced motion, so the
-        // room it lights is simply already lit rather than easing up.
+        // Nothing is moving under reduced motion, so the panel is simply
+        // already lit rather than easing up.
         gsap.set(lightRef.current, { opacity: 1 });
         return;
       }
 
-      // The bulb sits behind this card by the time the section arrives, so the
-      // panel warms up as it slides into place — fully lit exactly when the
-      // pin takes hold. Scrubbed rather than triggered so it tracks the scroll
-      // like a dimmer being turned, not a switch being flipped.
+      // The panel comes up out of the machine's light as it slides into
+      // place — fully lit exactly when the pin takes hold. Scrubbed rather
+      // than triggered so it tracks the scroll like a dimmer being turned,
+      // not a switch being flipped.
       gsap.fromTo(
         lightRef.current,
         { opacity: 0 },
@@ -123,9 +123,9 @@ export function SystemsIntegration() {
       <div className="absolute inset-0 -z-10">
         <NodeNetwork
           className="h-full w-full"
-          density={1 / 26000}
-          lineColor="165, 148, 249"
-          dotColor="200, 190, 255"
+          density={1 / 28000}
+          lineColor="110, 150, 195"
+          dotColor="150, 205, 230"
         />
       </div>
 
@@ -147,11 +147,11 @@ export function SystemsIntegration() {
             )}
           >
             {/*
-             * The light the bulb casts into this panel. First child, so every
-             * stage panel below paints over it and the copy stays fully
-             * opaque and sharp — this only ever warms what is behind the text.
-             * `screen` keeps it additive against the near-black card, so it
-             * reads as light arriving rather than a tinted wash laid on top.
+             * The light the machine casts up into this panel. First child, so
+             * every stage panel below paints over it and the copy stays fully
+             * opaque and sharp — this only ever lights what is behind the
+             * text. `screen` keeps it additive against the near-black plate,
+             * so it reads as light arriving rather than a tint laid on top.
              */}
             <div
               ref={lightRef}
@@ -161,14 +161,14 @@ export function SystemsIntegration() {
                 opacity: 0,
                 mixBlendMode: "screen",
                 background: [
-                  // The bulb itself: anchored just below the card on the
-                  // centre line where the mark actually sits, and wide enough
-                  // that its falloff clears the top edge instead of dying
-                  // partway up and leaving the heading in the dark.
-                  "radial-gradient(150% 125% at 50% 96%, rgba(255,201,92,0.34) 0%, rgba(251,158,54,0.22) 22%, rgba(214,120,80,0.14) 44%, rgba(140,125,215,0.085) 68%, rgba(99,102,241,0.05) 100%)",
+                  // The source: anchored just below the card on the centre
+                  // line, and wide enough that its falloff clears the top
+                  // edge instead of dying partway up and leaving the heading
+                  // in the dark.
+                  "radial-gradient(150% 125% at 50% 96%, rgba(92,200,232,0.26) 0%, rgba(72,170,205,0.16) 24%, rgba(60,120,175,0.10) 46%, rgba(106,92,224,0.07) 70%, rgba(106,92,224,0.035) 100%)",
                   // Ambient bounce. A radial alone always leaves the far
                   // corners black, so this lifts the whole surface a little.
-                  "linear-gradient(to top, rgba(255,188,116,0.11) 0%, rgba(178,150,220,0.06) 55%, rgba(150,150,235,0.045) 100%)",
+                  "linear-gradient(to top, rgba(120,190,225,0.08) 0%, rgba(110,130,200,0.05) 55%, rgba(120,140,215,0.035) 100%)",
                 ].join(", "),
               }}
             />
@@ -193,7 +193,7 @@ export function SystemsIntegration() {
                   <li
                     key={system}
                     data-chip
-                    className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-foreground/80 sm:px-4 sm:py-2 sm:text-sm"
+                    className="rounded-full border border-edge px-3 py-1.5 text-xs text-foreground/80 sm:px-4 sm:py-2 sm:text-sm"
                   >
                     {system}
                   </li>

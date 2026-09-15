@@ -34,32 +34,32 @@ export function TechChallenges({
           >
             <div
               aria-hidden="true"
-              className="relative flex h-44 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 md:h-[300px] md:rounded-2xl lg:w-[520px]"
+              className="relative flex h-44 w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-edge md:h-[300px] md:rounded-2xl lg:w-[520px]"
               style={{
                 background:
-                  "radial-gradient(120% 120% at 30% 0%, rgba(99,102,241,0.20) 0%, rgba(168,85,247,0.10) 38%, rgba(12,9,25,1) 78%)",
+                  "radial-gradient(120% 120% at 30% 0%, rgba(92,200,232,0.16) 0%, rgba(106,92,224,0.08) 38%, rgba(4,6,11,1) 78%)",
               }}
             >
-              <span className="font-display text-[clamp(4rem,12vw,8rem)] leading-none font-medium text-white/10">
+              <span className="font-display text-[clamp(4rem,12vw,8rem)] leading-none font-medium text-muted/70">
                 {String(i + 1).padStart(2, "0")}
               </span>
             </div>
 
             <div className="flex flex-col items-start gap-3 lg:max-w-lg lg:gap-5 xl:max-w-[620px]">
-              <h3 className="font-display text-xl font-medium tracking-tight text-white lg:text-2xl xl:text-3xl">
+              <h3 className="font-display text-xl font-medium tracking-tight text-foreground lg:text-2xl xl:text-3xl">
                 {item.title}
               </h3>
-              <p className="text-sm leading-relaxed text-white/55 md:text-base">{item.body}</p>
+              <p className="text-sm leading-relaxed text-muted md:text-base">{item.body}</p>
 
               <ul className="flex flex-col gap-2">
                 {item.points.map((point) => (
                   <li
                     key={point}
-                    className="flex gap-3 text-sm leading-relaxed text-white/65 md:text-base"
+                    className="flex gap-3 text-sm leading-relaxed text-hero-sub md:text-base"
                   >
                     <span
                       aria-hidden="true"
-                      className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-300/70"
+                      className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70"
                     />
                     {point}
                   </li>

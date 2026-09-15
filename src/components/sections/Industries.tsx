@@ -26,10 +26,10 @@ export function Industries({ slug, showHeading }: { slug: string; showHeading?: 
         ) : null}
 
         <div className={showHeading ? "mt-6 sm:mt-10" : ""}>
-          <h3 className="text-xl font-medium tracking-tight text-white sm:text-3xl">
+          <h3 className="text-xl font-medium tracking-tight text-foreground sm:text-3xl">
             {industry.name}
           </h3>
-          <p className="mt-1.5 max-w-xl text-sm text-white/50 sm:mt-2 sm:text-base">
+          <p className="mt-1.5 max-w-xl text-sm text-muted sm:mt-2 sm:text-base">
             {industry.headline}
           </p>
 
@@ -40,15 +40,15 @@ export function Industries({ slug, showHeading }: { slug: string; showHeading?: 
             {industry.agents.map((agent) => (
               <div
                 key={agent.name}
-                className="w-[78vw] shrink-0 snap-start rounded-2xl border border-white/10 p-4 sm:w-auto sm:shrink sm:rounded-3xl sm:p-6"
+                className="w-[78vw] shrink-0 snap-start rounded-2xl border border-edge p-4 sm:w-auto sm:shrink sm:rounded-3xl sm:p-6"
               >
-                <h4 className="text-base font-medium text-white sm:text-lg">{agent.name}</h4>
-                <p className="mt-1.5 text-xs text-white/50 sm:mt-2 sm:text-sm">
+                <h4 className="text-base font-medium text-foreground sm:text-lg">{agent.name}</h4>
+                <p className="mt-1.5 text-xs text-muted sm:mt-2 sm:text-sm">
                   {agent.description}
                 </p>
                 <ol className="mt-3 flex flex-col gap-1 sm:mt-4 sm:gap-1.5">
                   {agent.steps.slice(0, PREVIEW_STEPS).map((step) => (
-                    <li key={step} className="text-xs text-white/60 sm:text-sm">
+                    <li key={step} className="text-xs text-muted sm:text-sm">
                       {step}
                     </li>
                   ))}

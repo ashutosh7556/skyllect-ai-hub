@@ -23,14 +23,14 @@ export function OneAiLayer() {
           {QUESTIONS.slice(0, PREVIEW_COUNT).map((question) => (
             <p
               key={question}
-              className="rounded-xl border border-white/10 p-3 text-xs text-white/70 sm:rounded-2xl sm:p-5 sm:text-base"
+              className="rounded-xl border border-edge p-3 text-xs text-hero-sub sm:rounded-2xl sm:p-5 sm:text-base"
             >
               “{question}”
             </p>
           ))}
         </div>
 
-        <p className="mt-6 max-w-2xl text-sm text-white/50 sm:mt-10 sm:text-base">
+        <p className="mt-6 max-w-2xl text-sm text-muted sm:mt-10 sm:text-base">
           Instead of opening five different systems, your team asks one intelligent
           assistant. The AI retrieves information from your actual systems and gives
           your team actionable answers.

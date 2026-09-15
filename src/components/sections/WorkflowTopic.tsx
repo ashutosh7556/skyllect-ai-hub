@@ -128,13 +128,14 @@ export function WorkflowTopic() {
         .to([packetCrmRef.current, packetErpRef.current], { opacity: 0, duration: 0.15 }, 3.2)
         .to([crmGlowRef.current, erpGlowRef.current], { opacity: 1, duration: 0.3 }, 3.15);
 
-      // Beat D — approval requested, then CRM/ERP confirm (accent shift to success tone).
+      // Beat D — approval requested, then CRM/ERP confirm (the node light
+      // brightens to confirm rather than switching to a second hue).
       timeline
         .to(approvalRef.current, { autoAlpha: 1, y: 0, duration: 0.35 }, 3.7)
         .to(approvalRef.current, { autoAlpha: 0, y: -10, duration: 0.3 }, 4.4)
         .to(
           [crmGlowRef.current, erpGlowRef.current],
-          { fill: "#34d399", duration: 0.4 },
+          { fill: "#8fdcf2", duration: 0.4 },
           4.2,
         );
 
@@ -170,7 +171,7 @@ export function WorkflowTopic() {
       style={reduced ? undefined : { height: `${heightVh}vh` }}
     >
       <div className="absolute inset-0 -z-10">
-        <NodeNetwork className="h-full w-full" density={1 / 30000} lineColor="140, 200, 210" dotColor="190, 230, 235" />
+        <NodeNetwork className="h-full w-full" density={1 / 32000} lineColor="110, 150, 195" dotColor="150, 205, 230" />
       </div>
 
       <div
@@ -200,7 +201,7 @@ export function WorkflowTopic() {
         {reduced ? (
           <ol className="flex w-full max-w-xl flex-col gap-2">
             {WORKFLOW_STEPS.map((step, i) => (
-              <li key={step} className="text-sm text-white/60">
+              <li key={step} className="text-sm text-muted">
                 {i + 1}. {step}
               </li>
             ))}
@@ -221,7 +222,7 @@ export function WorkflowTopic() {
                 d={PATH_EMAIL_AI}
                 pathLength={1}
                 fill="none"
-                stroke="rgba(180, 210, 255, 0.5)"
+                stroke="rgba(150, 195, 230, 0.42)"
                 strokeWidth={2}
               />
               <path
@@ -229,7 +230,7 @@ export function WorkflowTopic() {
                 d={PATH_AI_CRM}
                 pathLength={1}
                 fill="none"
-                stroke="rgba(180, 210, 255, 0.5)"
+                stroke="rgba(150, 195, 230, 0.42)"
                 strokeWidth={2}
               />
               <path
@@ -237,20 +238,20 @@ export function WorkflowTopic() {
                 d={PATH_AI_ERP}
                 pathLength={1}
                 fill="none"
-                stroke="rgba(180, 210, 255, 0.5)"
+                stroke="rgba(150, 195, 230, 0.42)"
                 strokeWidth={2}
               />
 
-              <circle ref={emailGlowRef} cx={NODES.email.x} cy={NODES.email.y} r={70} fill="#6366f1" opacity={0} style={{ filter: "blur(30px)" }} />
-              <circle ref={aiGlowRef} cx={NODES.ai.x} cy={NODES.ai.y} r={90} fill="#a855f7" opacity={0} style={{ filter: "blur(34px)" }} />
-              <circle ref={crmGlowRef} cx={NODES.crm.x} cy={NODES.crm.y} r={70} fill="#6366f1" opacity={0} style={{ filter: "blur(30px)" }} />
-              <circle ref={erpGlowRef} cx={NODES.erp.x} cy={NODES.erp.y} r={70} fill="#6366f1" opacity={0} style={{ filter: "blur(30px)" }} />
+              <circle ref={emailGlowRef} cx={NODES.email.x} cy={NODES.email.y} r={70} fill="#2b7fb8" opacity={0} style={{ filter: "blur(30px)" }} />
+              <circle ref={aiGlowRef} cx={NODES.ai.x} cy={NODES.ai.y} r={90} fill="#5cc8e8" opacity={0} style={{ filter: "blur(34px)" }} />
+              <circle ref={crmGlowRef} cx={NODES.crm.x} cy={NODES.crm.y} r={70} fill="#2b7fb8" opacity={0} style={{ filter: "blur(30px)" }} />
+              <circle ref={erpGlowRef} cx={NODES.erp.x} cy={NODES.erp.y} r={70} fill="#2b7fb8" opacity={0} style={{ filter: "blur(30px)" }} />
             </svg>
 
             {Object.entries(NODES).map(([key, node]) => (
               <div
                 key={key}
-                className="liquid-glass absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border border-white/10 text-[11px] font-medium text-foreground/80 sm:h-16 sm:w-16 sm:rounded-2xl sm:text-xs"
+                className="liquid-glass absolute flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl border border-edge text-[11px] font-medium text-foreground/80 sm:h-16 sm:w-16 sm:rounded-2xl sm:text-xs"
                 style={{ left: pct(node.x, "w"), top: pct(node.y, "h") }}
               >
                 {node.label}
@@ -259,17 +260,17 @@ export function WorkflowTopic() {
 
             <div
               ref={packetMainRef}
-              className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+              className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-soft shadow-[0_0_10px_2px_rgba(92,200,232,0.5)]"
               style={{ left: pct(NODES.email.x, "w"), top: pct(NODES.email.y, "h") }}
             />
             <div
               ref={packetCrmRef}
-              className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+              className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-soft shadow-[0_0_10px_2px_rgba(92,200,232,0.5)]"
               style={{ left: pct(NODES.ai.x, "w"), top: pct(NODES.ai.y, "h") }}
             />
             <div
               ref={packetErpRef}
-              className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+              className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-soft shadow-[0_0_10px_2px_rgba(92,200,232,0.5)]"
               style={{ left: pct(NODES.ai.x, "w"), top: pct(NODES.ai.y, "h") }}
             />
 
@@ -281,7 +282,7 @@ export function WorkflowTopic() {
               {["Customer", "SKU", "Amount"].map((chip) => (
                 <span
                   key={chip}
-                  className="rounded-full border border-white/15 bg-black/40 px-2 py-0.5 text-[11px] text-foreground/70 sm:px-3 sm:py-1 sm:text-[11px]"
+                  className="rounded-full border border-edge bg-surface/80 px-2 py-0.5 text-[11px] text-foreground/70 sm:px-3 sm:py-1 sm:text-[11px]"
                 >
                   {chip}
                 </span>
@@ -290,7 +291,7 @@ export function WorkflowTopic() {
 
             <div
               ref={approvalRef}
-              className="liquid-glass absolute flex -translate-x-1/2 -translate-y-[220%] items-center gap-2 whitespace-nowrap rounded-full border border-white/10 px-3 py-1.5 text-[11px] text-foreground/80 sm:px-4 sm:py-2 sm:text-xs"
+              className="liquid-glass absolute flex -translate-x-1/2 -translate-y-[220%] items-center gap-2 whitespace-nowrap rounded-full border border-edge px-3 py-1.5 text-[11px] text-foreground/80 sm:px-4 sm:py-2 sm:text-xs"
               style={{ left: pct(NODES.ai.x, "w"), top: pct(NODES.ai.y, "h") }}
             >
               Approval requested
@@ -298,7 +299,7 @@ export function WorkflowTopic() {
 
             <div
               ref={followUpRef}
-              className="liquid-glass absolute -translate-x-1/2 translate-y-[120%] whitespace-nowrap rounded-full border border-white/10 px-3 py-1.5 text-[11px] text-foreground/80 sm:px-4 sm:py-2 sm:text-xs"
+              className="liquid-glass absolute -translate-x-1/2 translate-y-[120%] whitespace-nowrap rounded-full border border-edge px-3 py-1.5 text-[11px] text-foreground/80 sm:px-4 sm:py-2 sm:text-xs"
               style={{ left: pct(NODES.email.x, "w"), top: pct(NODES.email.y, "h") }}
             >
               Follow-up created

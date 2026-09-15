@@ -7,7 +7,7 @@ function Tick() {
     <svg
       aria-hidden="true"
       viewBox="0 0 16 16"
-      className="mt-[3px] h-3.5 w-3.5 shrink-0 text-indigo-300/80"
+      className="mt-[3px] h-3.5 w-3.5 shrink-0 text-accent/80"
       fill="none"
       stroke="currentColor"
       strokeWidth={1.6}
@@ -24,10 +24,10 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
     <div className="px-5 pt-32 pb-20 sm:px-8 sm:pt-40 sm:pb-28">
       <div className="mx-auto max-w-[1200px]">
         <nav aria-label="Breadcrumb" className="mb-8">
-          <ol className="flex flex-wrap items-center gap-2 text-xs text-white/40">
+          <ol className="flex flex-wrap items-center gap-2 text-xs text-muted/70">
             <li>Case Studies</li>
             <li aria-hidden="true">/</li>
-            <li className="text-white/70">{study.name}</li>
+            <li className="text-hero-sub">{study.name}</li>
           </ol>
         </nav>
 
@@ -37,7 +37,7 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
             <h1 className="font-display text-[clamp(2rem,5vw,3.5rem)] font-normal leading-[1.06] tracking-[-0.02em] text-foreground">
               {study.name}
             </h1>
-            <p className="mt-3 text-base text-white/60 sm:text-lg">{study.tagline}</p>
+            <p className="mt-3 text-base text-muted sm:text-lg">{study.tagline}</p>
             <p className="mt-6 max-w-xl text-base leading-relaxed text-hero-sub opacity-80">
               {study.summary}
             </p>
@@ -55,10 +55,10 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
            * rather than screenshots, so cropping them to fill would wreck them.
            */}
           <div
-            className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl border border-white/10 p-10 sm:rounded-3xl"
+            className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl border border-edge p-10 sm:rounded-3xl"
             style={{
               background:
-                "radial-gradient(120% 120% at 30% 0%, rgba(99,102,241,0.24) 0%, rgba(168,85,247,0.12) 42%, rgba(12,9,25,1) 82%)",
+                "radial-gradient(120% 120% at 30% 0%, rgba(92,200,232,0.18) 0%, rgba(106,92,224,0.09) 42%, rgba(4,6,11,1) 82%)",
             }}
           >
             {/*
@@ -86,12 +86,12 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
             {study.facts.map((fact) => (
               <div
                 key={fact.label}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5"
+                className="rounded-2xl border border-edge bg-surface-2/60 p-4 sm:p-5"
               >
-                <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-white/40">
+                <dt className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted/70">
                   {fact.label}
                 </dt>
-                <dd className="mt-2 text-sm text-white sm:text-base">{fact.value}</dd>
+                <dd className="mt-2 text-sm text-foreground sm:text-base">{fact.value}</dd>
               </div>
             ))}
           </dl>
@@ -99,12 +99,12 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
 
         {/* Challenge */}
         <section className="mt-14 max-w-3xl sm:mt-20">
-          <h2 className="font-display text-[clamp(1.5rem,3.6vw,2.25rem)] font-medium leading-[1.15] tracking-tight text-white">
+          <h2 className="font-display text-[clamp(1.5rem,3.6vw,2.25rem)] font-medium leading-[1.15] tracking-tight text-foreground">
             <AccentHeading text={study.challenge.heading} accent={study.challenge.accent} />
           </h2>
           <div className="mt-5 flex flex-col gap-4">
             {study.challenge.body.map((paragraph) => (
-              <p key={paragraph} className="text-sm leading-relaxed text-white/55 sm:text-base">
+              <p key={paragraph} className="text-sm leading-relaxed text-muted sm:text-base">
                 {paragraph}
               </p>
             ))}
@@ -113,19 +113,19 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
 
         {/* Delivered */}
         <section className="mt-14 sm:mt-20">
-          <h2 className="font-display text-[clamp(1.5rem,3.6vw,2.25rem)] font-medium leading-[1.15] tracking-tight text-white">
+          <h2 className="font-display text-[clamp(1.5rem,3.6vw,2.25rem)] font-medium leading-[1.15] tracking-tight text-foreground">
             <AccentHeading text={study.delivered.heading} accent={study.delivered.accent} />
           </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
             {study.delivered.items.map((item) => (
               <article
                 key={item.title}
-                className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:rounded-3xl sm:p-6"
+                className="rounded-2xl border border-edge bg-surface-2/60 p-5 transition-colors duration-300 hover:border-edge-strong hover:bg-surface-3/70 sm:rounded-3xl sm:p-6"
               >
-                <h3 className="font-display text-base font-medium tracking-tight text-white sm:text-lg">
+                <h3 className="font-display text-base font-medium tracking-tight text-foreground sm:text-lg">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/55">{item.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{item.description}</p>
               </article>
             ))}
           </div>
@@ -134,14 +134,14 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
         {/* Stack and outcomes */}
         <section className="mt-14 grid gap-10 sm:mt-20 lg:grid-cols-2 lg:gap-14">
           <div>
-            <h2 className="font-display text-xl font-medium tracking-tight text-white sm:text-2xl">
+            <h2 className="font-display text-xl font-medium tracking-tight text-foreground sm:text-2xl">
               Built with
             </h2>
             <ul className="mt-5 flex flex-wrap gap-2 sm:gap-3">
               {study.stack.map((tech) => (
                 <li
                   key={tech}
-                  className="rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-2 text-xs text-white/65 sm:text-sm"
+                  className="rounded-full border border-edge bg-surface-2/60 px-3.5 py-2 text-xs text-hero-sub sm:text-sm"
                 >
                   {tech}
                 </li>
@@ -150,12 +150,12 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
           </div>
 
           <div>
-            <h2 className="font-display text-xl font-medium tracking-tight text-white sm:text-2xl">
+            <h2 className="font-display text-xl font-medium tracking-tight text-foreground sm:text-2xl">
               What it changed
             </h2>
             <ul className="mt-5 flex flex-col gap-2.5">
               {study.outcomes.map((outcome) => (
-                <li key={outcome} className="flex gap-3 text-sm text-white/70 sm:text-base">
+                <li key={outcome} className="flex gap-3 text-sm text-hero-sub sm:text-base">
                   <Tick />
                   {outcome}
                 </li>

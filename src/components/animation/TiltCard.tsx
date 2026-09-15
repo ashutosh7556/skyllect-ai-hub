@@ -58,7 +58,7 @@ export function TiltCard({ children, className }: TiltCardProps) {
     <div ref={wrapperRef} className={className} style={{ perspective: 1200 }}>
       <div
         ref={cardRef}
-        className="liquid-glass h-full w-full rounded-[28px] border border-white/10"
+        className="liquid-glass h-full w-full rounded-[28px] border border-edge"
         style={{ transformStyle: "preserve-3d" }}
       >
         {children}

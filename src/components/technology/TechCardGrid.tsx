@@ -36,17 +36,17 @@ export function TechCardGrid({
         {items.map((item, i) => (
           <article
             key={item.title}
-            className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:rounded-3xl sm:p-6"
+            className="rounded-2xl border border-edge bg-surface-2/60 p-5 transition-colors duration-300 hover:border-edge-strong hover:bg-surface-3/70 sm:rounded-3xl sm:p-6"
           >
             {numbered ? (
-              <p className="font-mono text-xs text-white/30">
+              <p className="font-mono text-xs text-muted/70">
                 {String(i + 1).padStart(2, "0")}
               </p>
             ) : null}
-            <h3 className="font-display mt-1.5 text-base font-medium tracking-tight text-white sm:text-lg">
+            <h3 className="font-display mt-1.5 text-base font-medium tracking-tight text-foreground sm:text-lg">
               {item.title}
             </h3>
-            <p className="mt-2 text-sm leading-relaxed text-white/55">{item.description}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{item.description}</p>
           </article>
         ))}
       </div>

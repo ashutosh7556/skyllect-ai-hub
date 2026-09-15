@@ -15,22 +15,22 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
     <section className="relative overflow-hidden px-5 pt-32 pb-16 sm:px-8 sm:pt-40 sm:pb-24">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-0 left-1/2 -z-10 h-[min(520px,70vw)] w-[min(900px,100vw)] -translate-x-1/2 -translate-y-1/3 rounded-full bg-indigo-500/10 blur-[90px]"
+        className="pointer-events-none absolute top-0 left-1/2 -z-10 h-[min(520px,70vw)] w-[min(900px,100vw)] -translate-x-1/2 -translate-y-1/3 rounded-full bg-accent/10 blur-[90px]"
       />
 
       <div className="mx-auto max-w-[1200px]">
         {/* Breadcrumbs read from the left even though the hero copy below is
             centred — that is where a reader looks for their position. */}
         <nav aria-label="Breadcrumb" className="mb-8">
-          <ol className="flex flex-wrap items-center gap-2 text-xs text-white/40">
+          <ol className="flex flex-wrap items-center gap-2 text-xs text-muted/70">
             <li>Technologies</li>
             <li aria-hidden="true">/</li>
-            <li className="text-white/70">{content.navLabel}</li>
+            <li className="text-hero-sub">{content.navLabel}</li>
           </ol>
         </nav>
 
         <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.28em] text-white/45 sm:text-xs">
+          <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.28em] text-muted/70 sm:text-xs">
             {hero.eyebrow}
           </p>
 
@@ -55,7 +55,7 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
          * every width instead of the frame changing shape with the viewport.
          * `priority` because this is the page's largest contentful paint.
          */}
-        <div className="relative mt-12 aspect-[16/9] w-full overflow-hidden rounded-xl border border-white/10 sm:mt-16 sm:rounded-3xl">
+        <div className="relative mt-12 aspect-[16/9] w-full overflow-hidden rounded-xl border border-edge sm:mt-16 sm:rounded-3xl">
           {hero.image ? (
             <>
               <Image
@@ -73,7 +73,7 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
                 className="pointer-events-none absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(180deg, rgba(10,7,20,0.20) 0%, rgba(10,7,20,0.05) 45%, rgba(10,7,20,0.55) 100%)",
+                    "linear-gradient(180deg, rgba(4,6,11,0.28) 0%, rgba(4,6,11,0.08) 45%, rgba(4,6,11,0.62) 100%)",
                 }}
               />
             </>
@@ -89,10 +89,10 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
               className="flex h-full w-full items-center justify-center"
               style={{
                 background:
-                  "radial-gradient(110% 130% at 30% 0%, rgba(99,102,241,0.26) 0%, rgba(168,85,247,0.13) 42%, rgba(12,9,25,1) 82%)",
+                  "radial-gradient(110% 130% at 30% 0%, rgba(92,200,232,0.18) 0%, rgba(106,92,224,0.09) 42%, rgba(4,6,11,1) 82%)",
               }}
             >
-              <span className="text-white/20">
+              <span className="text-muted/70">
                 <NavIcon name={content.icon} className="h-24 w-24 sm:h-36 sm:w-36" />
               </span>
             </div>

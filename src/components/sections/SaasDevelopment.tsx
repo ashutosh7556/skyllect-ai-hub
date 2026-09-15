@@ -34,7 +34,7 @@ export function SaasDevelopment() {
           {CAPABILITIES.slice(0, PREVIEW_COUNT).map((capability) => (
             <li
               key={capability}
-              className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm"
+              className="rounded-full border border-edge px-3 py-1.5 text-xs text-hero-sub sm:px-4 sm:py-2 sm:text-sm"
             >
               {capability}
             </li>
@@ -44,11 +44,11 @@ export function SaasDevelopment() {
         <div className="mt-6 flex flex-wrap items-center gap-2 sm:mt-10 sm:gap-3">
           {JOURNEY.map((stage, index) => (
             <div key={stage} className="flex items-center gap-2 sm:gap-3">
-              <span className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-white/70 sm:px-4 sm:py-2 sm:text-sm">
+              <span className="rounded-full border border-edge px-3 py-1.5 text-xs text-hero-sub sm:px-4 sm:py-2 sm:text-sm">
                 {stage}
               </span>
               {index < JOURNEY.length - 1 ? (
-                <span className="text-white/30">→</span>
+                <span className="text-muted/70">→</span>
               ) : null}
             </div>
           ))}

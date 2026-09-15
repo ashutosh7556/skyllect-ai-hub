@@ -1,9 +1,31 @@
 @import "tailwindcss";
 
+/*
+ * Dark machine palette. Near-black navy base, blue-gray metal surfaces, a
+ * single restrained cyan accent and a soft violet used only as atmosphere —
+ * never as a fill. Everything on the site reads from these tokens so the
+ * whole thing shifts together rather than per component.
+ */
 :root {
-  --background: hsl(260 87% 3%);
-  --foreground: hsl(40 6% 95%);
-  --hero-sub: hsl(40 6% 82%);
+  --background: #04060b;
+  /* Section surfaces, lightest last. Differences are deliberately small: the
+     separation should read as tonal, not as stacked cards. */
+  --surface-1: #070a11;
+  --surface-2: #0b111b;
+  --surface-3: #111a27;
+  --foreground: #e7edf6;
+  /* Secondary copy: blue-gray, never neutral gray — neutral goes muddy on a
+     navy ground. */
+  --muted: #8698b2;
+  --hero-sub: #a9b8cc;
+  --accent: #5cc8e8;
+  --accent-soft: #8fdcf2;
+  --accent-deep: #2b7fb8;
+  /* Atmosphere only. Used at low alpha behind things, never as a text or
+     border colour. */
+  --violet: #6a5ce0;
+  --edge: rgba(150, 180, 215, 0.12);
+  --edge-strong: rgba(160, 195, 230, 0.24);
   --font-display-family: "General Sans", var(--font-geist-sans), Arial, sans-serif;
 }
 
@@ -11,6 +33,15 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-hero-sub: var(--hero-sub);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-deep: var(--accent-deep);
+  --color-edge: var(--edge);
+  --color-edge-strong: var(--edge-strong);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-display-family);
@@ -23,7 +54,7 @@ body {
 }
 
 ::selection {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(92, 200, 232, 0.22);
 }
 
 .sr-only {
@@ -45,30 +76,44 @@ body {
  * beat any `absolute`/`fixed` utility placed on the same element.
  */
 @layer components {
+  /*
+   * Machined panel, not glass. The old treatment was a bright translucent
+   * sheet with a white rim; this is a dark anodised surface — a cool top
+   * sheen, a near-black body, and a hairline blue-gray edge. Kept under the
+   * original class name so every surface on the site changes at once.
+   */
   .liquid-glass {
-    background: rgba(255, 255, 255, 0.01);
-    background-blend-mode: luminosity;
-    backdrop-filter: blur(4px);
-    border: none;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    background:
+      linear-gradient(
+        180deg,
+        rgba(180, 210, 240, 0.05) 0%,
+        rgba(150, 185, 220, 0.014) 34%,
+        rgba(0, 0, 0, 0.22) 100%
+      ),
+      linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--edge);
+    box-shadow:
+      inset 0 1px 0 rgba(190, 220, 255, 0.08),
+      0 26px 60px -34px rgba(0, 0, 0, 0.95);
     position: relative;
     overflow: hidden;
   }
 
+  /* A single machined highlight along the top edge — the light catching one
+     bevel, rather than the full ring the glass treatment drew. */
   .liquid-glass::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    padding: 1.4px;
+    padding: 1px;
     background: linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.45) 0%,
-      rgba(255, 255, 255, 0.15) 20%,
-      rgba(255, 255, 255, 0) 40%,
-      rgba(255, 255, 255, 0) 60%,
-      rgba(255, 255, 255, 0.15) 80%,
-      rgba(255, 255, 255, 0.45) 100%
+      rgba(190, 225, 255, 0.3) 0%,
+      rgba(140, 175, 215, 0.06) 22%,
+      rgba(255, 255, 255, 0) 55%
     );
     -webkit-mask:
       linear-gradient(#fff 0 0) content-box,
@@ -81,29 +126,32 @@ body {
 
 @layer components {
   /*
-   * Agent cards are positioned by GSAP every frame, so hover must not touch
-   * transform. Border, glow and video opacity are safe to animate here.
-   * The border lives in CSS rather than inline styles so the hover rule can
-   * actually win — an inline border-color would override it.
+   * A module of the machine: the agent panels and any other technical tile.
+   * Hover only lifts the edge and adds a cool rim glow — no transform, so it
+   * never fights a GSAP-driven property.
    */
-  .agent-card {
-    border-color: color-mix(in srgb, var(--agent-accent) 35%, transparent);
+  .machine-module {
     transition:
       border-color 0.35s ease,
-      box-shadow 0.35s ease;
+      box-shadow 0.35s ease,
+      background-color 0.35s ease;
   }
 
-  .agent-card:hover {
-    border-color: color-mix(in srgb, var(--agent-accent) 85%, transparent);
-    box-shadow: 0 24px 70px -18px color-mix(in srgb, var(--agent-accent) 55%, transparent);
+  .machine-module:hover {
+    border-color: var(--edge-strong);
+    box-shadow:
+      inset 0 1px 0 rgba(190, 220, 255, 0.14),
+      0 30px 70px -34px rgba(0, 0, 0, 0.95),
+      0 0 0 1px rgba(92, 200, 232, 0.14),
+      0 0 46px -14px rgba(92, 200, 232, 0.3);
   }
 
-  .agent-card__video {
-    transition: opacity 0.35s ease;
+  .machine-module__media {
+    transition: opacity 0.45s ease;
   }
 
-  .agent-card:hover .agent-card__video {
-    opacity: 0.85;
+  .machine-module:hover .machine-module__media {
+    opacity: 0.5;
   }
 }
 
@@ -139,19 +187,6 @@ body {
 
 .solution-enter {
   animation: solution-enter 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0%);
-  }
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 20s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

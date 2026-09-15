@@ -9,11 +9,11 @@ export function TechCta({ content }: { content: TechnologyPageContent }) {
   return (
     <section className="px-5 py-20 sm:px-8 sm:py-28">
       <div className="mx-auto max-w-4xl text-center">
-        <h2 className="font-display text-[clamp(1.75rem,4.5vw,3rem)] font-medium leading-[1.12] tracking-tight text-white">
+        <h2 className="font-display text-[clamp(1.75rem,4.5vw,3rem)] font-medium leading-[1.12] tracking-tight text-foreground">
           <AccentHeading text={cta.heading} accent={cta.accent} />
         </h2>
 
-        <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/60 sm:text-base">
+        <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-muted sm:text-base">
           {cta.body}
         </p>
 
