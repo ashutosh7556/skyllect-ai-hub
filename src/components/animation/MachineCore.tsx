@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { MACHINE } from "@/lib/theme";
+import { machineRings, type RingBerth } from "@/lib/machineRings";
 import { cn } from "@/lib/utils";
 
 /**
@@ -320,6 +321,43 @@ export function MachineCore() {
     gearMid.rotation.x = 0.42;
     gearInner.rotation.y = 0.5;
     core.add(gearOuter, gearMid, gearInner);
+
+    /*
+     * Berths: where each agent module is held before the machine lets it go.
+     *
+     * One empty anchor per module, parented to a gear rather than placed in
+     * world space. That parenting is the whole point — the anchor inherits
+     * the gear's rotation, the core's tilt, the root's parallax and the fit
+     * scale, so a card flying off it is riding the ring it came out of
+     * exactly, with none of the ring's motion restated anywhere else. Change
+     * a gear's speed and the cards follow it without this code being touched.
+     *
+     * Empties cost nothing to draw: they are matrices in the graph, not
+     * geometry.
+     */
+    const berthAnchors: THREE.Object3D[] = [];
+    {
+      // Rebuilt from scratch, not appended to: the hero remounts on a
+      // client-side navigation back to the home page.
+      machineRings.berths.length = 0;
+      const rings: Array<[THREE.Group, number]> = [
+        [gearOuter, 4.5],
+        [gearMid, 3.1],
+        [gearInner, 1.9],
+      ];
+      for (let i = 0; i < DOCK_MAX; i++) {
+        const [gear, radius] = rings[i % rings.length];
+        // The golden angle, so consecutive modules are never neighbours on
+        // the same ring and the releases read as coming from all round the
+        // machine rather than marching along one arc.
+        const angle = i * 2.399963;
+        const anchor = new THREE.Object3D();
+        anchor.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
+        gear.add(anchor);
+        berthAnchors.push(anchor);
+        machineRings.berths.push({ x: 0, y: 0, depth: 1 });
+      }
+    }
 
     // Open shells: partial tori that read as a housing cracked open around
     // the core rather than a closed sphere.
@@ -772,9 +810,45 @@ export function MachineCore() {
       packets.instanceMatrix.needsUpdate = true;
     }
 
+    const berthWorld = new THREE.Vector3();
+    const berthProjected = new THREE.Vector3();
+
+    /**
+     * Hand the rings' current screen positions to the page.
+     *
+     * Called after the camera has been placed and its matrices updated for
+     * this frame, for the same reason the dock is: a projection taken against
+     * last frame's camera puts every card a frame behind the machine it is
+     * supposed to be coming out of, which is exactly the kind of lag that
+     * reads as two animations instead of one.
+     */
+    function publishRings() {
+      mid.getWorldPosition(berthWorld);
+      const coreDistance = camera.position.distanceTo(berthWorld);
+      berthProjected.copy(berthWorld).project(camera);
+      machineRings.cx = (berthProjected.x * 0.5 + 0.5) * window.innerWidth;
+      machineRings.cy = (-berthProjected.y * 0.5 + 0.5) * window.innerHeight;
+
+      for (let i = 0; i < berthAnchors.length; i++) {
+        const berth: RingBerth = machineRings.berths[i];
+        if (!berth) continue;
+        berthAnchors[i].getWorldPosition(berthWorld);
+        const distance = camera.position.distanceTo(berthWorld);
+        berthProjected.copy(berthWorld).project(camera);
+        berth.x = (berthProjected.x * 0.5 + 0.5) * window.innerWidth;
+        berth.y = (-berthProjected.y * 0.5 + 0.5) * window.innerHeight;
+        berth.depth = coreDistance / Math.max(distance, 0.001);
+      }
+
+      machineRings.live = true;
+    }
+
     /** `time` is GSAP's ticker clock, in seconds. */
     function frame(time: number) {
-      if (!running || width === 0) return;
+      if (!running || width === 0) {
+        machineRings.live = false;
+        return;
+      }
 
       /*
        * How present the machine is. It runs at full strength through the
@@ -789,7 +863,9 @@ export function MachineCore() {
           hostVisible = false;
           host!.style.visibility = "hidden";
         }
-        // Invisible: no reason to spend a WebGL frame on it.
+        // Invisible: no reason to spend a WebGL frame on it — and no rings
+        // for anything on the page to be coming out of.
+        machineRings.live = false;
         return;
       }
       if (!hostVisible) {
@@ -861,6 +937,7 @@ export function MachineCore() {
       // to be current before any unprojection happens.
       camera.updateMatrixWorld();
 
+      publishRings();
       updateDock(time, state.dock * (1 - state.exit));
 
       renderer.render(scene, camera);
@@ -953,6 +1030,9 @@ export function MachineCore() {
 
     return () => {
       running = false;
+      // Nothing is projecting the rings any more, so nothing on the page
+      // should still be flying out of them.
+      machineRings.live = false;
       gsap.ticker.remove(frame);
       phases.forEach((phase) => {
         phase.scrollTrigger?.kill();

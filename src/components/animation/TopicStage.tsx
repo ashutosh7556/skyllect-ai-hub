@@ -4,6 +4,7 @@ import { Children, useRef, type ReactNode } from "react";
 import { usePinnedTimeline } from "@/hooks/usePinnedTimeline";
 import { gsap } from "@/lib/gsap";
 import { IntegrationPortal } from "@/components/animation/IntegrationPortal";
+import { StageProgressProvider } from "@/components/animation/StageProgress";
 import { cn } from "@/lib/utils";
 
 /**
@@ -58,6 +59,10 @@ export function TopicStage({ children }: { children: ReactNode }) {
   // What the gateway behind the panels is doing. A ref rather than state: the
   // scene reads it every frame and React has no business re-rendering for it.
   const portalState = useRef({ progress: 0, dock: 0, focus: 0 });
+  // The same position, handed to the topics. A topic sitting on a pinned
+  // stage cannot build a ScrollTrigger of its own — its element never moves —
+  // so anything it wants to drive from scroll reads this instead.
+  const atRef = useRef({ value: 0 });
 
   const steps = Math.max(panels.length - 1, 1);
 
@@ -68,6 +73,7 @@ export function TopicStage({ children }: { children: ReactNode }) {
     (progress) => {
       // Position along the run, in panels: panel i is centred at i.
       const at = progress * steps;
+      atRef.current.value = at;
 
       panelRefs.current.forEach((panel, i) => {
         if (!panel) return;
@@ -115,7 +121,9 @@ export function TopicStage({ children }: { children: ReactNode }) {
       <div ref={wrapperRef} className="relative">
         {panels.map((panel, i) => (
           <div key={i} className="w-full">
-            {panel}
+            <StageProgressProvider value={{ atRef, index: i, reduced: true }}>
+              {panel}
+            </StageProgressProvider>
           </div>
         ))}
       </div>
@@ -169,7 +177,11 @@ export function TopicStage({ children }: { children: ReactNode }) {
               ["--stage-scroll-offset" as string]: `-${i * 100}vh`,
             }}
           >
-            <div className="max-h-full w-full overflow-y-auto">{panel}</div>
+            <div className="max-h-full w-full overflow-y-auto">
+              <StageProgressProvider value={{ atRef, index: i, reduced: false }}>
+                {panel}
+              </StageProgressProvider>
+            </div>
           </div>
         ))}
       </div>

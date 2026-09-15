@@ -124,6 +124,71 @@ export function SystemsIntegration() {
         },
       );
 
+      /*
+       * The machinery, expressed on the panel itself.
+       *
+       * Three things, all of them behind the copy and none of them fast:
+       * light running the two edges in opposite directions, the corner
+       * brackets locking on as the section takes hold, and the plate
+       * breathing. Every one is a hairline or a low-alpha wash on `screen`,
+       * so the type over them never loses contrast — the panel reads as a
+       * working surface rather than a slide.
+       */
+      gsap.utils.toArray<HTMLElement>("[data-edge-rail]").forEach((railElement) => {
+        const light = railElement.querySelector<HTMLElement>("[data-edge-light]");
+        if (!light) return;
+        const reverse = railElement.dataset.edgeRail === "bottom";
+        gsap.fromTo(
+          light,
+          { x: () => (reverse ? railElement.offsetWidth + 140 : -140) },
+          {
+            x: () => (reverse ? -140 : railElement.offsetWidth + 140),
+            duration: 11,
+            ease: "none",
+            repeat: -1,
+            repeatDelay: 2.4,
+            invalidateOnRefresh: true,
+          },
+        );
+      });
+
+      // The brackets ease out to the corners as the panel arrives. Scrubbed,
+      // so it reads as the frame settling onto the plate.
+      gsap.fromTo(
+        "[data-corner]",
+        { autoAlpha: 0, scale: 0.55 },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          ease: "power2.out",
+          stagger: 0.09,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 88%",
+            end: "top 32%",
+            scrub: 1.4,
+            invalidateOnRefresh: true,
+          },
+        },
+      );
+
+      // Load on the plate. Slow enough that it is never something the eye
+      // follows — it only stops the surface going flat while a stage is held.
+      gsap.fromTo(
+        "[data-breath]",
+        { opacity: 0.14 },
+        {
+          // Kept low deliberately. The panel already takes a power-on sweep
+          // across it, and the two stacking is how copy on a dark plate stops
+          // being crisp — this only has to keep the surface from going flat.
+          opacity: 0.34,
+          duration: 8.5,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        },
+      );
+
       const stages = [
         stage0Ref.current,
         stage1Ref.current,
@@ -246,6 +311,68 @@ export function SystemsIntegration() {
                     ].join(", "),
                   }}
                 />
+
+                {/*
+                 * The plate under load. Second layer, still behind every
+                 * stage panel — `screen` at this alpha lifts the surface a
+                 * little and touches nothing of the copy's contrast.
+                 */}
+                {!reduced && (
+                  <div
+                    data-breath
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 opacity-[0.14]"
+                    style={{
+                      mixBlendMode: "screen",
+                      background:
+                        "radial-gradient(120% 90% at 50% 100%, rgba(92,200,232,0.16) 0%, rgba(106,92,224,0.07) 55%, rgba(4,6,11,0) 100%)",
+                    }}
+                  />
+                )}
+
+                {/* Light running the frame, out along the top and back along
+                    the bottom. Each rail clips its own light, so the pass
+                    enters and leaves at the panel's edges. */}
+                {!reduced &&
+                  (["top", "bottom"] as const).map((edge) => (
+                    <span
+                      key={edge}
+                      data-edge-rail={edge}
+                      aria-hidden="true"
+                      className={cn(
+                        "pointer-events-none absolute inset-x-0 h-px overflow-hidden",
+                        edge === "top" ? "top-0" : "bottom-0",
+                      )}
+                    >
+                      <span
+                        data-edge-light
+                        className="absolute inset-y-0 left-0 w-36 bg-gradient-to-r from-transparent via-accent-soft/80 to-transparent"
+                      />
+                    </span>
+                  ))}
+
+                {/* Corner brackets. Purely a frame — they sit inside the
+                    panel's padding, so no stage's copy moves for them. */}
+                {!reduced &&
+                  (
+                    [
+                      ["border-t border-l", "top-3 left-3"],
+                      ["border-t border-r", "top-3 right-3"],
+                      ["border-b border-l", "bottom-3 left-3"],
+                      ["border-b border-r", "bottom-3 right-3"],
+                    ] as const
+                  ).map(([edges, placement]) => (
+                    <span
+                      key={placement}
+                      data-corner
+                      aria-hidden="true"
+                      className={cn(
+                        "pointer-events-none absolute h-5 w-5 border-accent/45",
+                        edges,
+                        placement,
+                      )}
+                    />
+                  ))}
 
                 <div ref={stage0Ref} className={stagePanelClass(reduced)}>
                   <h2 className="font-display text-2xl leading-tight tracking-tight text-foreground sm:text-3xl md:text-5xl">
