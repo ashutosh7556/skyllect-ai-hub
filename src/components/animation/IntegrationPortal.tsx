@@ -5,6 +5,8 @@ import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { MACHINE } from "@/lib/theme";
+import { INTEGRATIONS } from "@/data/integrations";
+import { integrationPortal } from "@/lib/integrationPortal";
 
 /**
  * The gateway the integrations section opens onto.
@@ -31,14 +33,33 @@ import { MACHINE } from "@/lib/theme";
  * Where docking begins, and how much of the run each module takes to arrive.
  * Spread wide on purpose: the modules have the opening topics to come in
  * over, not a single screen, so nothing about the approach looks hurried.
+ *
+ * The step is derived rather than fixed. With five modules a hand-picked
+ * 0.16 fitted; with ten it would have put the last four past the end of the
+ * dock phase, so they would have orbited forever and never berthed. Dividing
+ * what is left after the first one starts and the last one finishes keeps the
+ * whole set home by the end however many there are.
  */
 const DOCK_START = 0.12;
 const DOCK_SPAN = 0.2;
-const DOCK_STEP = 0.16;
 
-/** Orbit radius before docking, and the berth radius after. */
-const ORBIT_RADIUS = 6.6;
-const BERTH_RADIUS = 3.1;
+/**
+ * Orbit radius before docking, and the berths after.
+ *
+ * Two berth rings, taken in turn, rather than the single one that held five
+ * modules. Ten plates on one ring sit about 1.5 units apart while a plate is
+ * nearly three wide, so they would overlap badly — and widening them enough
+ * to carry a name like "Custom internal applications" on two lines makes that
+ * far worse. Alternating the radius doubles the arc between any two plates on
+ * the same ring and separates the ones in between radially instead.
+ */
+const ORBIT_RADIUS = 6.9;
+const BERTH_RADIUS = 3.05;
+const BERTH_RADIUS_OUTER = 4.95;
+/** How far round the gate the berths are spread. */
+const BERTH_ARC = Math.PI * 1.7;
+const berthRadiusFor = (index: number) =>
+  index % 2 === 0 ? BERTH_RADIUS : BERTH_RADIUS_OUTER;
 
 /** Camera distance. Fixed — see the note in the frame loop. */
 const REST_DISTANCE = 13;
@@ -54,7 +75,15 @@ const PACKETS_PER_MODULE = 2;
  */
 const SHELL_COUNT = 13;
 
-const MODULES = ["CRM", "ERP", "E-commerce", "Accounting", "Email"] as const;
+/**
+ * One module per integration, so every plate on the ring is a card the topic
+ * will eventually release. Nothing appears on the page that was not visibly
+ * taken off the gate first.
+ */
+const MODULES = INTEGRATIONS.map((integration) => integration.name);
+
+const DOCK_STEP =
+  MODULES.length > 1 ? (1 - DOCK_START - DOCK_SPAN) / (MODULES.length - 1) : 0;
 
 interface Module {
   label: HTMLElement;
@@ -68,6 +97,11 @@ interface Module {
   berth: number;
   /** Eased 0..1 docking progress. */
   docked: number;
+  /**
+   * Eased 1..0 as the topic takes this module off the ring. 1 while the gate
+   * still holds it, 0 once its card is out on the page.
+   */
+  held: number;
 }
 
 /** Rounded plate outline, in the XY plane. */
@@ -193,9 +227,12 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
 
     const innerRing = lineOf(ring(1.55, 6), gateLine);
     const midRing = lineOf(ring(2.25, 72, Math.PI * 1.55), gateFaint);
+    // One ring per set of berths, so a plate always sits on a track rather
+    // than floating at an arbitrary distance from the gate.
     const berthRing = lineOf(ring(BERTH_RADIUS, 84), gateFaint);
-    const outerScan = lineOf(ring(4.3, 90, Math.PI * 1.2), gateFaint);
-    gate.add(innerRing, midRing, berthRing, outerScan);
+    const berthRingOuter = lineOf(ring(BERTH_RADIUS_OUTER, 96), gateFaint);
+    const outerScan = lineOf(ring(6.1, 90, Math.PI * 1.2), gateFaint);
+    gate.add(innerRing, midRing, berthRing, berthRingOuter, outerScan);
 
     /*
      * The structure that keeps growing. Each shell is an arc at its own
@@ -246,7 +283,15 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
 
     /* ----------------------------------------------------------- the modules */
 
-    const plateGeometry = plateOutline(2.7, 1.05, 0.22);
+    /*
+     * The plate a module's name has to fit inside, in world units.
+     *
+     * Wide enough that the longest name breaks to two lines rather than three,
+     * and tall enough that two lines clear the border. Both are what the berth
+     * rings above were re-spread to make room for.
+     */
+    const PLATE_WIDTH = 3.6;
+    const plateGeometry = plateOutline(PLATE_WIDTH, 1.28, 0.22);
     const labels = Array.from(layer.querySelectorAll<HTMLElement>("[data-module]"));
 
     const modules: Module[] = MODULES.map((_, i) => {
@@ -283,7 +328,7 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
 
       // Berths are spread over the upper and right of the ring, keeping the
       // lower left — where the copy sits — clear.
-      const berth = -0.95 + (i / (MODULES.length - 1)) * Math.PI * 1.35;
+      const berth = -0.95 + (i / (MODULES.length - 1)) * BERTH_ARC;
 
       return {
         label: labels[i],
@@ -299,8 +344,14 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
         ),
         berth,
         docked: 0,
+        held: 1,
       };
     });
+
+    // One published slot per module, rebuilt rather than appended to: the
+    // stage remounts on a client-side navigation back to the home page.
+    integrationPortal.modules = modules.map(() => ({ x: 0, y: 0 }));
+    integrationPortal.released = -1;
 
     /*
      * Three more things that keep arriving, so the rig is still gaining
@@ -503,7 +554,12 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
     let onScreen = true;
 
     function frame(time: number) {
-      if (!running || !onScreen || width === 0) return;
+      if (!running || !onScreen || width === 0) {
+        // Nothing is projecting the gate, so nothing should be flying out of
+        // it — the topic falls back to showing its card at rest.
+        integrationPortal.live = false;
+        return;
+      }
 
       const state = stateRef.current;
       const p = state?.dock ?? 0;
@@ -531,6 +587,7 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
       midRing.rotation.z = -time * 0.04;
       outerScan.rotation.z = time * 0.018;
       berthRing.rotation.z = -time * 0.007;
+      berthRingOuter.rotation.z = time * 0.005;
 
       // Everything past the modules is driven by the run as a whole.
       const journey = state?.progress ?? 0;
@@ -597,6 +654,20 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
 
       let packetIndex = 0;
 
+      /*
+       * How many screen pixels a world unit is worth right now, measured
+       * rather than assumed: the gate is scaled to fit the viewport and turns
+       * slightly as it breathes, so this is the only honest way to size a DOM
+       * label against geometry drawn in WebGL.
+       */
+      projected.set(0, 0, 0).applyMatrix4(gate.matrixWorld).project(camera);
+      const gateScreenX = (projected.x * 0.5 + 0.5) * width;
+      const gateScreenY = (-projected.y * 0.5 + 0.5) * height;
+      projected.set(1, 0, 0).applyMatrix4(gate.matrixWorld).project(camera);
+      const pixelsPerUnit = Math.abs((projected.x * 0.5 + 0.5) * width - gateScreenX);
+      // A little inside the plate, so the text never touches its own border.
+      const labelWidth = Math.max(56, PLATE_WIDTH * pixelsPerUnit * 0.86);
+
       modules.forEach((module, i) => {
         const start = DOCK_START + i * DOCK_STEP;
         const target = THREE.MathUtils.clamp((p - start) / DOCK_SPAN, 0, 1);
@@ -609,10 +680,29 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
         // comes in rather than cutting across the gate.
         const drift = time * 0.012 + (i / MODULES.length) * Math.PI * 2;
         const angle = THREE.MathUtils.lerp(drift, module.berth, module.docked);
-        const radius = THREE.MathUtils.lerp(ORBIT_RADIUS, BERTH_RADIUS, module.docked);
+        const radius = THREE.MathUtils.lerp(
+          ORBIT_RADIUS,
+          berthRadiusFor(i),
+          module.docked,
+        );
         module.group.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
         module.group.rotation.z = Math.sin(time * 0.4 + i) * 0.02;
-        module.plate.opacity = (0.14 + module.docked * 0.6) * focus * presence;
+
+        /*
+         * A module that has been taken off the ring hands its plate over to
+         * the card it became. Eased rather than switched, so releasing one
+         * reads as it leaving rather than as it being deleted — and so
+         * scrubbing back brings it home again instead of popping it in.
+         */
+        // Everything up to and including the one that is out, not just the
+        // one that is out. A module that has already been taken off the ring
+        // has become a card on the page and does not come back — so by the
+        // last integration the gate is empty, which is what it should be.
+        const wanted = integrationPortal.released >= i ? 0 : 1;
+        module.held += (wanted - module.held) * 0.06;
+
+        module.plate.opacity =
+          (0.14 + module.docked * 0.6) * focus * presence * module.held;
 
         // The cable only exists once the module is close enough to reach.
         const reach = THREE.MathUtils.clamp((module.docked - 0.45) / 0.55, 0, 1);
@@ -628,7 +718,7 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
           module.cablePositions.setXYZ(s, point.x, point.y, point.z);
         }
         module.cablePositions.needsUpdate = true;
-        module.cableMaterial.opacity = reach * 0.5 * focus * presence;
+        module.cableMaterial.opacity = reach * 0.5 * focus * presence * module.held;
 
         for (let k = 0; k < PACKETS_PER_MODULE; k++) {
           const phase = (time * 0.075 + i * 0.2 + k * 0.5) % 1;
@@ -643,9 +733,31 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
         const x = (projected.x * 0.5 + 0.5) * width;
         const y = (-projected.y * 0.5 + 0.5) * height;
         module.label.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0) translate(-50%, -50%)`;
-        module.label.style.opacity = String((0.3 + module.docked * 0.7) * focus * presence);
+        module.label.style.width = `${Math.round(labelWidth)}px`;
+        module.label.style.opacity = String(
+          (0.3 + module.docked * 0.7) * focus * presence * module.held,
+        );
+
+        /*
+         * Hand this module's position to the page.
+         *
+         * The same projection the label just used, so a card leaving the gate
+         * starts from exactly where its plate is drawn — not from an
+         * approximation of the ring, and not from a position a frame old.
+         */
+        const published = integrationPortal.modules[i];
+        if (published) {
+          published.x = x;
+          published.y = y;
+        }
       });
       packets.instanceMatrix.needsUpdate = true;
+
+      // The gate's own centre, which is the pivot a released card arcs
+      // around on its way across the page. Already measured above.
+      integrationPortal.cx = gateScreenX;
+      integrationPortal.cy = gateScreenY;
+      integrationPortal.live = true;
 
       gate.updateMatrixWorld();
       renderer.render(scene, camera);
@@ -675,6 +787,7 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
 
     return () => {
       running = false;
+      integrationPortal.live = false;
       gsap.ticker.remove(frame);
       observer.disconnect();
       resizeObserver.disconnect();
@@ -699,7 +812,16 @@ export function IntegrationPortal({ stateRef }: IntegrationPortalProps) {
           <div
             key={label}
             data-module
-            className="absolute top-0 left-0 text-[11px] font-medium tracking-[0.02em] text-foreground opacity-0 will-change-transform [text-shadow:0_1px_6px_rgba(4,6,11,0.95)] sm:text-xs"
+            /*
+             * Centred and free to wrap. The plate behind this is a fixed
+             * 2.7 world units wide, and a name like "Custom internal
+             * applications" is far wider than that as one line — it ran
+             * straight out of both sides of its own box. The width is set
+             * from the plate's real projected size every frame, so the text
+             * breaks to a second line exactly when it no longer fits,
+             * whatever the viewport is doing to the gate's scale.
+             */
+            className="absolute top-0 left-0 text-center text-[10px] leading-tight font-medium tracking-[0.01em] text-foreground opacity-0 will-change-transform [text-shadow:0_1px_6px_rgba(4,6,11,0.95)] sm:text-[11px]"
           >
             {label}
           </div>

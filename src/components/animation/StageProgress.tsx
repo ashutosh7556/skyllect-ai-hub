@@ -13,10 +13,19 @@ import { createContext, useContext, type RefObject } from "react";
  * never moves.
  */
 export interface StageProgress {
-  /** Position along the run, in panels. Panel `index` is centred at `index`. */
+  /**
+   * Position along the run, in viewports.
+   *
+   * Panels are no longer all one viewport wide — a topic can ask for a longer
+   * dwell — so this is a position in that weighted space rather than a panel
+   * index. A panel's own window is `start`..`start + span`.
+   */
   atRef: RefObject<{ value: number }>;
   /** Which panel is reading this. */
   index: number;
+  /** Where this panel's window begins, and how wide it is, in viewports. */
+  start: number;
+  span: number;
   /** True when the stage is stacked rather than pinned. */
   reduced: boolean;
 }
@@ -31,15 +40,13 @@ export function useStageProgress() {
 }
 
 /**
- * The stage position mapped to a topic's own 0..1.
+ * The stage position mapped to a topic's own 0..1, across its whole window.
  *
- * Panel 0 opens the stage already centred, so it has no approach to animate
- * over and its window has to start where the stage does. Every other panel
- * arrives from below and gets a little of that approach to play in.
+ * A one-viewport topic gets the same shape it always had; a topic that asked
+ * for ten gets all ten, which is what lets it run a sequence of its own
+ * rather than a single reveal.
  */
-export function localProgress(at: number, index: number) {
-  const distance = at - index;
-  const from = index === 0 ? 0 : -0.35;
-  const span = index === 0 ? 0.5 : 0.7;
-  return Math.min(1, Math.max(0, (distance - from) / span));
+export function localProgress(stage: StageProgress) {
+  const at = stage.atRef.current?.value ?? 0;
+  return Math.min(1, Math.max(0, (at - stage.start) / stage.span));
 }

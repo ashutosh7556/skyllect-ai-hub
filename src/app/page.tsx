@@ -4,16 +4,7 @@ import { AgentsTopic } from "@/components/sections/AgentsTopic";
 import { SystemsIntegration } from "@/components/sections/SystemsIntegration";
 import { WorkflowTopic } from "@/components/sections/WorkflowTopic";
 import { Integrations } from "@/components/sections/Integrations";
-import { SaasDevelopment } from "@/components/sections/SaasDevelopment";
-import { Modernization } from "@/components/sections/Modernization";
-import { Industries } from "@/components/sections/Industries";
-import { OneAiLayer } from "@/components/sections/OneAiLayer";
-import { HumanControlledAi } from "@/components/sections/HumanControlledAi";
-import { WorkflowAssessment } from "@/components/sections/WorkflowAssessment";
-import { HowWeWork } from "@/components/sections/HowWeWork";
-import { StartSmall } from "@/components/sections/StartSmall";
-import { WhySkyllect } from "@/components/sections/WhySkyllect";
-import { FinalCta } from "@/components/sections/FinalCta";
+import { INTEGRATIONS } from "@/data/integrations";
 
 export default function Home() {
   return (
@@ -23,25 +14,19 @@ export default function Home() {
       <SystemsIntegration />
       <WorkflowTopic />
       {/*
-        From here every remaining topic shares one screen. The stage pins
-        once, holds a single gateway behind all of them, and hands over from
-        one topic to the next in place as the scroll continues — rather than
-        giving each its own section to scroll past.
+        The stage pins once and holds the gateway behind whatever is on it.
+        It carried every remaining topic; for now it carries only the
+        integrations run, which releases one card per integration off the gate
+        and so takes a screen of scroll for each.
+
+        The topics that used to follow — SaaS, Modernization, the three
+        Industries panels, One AI Layer, Human-Controlled AI, the assessment,
+        How We Work, Start Small, Why Skyllect and the closing call to action
+        — are still in `components/sections`, untouched. Putting them back is
+        a matter of listing them here again.
       */}
-      <TopicStage>
+      <TopicStage dwell={{ 0: INTEGRATIONS.length }}>
         <Integrations />
-        <SaasDevelopment />
-        <Modernization />
-        <Industries slug="logistics" showHeading />
-        <Industries slug="distribution" />
-        <Industries slug="manufacturing" />
-        <OneAiLayer />
-        <HumanControlledAi />
-        <WorkflowAssessment />
-        <HowWeWork />
-        <StartSmall />
-        <WhySkyllect />
-        <FinalCta />
       </TopicStage>
     </>
   );

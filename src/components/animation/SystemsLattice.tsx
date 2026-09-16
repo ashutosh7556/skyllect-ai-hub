@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { MACHINE } from "@/lib/theme";
+import { systemsLattice } from "@/lib/systemsLattice";
 
 /**
  * The systems an agent actually plugs into, drawn behind the Beyond Chat card.
@@ -237,6 +238,10 @@ export function SystemsLattice({ triggerRef, pinLength }: SystemsLatticeProps) {
       };
     });
 
+    // One published slot per node, rebuilt rather than appended to: the
+    // section remounts on a client-side navigation back to the home page.
+    systemsLattice.nodes = nodes.map(() => ({ x: 0, y: 0, lit: 0 }));
+
     /* ------------------------------------------------------------- the links */
 
     interface Link {
@@ -339,7 +344,12 @@ export function SystemsLattice({ triggerRef, pinLength }: SystemsLatticeProps) {
     let onScreen = true;
 
     function frame(time: number) {
-      if (!running || !onScreen || width === 0) return;
+      if (!running || !onScreen || width === 0) {
+        // Nothing is projecting the nodes, so nothing should be drawing feeds
+        // from them into the card.
+        systemsLattice.live = false;
+        return;
+      }
 
       // The wave front, run slightly past the end so the last node has time
       // to come fully up before the section is done.
@@ -384,6 +394,27 @@ export function SystemsLattice({ triggerRef, pinLength }: SystemsLatticeProps) {
       // A breath of parallax, so the board is never perfectly flat.
       board.rotation.y = Math.sin(time * 0.1) * 0.05;
       board.rotation.x = Math.cos(time * 0.08) * 0.03;
+
+      /*
+       * Hand the nodes to the card in front.
+       *
+       * After the board's own breath is applied and its matrices are current,
+       * so the feed lines drawn into the card ride exactly the same parallax
+       * the glyphs do. Nothing here changes what the lattice draws — it only
+       * reports where it drew it.
+       */
+      board.updateMatrixWorld();
+      systemsLattice.width = width;
+      systemsLattice.height = height;
+      nodes.forEach((node, i) => {
+        const published = systemsLattice.nodes[i];
+        if (!published) return;
+        point.copy(node.group.position).applyMatrix4(board.matrixWorld).project(camera);
+        published.x = (point.x * 0.5 + 0.5) * width;
+        published.y = (-point.y * 0.5 + 0.5) * height;
+        published.lit = node.lit * ease;
+      });
+      systemsLattice.live = true;
 
       renderer.render(scene, camera);
     }
@@ -447,6 +478,7 @@ export function SystemsLattice({ triggerRef, pinLength }: SystemsLatticeProps) {
 
     return () => {
       running = false;
+      systemsLattice.live = false;
       gsap.ticker.remove(frame);
       tweens.forEach((tween) => {
         tween.scrollTrigger?.kill();

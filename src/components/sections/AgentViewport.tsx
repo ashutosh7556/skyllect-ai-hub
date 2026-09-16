@@ -679,7 +679,14 @@ export function AgentViewport({ src, variant, active, index }: AgentViewportProp
        * string rather than "true" so `dataset.active === ""` is the test.
        */
       data-active={active ? "" : undefined}
-      className="relative mb-5 h-24 w-full overflow-hidden rounded-lg border border-edge bg-surface"
+      /*
+       * Height comes from the board, not from here. AgentsTopic measures what
+       * the window can actually give three rows of cards and sets
+       * `--agent-media` to suit, so the clip is as large as it can be without
+       * pushing the last row off the screen. The fallback is the old fixed
+       * size, for anything that renders this outside that board.
+       */
+      className="relative mb-3 h-[var(--agent-media,5.25rem)] w-full overflow-hidden rounded-lg border border-edge bg-surface"
     >
       <video
         ref={videoRef}

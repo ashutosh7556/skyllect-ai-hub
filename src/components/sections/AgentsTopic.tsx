@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
-import { gsap, ScrollTrigger } from "@/lib/gsap";
+import { gsap } from "@/lib/gsap";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { AgentScenes } from "@/components/animation/AgentScenes";
 import { AgentViewport } from "@/components/sections/AgentViewport";
 import { AGENTS } from "@/data/agents";
 import { machineRings } from "@/lib/machineRings";
+import { cn } from "@/lib/utils";
 
 /**
  * The agents, read as modules of the machine — and built by it.
@@ -15,9 +16,14 @@ import { machineRings } from "@/lib/machineRings";
  * The modules are not placed on the page. Each one is held on one of the
  * machine's gear rings, turning with it, and released as the section is read:
  * it sweeps round the arc it was born on, spirals outward as it goes, opens
- * toward the camera and settles into its slot in the grid. Seven of them, one
- * after another, so the section reads as the machine producing its own
- * contents rather than as a grid fading in.
+ * toward the camera and settles into its slot. Seven of them, one after
+ * another, so the section reads as the machine producing its own contents
+ * rather than as a grid fading in.
+ *
+ * What they settle into is a ring of its own, seated on a twelve-column grid
+ * with its centre left empty — see RING_SLOTS. A module that spirals out of a
+ * circle and lands in a rectangle spends the last of its flight arguing with
+ * where it came from.
  *
  * The flight is computed in screen space against the rings' real projected
  * positions — MachineCore parents an empty to each gear and publishes where
@@ -54,8 +60,14 @@ const DWELL = 3.2;
  * that just arrived is left alone and nothing else has started yet. Slots
  * never overlap, so there is never a second card in the air, and the pause
  * between releases is real scroll rather than a gap in an eased stagger.
+ *
+ * Raised alongside the slot length so the flight itself is slower rather than
+ * merely further apart: together they take a module's travel from about 80px
+ * of wheel to about 125, while leaving the pause between releases where it
+ * was.
  */
-const FLIGHT_DUTY = 0.62;
+const FLIGHT_DUTY = 0.68;
+
 
 /** Size a module is held at inside the machine, before it is let go. */
 const BIRTH_SCALE = 0.16;
@@ -72,9 +84,94 @@ const FLIGHT_ROLL = 9;
  */
 const CARRY_ARC = 0.62;
 
+/**
+ * Scroll one module's slot is worth while the board is held, in px.
+ *
+ * The run is this times the number of modules, so the pacing is the same
+ * however tall the grid or the window happens to be.
+ */
+const SCROLL_PER_CARD = 290;
+
+/** Room the floating header needs at the top of the window, in px. */
+const HEADER_CLEARANCE = 68;
+
+/**
+ * How tall a module's clip may be, in px.
+ *
+ * Sized to the window rather than fixed: three rows of cards plus a heading is
+ * within a few dozen pixels of a laptop screen either way, so a height that
+ * looks generous on one is a cropped last row on another. The board measures
+ * what is spare and gives it to the clips, which is the one part of a card
+ * that gains from being larger.
+ */
+const MEDIA_MIN = 84;
+const MEDIA_MAX = 156;
+/**
+ * Bottom overflow the board will accept in exchange for larger clips.
+ *
+ * None. Spending it bought about a dozen pixels of clip per row and cost the
+ * last row the bottom of its description — trading copy the reader is meant
+ * to read for image they are not.
+ */
+const MEDIA_BLEED = 0;
+
+/* -------------------------------------------------------- the composition */
+
+/**
+ * Where each module comes to rest, once the machine has let it go.
+ *
+ * A twelve-column grid rather than three, used to seat the modules as a ring
+ * around an open centre: three across the top, two on the flanks with the gap
+ * between them left empty, two closed up underneath. The empty middle is the
+ * point — it is the only part of the section where the machine the modules
+ * came out of is still visible through them, and it is what stops a circular
+ * scene being covered by a rectangle.
+ *
+ * It also disposes of the orphan. Seven modules in a three-column grid leaves
+ * the last one alone on a row of its own, which is the one thing about the
+ * old arrangement that read as a mistake rather than a decision.
+ *
+ * The top row is bowed: the outer two are dropped, so the three of them sit
+ * on a curve with the highest point at the centre — the top of a circle, not
+ * the top of a box. The bottom pair straddle the centre line and are
+ * therefore level with each other, which is what the same circle does there.
+ *
+ * Placement only. No module is rotated: everything else on this page is
+ * machined and square to its neighbours — hairlines, corner brackets,
+ * monospace labels — and panels tipped a couple of degrees off true would
+ * read as scattered rather than assembled, on top of costing the body copy
+ * its horizontal. The curve is in where the cards sit, not in how they lean.
+ *
+ * Every span is four columns wide, which is exactly the width three columns
+ * gave: the card design is untouched at every breakpoint. Below `lg` this is
+ * inert and the modules stack one or two up as before.
+ */
+const RING_SLOTS = [
+  "sm:col-span-2 lg:col-start-1 lg:row-start-1 lg:col-span-4",
+  "sm:col-span-2 lg:col-start-5 lg:row-start-1 lg:col-span-4",
+  "sm:col-span-2 lg:col-start-9 lg:row-start-1 lg:col-span-4",
+  "sm:col-span-2 lg:col-start-1 lg:row-start-2 lg:col-span-4",
+  "sm:col-span-2 lg:col-start-9 lg:row-start-2 lg:col-span-4",
+  "sm:col-span-2 lg:col-start-3 lg:row-start-3 lg:col-span-4",
+  // Odd one out at the middle breakpoint, where the ring has collapsed to two
+  // up: centred on its own row rather than left hanging off the left edge.
+  "sm:col-start-2 sm:col-span-2 lg:col-start-7 lg:row-start-3 lg:col-span-4",
+];
+
+/**
+ * An eighth module would have nowhere on the ring to go, so it falls back to
+ * flowing after the others at the same width rather than collapsing to a
+ * single column of the twelve.
+ */
+const ringSlot = (index: number) =>
+  RING_SLOTS[index] ?? "sm:col-span-2 lg:col-span-4";
+
 export function AgentsTopic() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const holdRef = useRef<HTMLDivElement>(null);
+  const stickyRef = useRef<HTMLDivElement>(null);
+  const spacerRef = useRef<HTMLDivElement>(null);
   // Which module the pointer is over, and which one the system has promoted
   // on its own. Held here rather than per card so the panel, its viewport
   // read-out and the machine's cables all agree on who is live.
@@ -158,56 +255,6 @@ export function AgentsTopic() {
         },
       });
 
-      gsap.from("[data-rail]", {
-        scaleX: 0,
-        transformOrigin: "left center",
-        duration: 1.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 78%",
-          once: true,
-        },
-      });
-
-      /*
-       * Charge running the bus. The rail clips it, so the pulse enters and
-       * leaves rather than appearing and vanishing — one slow pass, a breath,
-       * then another. This is the section's tie to the machinery behind it:
-       * the same current the cables carry, on the page's own furniture.
-       */
-      const rail = sectionRef.current?.querySelector<HTMLElement>("[data-rail]");
-      if (rail) {
-        gsap.fromTo(
-          "[data-rail-pulse]",
-          { x: -160 },
-          {
-            x: () => rail.offsetWidth + 160,
-            duration: 9,
-            ease: "none",
-            repeat: -1,
-            repeatDelay: 1.6,
-            invalidateOnRefresh: true,
-          },
-        );
-      }
-
-      // The drops off the bus into each module. Drawn downward from the rail
-      // as the board arrives, so the modules read as fed rather than placed.
-      gsap.from("[data-feed]", {
-        scaleY: 0,
-        autoAlpha: 0,
-        transformOrigin: "top center",
-        duration: 0.9,
-        ease: "power2.out",
-        stagger: 0.07,
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 74%",
-          once: true,
-        },
-      });
-
       /*
        * Idle drift. Each module breathes in depth on its own clock, so the
        * grid is never still and never in step — a board of parts under load
@@ -259,17 +306,6 @@ export function AgentsTopic() {
 
   /* ------------------------------------------------------------ the flight */
 
-  /**
-   * Where each module belongs once it has landed, in document coordinates.
-   *
-   * Measured from `offsetLeft`/`offsetTop` against the section rather than
-   * from `getBoundingClientRect`, because the cell is carrying a transform
-   * for most of the time this needs to be known and a rect would report where
-   * the card currently *is* rather than where it is going. Offsets are layout
-   * values: no transform on the cell, or on anything inside it, can touch
-   * them.
-   */
-  const homesRef = useRef<Array<{ x: number; y: number }>>([]);
   const flightRef = useRef({ value: 0 });
 
   useEffect(() => {
@@ -285,17 +321,6 @@ export function AgentsTopic() {
     // written once and then left alone rather than re-set sixty times a
     // second for the whole time the reader spends with the section.
     const landed = cells.map(() => false);
-
-    function measure() {
-      const base = section!.getBoundingClientRect();
-      const baseX = base.left + window.scrollX;
-      const baseY = base.top + window.scrollY;
-      homesRef.current = cells.map((cell) => ({
-        x: baseX + cell.offsetLeft + cell.offsetWidth / 2,
-        y: baseY + cell.offsetTop + cell.offsetHeight / 2,
-      }));
-    }
-    measure();
 
     const park = (cell: HTMLElement, i: number) => {
       if (landed[i]) return;
@@ -318,7 +343,6 @@ export function AgentsTopic() {
 
     function fly() {
       const master = flightRef.current.value;
-      const homes = homesRef.current;
 
       // No machine projecting its rings — no WebGL, or it has dimmed out
       // below the page. There is nothing to fly out of, so everything simply
@@ -328,14 +352,25 @@ export function AgentsTopic() {
         return;
       }
 
-      const scrollX = window.scrollX;
-      const scrollY = window.scrollY;
+      /*
+       * Where the grid is right now, in viewport pixels.
+       *
+       * A cell's own rect is useless here — it is carrying the flight — so a
+       * home is the grid's live position plus the cell's layout offset inside
+       * it. The grid is `relative`, which makes it every cell's `offsetParent`
+       * and those offsets grid-relative by construction.
+       *
+       * Read every frame rather than measured once into document coordinates,
+       * because the grid is pinned for the length of the run: while it is
+       * pinned its document position is meaningless and only its viewport
+       * position is true.
+       */
+      const gridBox = grid!.getBoundingClientRect();
       const { cx, cy } = machineRings;
 
       cells.forEach((cell, i) => {
-        const home = homes[i];
         const berth = machineRings.berths[i];
-        if (!home || !berth) return;
+        if (!berth) return;
 
         const e = gsap.utils.clamp(0, 1, (master - i * slot) / span);
         if (e >= 1) {
@@ -354,8 +389,8 @@ export function AgentsTopic() {
          * cartesian endpoints instead would draw a straight line from the
          * machine to the slot, which is precisely what this is not.
          */
-        const homeX = home.x - scrollX;
-        const homeY = home.y - scrollY;
+        const homeX = gridBox.left + cell.offsetLeft + cell.offsetWidth / 2;
+        const homeY = gridBox.top + cell.offsetTop + cell.offsetHeight / 2;
 
         const bornRadius = Math.hypot(berth.x - cx, berth.y - cy);
         const bornAngle = Math.atan2(berth.y - cy, berth.x - cx);
@@ -412,43 +447,143 @@ export function AgentsTopic() {
     // late, and a flash of seven finished cards is exactly what it would show.
     gsap.set(cells, { autoAlpha: 0 });
 
+    /*
+     * Hold the board on screen for the length of the run.
+     *
+     * The wrapper is given the run's worth of height below the board, and the
+     * board is made sticky inside it: the reader keeps scrolling, that height
+     * passes underneath, and the board stays where it is until the last module
+     * has arrived. Then it releases and the page carries on.
+     *
+     * Only when the board fits the window. Held in place while taller than the
+     * screen, its bottom row could never be seen — so on a short window none
+     * of this is applied and the run is bounded by what is on screen instead,
+     * the way it was before.
+     */
+    const hold = holdRef.current;
+    const sticky = stickyRef.current;
+    const spacer = spacerRef.current;
+    /*
+     * Three rows of these cards come to about 870px, which is taller than a
+     * good many laptop windows — so demanding that the whole board fit meant
+     * the hold switched itself off on exactly the screens that need it most,
+     * and the board went back to scrolling away with its top row cut off while
+     * modules were still arriving.
+     *
+     * A little overflow is tolerated instead. Held, a board slightly taller
+     * than the window loses a few dozen pixels off its last row; not held, it
+     * loses the whole top row *and* the section leaves early. The first is the
+     * better trade — so when there is no room to centre the board it is put
+     * against the top of the window rather than not held at all.
+     */
+    /*
+     * Measured on the sticky block, not the grid: the board's label rides
+     * inside it, so the grid alone understates what has to be held.
+     *
+     * The label's description line is the one thing here that can be given up.
+     * Three rows of cards already come to about 870px, which fills a laptop
+     * window on its own, so on a short screen the choice is between showing
+     * the description and showing the bottom of the last row — and the cards
+     * are what the section is. Taller windows get both.
+     */
+    /*
+     * Give the clips whatever height the window has spare.
+     *
+     * Measured at the smallest size first, because the block's height depends
+     * on the very thing being chosen — so the spare room is found with the
+     * clips at their minimum and then handed out three ways, one per row.
+     */
+    grid.style.setProperty("--agent-media", `${MEDIA_MIN}px`);
+    const blockAt = () => (sticky ? sticky.offsetHeight : grid.offsetHeight);
+    const budget = window.innerHeight - HEADER_CLEARANCE + MEDIA_BLEED;
+    const media = gsap.utils.clamp(
+      MEDIA_MIN,
+      MEDIA_MAX,
+      MEDIA_MIN + Math.floor((budget - blockAt()) / 3),
+    );
+    grid.style.setProperty("--agent-media", `${media}px`);
+
+    /*
+     * Measured on the whole held block, not the grid alone. The heading is
+     * inside the sticky element now, so sizing against the grid understated it
+     * by its full height and pushed the title off the top of the window.
+     */
+    const room = window.innerHeight - blockAt();
+    const fits = !!hold && !!sticky && !!spacer && room >= -(80 + MEDIA_BLEED);
+    const runPx = cells.length * SCROLL_PER_CARD;
+    /*
+     * Never under the header.
+     *
+     * Centring the block in the window put its top at whatever half the spare
+     * room happened to be — which on a lot of windows is less than the height
+     * of the floating header, so the section title was held behind it. The
+     * header's clearance is the floor; the block is centred only in whatever
+     * is left below it.
+     */
+    const stickyTop = fits ? Math.max(HEADER_CLEARANCE, Math.round(room / 2)) : 0;
+
+    if (fits) {
+      sticky!.style.position = "sticky";
+      sticky!.style.top = `${stickyTop}px`;
+      /*
+       * The run's height goes on a real sibling, not on the wrapper's padding.
+       *
+       * Padding looked equivalent and is not: with `padding-bottom` on the
+       * wrapper the sticky element never detached at all — measured inert,
+       * tracking its parent pixel for pixel — and with the identical height as
+       * a sibling box below it, it sticks. The element needs flow content to
+       * travel past, not just a taller box to sit in.
+       */
+      spacer!.style.height = `${runPx}px`;
+    }
+
     const master = gsap.to(flightRef.current, {
       value: 1,
       ease: "none",
-      scrollTrigger: {
-        trigger: grid,
-        /*
-         * As much scroll as the section can honestly give the run.
-         *
-         * The window is bounded at both ends by what is on screen: a module
-         * cannot be released before its slot has come up from below, and the
-         * last one cannot land after its row has gone off the top. Between
-         * "the grid is arriving" and "the grid is nearly away" is every pixel
-         * there is, and the releases are spread across all of it.
-         */
-        start: "top 95%",
-        end: "bottom 30%",
-        // Heavy on purpose. The scrub is what turns a flick of the wheel into
-        // a long glide, so the module keeps travelling after the scroll has
-        // stopped rather than arriving with it.
-        scrub: 2.2,
-        invalidateOnRefresh: true,
-      },
+      scrollTrigger: fits
+        ? {
+            // The wrapper, not the board: while the board is stuck its own
+            // rect does not move, so a trigger measured against it would sit
+            // at one progress for the whole run. The wrapper keeps scrolling.
+            trigger: hold,
+            start: () => `top ${stickyTop}px`,
+            end: () => `+=${runPx}`,
+            // Heavier than the fallback below: the board is held, so a longer
+            // catch-up costs nothing but glide — there is no risk of the
+            // module still travelling after its slot has scrolled away.
+            scrub: 2.1,
+            invalidateOnRefresh: true,
+          }
+        : {
+            trigger: grid,
+            start: "top 90%",
+            end: "bottom 70%",
+            /*
+             * Enough to turn a flick of the wheel into a glide, and no more.
+             * At 2.2 the module was still catching up well after the scroll
+             * stopped, which ate into the time it was sitting still and
+             * readable.
+             */
+            scrub: 1.6,
+            invalidateOnRefresh: true,
+          },
     });
 
     gsap.ticker.add(fly);
-    // The homes move whenever the grid reflows — a resize, a font landing, or
-    // ScrollTrigger recomputing the page around it.
-    const observer = new ResizeObserver(measure);
-    observer.observe(grid);
-    ScrollTrigger.addEventListener("refresh", measure);
 
     return () => {
       gsap.ticker.remove(fly);
-      observer.disconnect();
-      ScrollTrigger.removeEventListener("refresh", measure);
       master.scrollTrigger?.kill();
       master.kill();
+      // The hold is written straight onto the elements, so it has to be taken
+      // off again — a remount would otherwise stack another run's worth of
+      // padding onto the last one's.
+      if (sticky) {
+        sticky.style.position = "";
+        sticky.style.top = "";
+      }
+      if (spacer) spacer.style.height = "";
+      grid.style.removeProperty("--agent-media");
       gsap.set(cells, { clearProps: "transform,opacity,visibility,pointerEvents" });
     };
   }, [reduced]);
@@ -561,36 +696,65 @@ export function AgentsTopic() {
       <AgentScenes containerRef={sectionRef} focus={active} />
 
       <div className="mx-auto max-w-[1200px]">
-        <div data-agents-head className="max-w-2xl">
-          <p className="font-mono text-[11px] tracking-[0.4em] text-muted uppercase">01 / Modules</p>
-          <h2 className="font-display mt-3 text-[clamp(1.9rem,4.5vw,3.25rem)] leading-[1.1] font-normal tracking-tight text-foreground">
-            AI Agents
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-hero-sub sm:text-base">
-            Each agent is a working part of the same system — assembled around
-            your actual business processes, not a chat window bolted onto them.
-          </p>
-        </div>
-
-        {/* The bus every module hangs off, and the charge running it. The
-            rail keeps its own height — the pulse is absolutely placed inside
-            it, so nothing about the spacing changes. */}
-        <div
-          data-rail
-          aria-hidden="true"
-          className="relative mt-12 h-px w-full overflow-hidden bg-gradient-to-r from-accent/40 via-edge to-transparent"
-        >
-          {!reduced && (
-            <span
-              data-rail-pulse
-              className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-transparent via-accent-soft to-transparent"
-            />
-          )}
-        </div>
+        {/*
+         * The hold.
+         *
+         * `holdRef` is given extra height below the board and `stickyRef` is
+         * made sticky inside it, so the board stays put on screen while that
+         * extra height scrolls past underneath it — which is the whole run,
+         * one module at a time, with the wheel still working the entire time.
+         *
+         * Sticky rather than a ScrollTrigger pin on purpose. A pin takes the
+         * board out of flow and holds it fixed, and the section below simply
+         * scrolled up underneath it — the two ended up drawn on top of each
+         * other. A sticky element stays in flow: its parent still reserves its
+         * height, so the next section physically cannot reach it.
+         *
+         * Both properties are set from the effect, because whether there is
+         * room to do this at all depends on the window.
+         */}
+        <div ref={holdRef} className="relative">
+          <div ref={stickyRef}>
+            {/*
+             * The heading is part of the board, not something above it.
+             *
+             * Held together, the title, the line under it and the ring of
+             * modules read as one composition on one screen — which is the
+             * whole point of holding the board at all. Left outside, it simply
+             * scrolled away and left the cards unattributed for the length of
+             * the run.
+             */}
+            {/* Wide enough that the line under the title stays on one line at
+                desktop widths — two lines here is two lines fewer for the
+                cards below. */}
+            <div data-agents-head className="mx-auto max-w-5xl text-center">
+              <p className="font-mono text-[11px] tracking-[0.4em] text-muted uppercase">
+                01 / Modules
+              </p>
+              <h2 className="font-display mt-1.5 text-[clamp(1.6rem,2.9vw,2.15rem)] leading-[1.1] font-normal tracking-tight text-foreground">
+                AI Agents
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-hero-sub">
+                Each agent is a working part of the same system — assembled
+                around your actual business processes, not a chat window bolted
+                onto them.
+              </p>
+            </div>
 
         <div
           ref={gridRef}
-          className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          /*
+           * Twelve columns at `lg` so the ring has somewhere to be seated,
+           * four at `sm` so the module left over can sit in the middle of its
+           * row instead of against one edge — see RING_SLOTS. Both are the
+           * same card width they were at three columns and two; the extra
+           * columns only buy places to put things, not a different size.
+           *
+           * `relative` so the grid is every cell's `offsetParent`, which is
+           * what makes their offsets grid-relative and keeps the flight's
+           * home positions correct while the board is held.
+           */
+          className="relative mt-4 grid gap-3 sm:grid-cols-4 lg:grid-cols-12"
           // Shared perspective, so the modules read as seated at different
           // depths on one board rather than each having its own vanishing
           // point.
@@ -607,24 +771,13 @@ export function AgentsTopic() {
                * would report a moving target.
                */
               data-emerge
-              className="relative"
+              className={cn("relative", ringSlot(i))}
               style={
                 reduced
                   ? undefined
                   : { transformStyle: "preserve-3d", willChange: "transform, opacity" }
               }
             >
-              {/* The drop off the bus. Short enough to sit inside the gap
-                  above the card at every breakpoint, so it never crosses the
-                  module above it. */}
-              {!reduced && (
-                <span
-                  data-feed
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -top-3 left-7 h-3 w-px bg-gradient-to-b from-accent/0 via-accent/35 to-accent/60"
-                />
-              )}
-
               <div
                 data-dock
                 className="h-full"
@@ -643,7 +796,9 @@ export function AgentsTopic() {
                     onPointerLeave={(event) => {
                       if (event.pointerType === "mouse") leaveModule();
                     }}
-                    className="liquid-glass machine-module flex h-full flex-col rounded-2xl p-5 sm:p-6"
+                    // Tighter than it was: the heading now shares the screen
+                    // with the whole ring, so every row has to give some back.
+                    className="liquid-glass machine-module flex h-full flex-col rounded-2xl p-4 sm:p-[1.15rem]"
                     style={reduced ? undefined : { transformStyle: "preserve-3d" }}
                   >
                     {/* The pass of light when this module goes live. The panel
@@ -679,15 +834,23 @@ export function AgentsTopic() {
                       />
                     </div>
 
-                    <h3 className="font-display mt-2.5 text-lg leading-tight font-normal tracking-tight text-foreground">
+                    <h3 className="font-display mt-2 text-base leading-tight font-normal tracking-tight text-foreground">
                       {agent.name}
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted">{agent.description}</p>
+                    <p className="mt-1.5 text-[0.8rem] leading-snug text-muted">
+                      {agent.description}
+                    </p>
                   </article>
                 </div>
               </div>
             </div>
           ))}
+        </div>
+          </div>
+
+          {/* The run's worth of scroll, as flow content for the board above to
+              stay put against. Height is set from the effect. */}
+          <div ref={spacerRef} aria-hidden="true" />
         </div>
       </div>
     </div>
