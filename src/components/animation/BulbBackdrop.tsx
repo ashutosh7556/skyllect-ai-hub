@@ -45,10 +45,11 @@ export function BulbBackdrop() {
 
       const renderJourney = (raw: number) => {
         const p = easeJourney(raw);
-        // While it is travelling it rides *over* the hero, so you watch it lift
-        // out of the logo and cross the banner. Only once it has landed does it
-        // drop behind the content to act as a backdrop.
-        gsap.set(layerRef.current, { zIndex: raw < 0.98 ? 45 : 0 });
+        // While it is travelling it rides *over* the hero and over the header
+        // (z-50), so you watch it lift off the front of the logo and cross the
+        // banner rather than sliding out from behind the nav. Only once it has
+        // landed does it drop behind the content to act as a backdrop.
+        gsap.set(layerRef.current, { zIndex: raw < 0.98 ? 55 : 0 });
         gsap.set(bulb, {
           x: interpolate(from.x, 0, p),
           y: interpolate(from.y, BULB_Y_OFFSET, p),

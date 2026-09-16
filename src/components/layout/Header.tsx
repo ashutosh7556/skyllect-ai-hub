@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { scrollToTop } from "@/hooks/useLenis";
 import { NAV_ITEMS, PRIMARY_CTA } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/layout/Logo";
@@ -196,6 +198,7 @@ export function Header() {
   // of them is ever on screen.
   const [openItem, setOpenItem] = useState<string | null>(null);
   const navRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
 
   // Escape closes whatever is open, and a click outside the header dismisses
   // the dropdowns — otherwise a menu opened by tap on a touch device has no
@@ -257,7 +260,20 @@ export function Header() {
 
       <div className="flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
         {/* The full lockup carries its own wordmark, so no text beside it. */}
-        <Link href="/#home" className="flex items-center" onClick={closeAll}>
+        <Link
+          href="/#home"
+          className="flex items-center"
+          // On home the href is already the current URL, so Next treats the
+          // click as a no-op and nothing moves. Lenis also owns the scroll
+          // position, so a hash jump would be undone on the next frame —
+          // hand the scroll to Lenis directly instead.
+          onClick={(event) => {
+            closeAll();
+            if (pathname !== "/") return;
+            event.preventDefault();
+            scrollToTop();
+          }}
+        >
           <Logo variant="full" height={34} bulbOrigin />
         </Link>
 
