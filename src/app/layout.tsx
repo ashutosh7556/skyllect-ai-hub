@@ -1,21 +1,19 @@
 import type { Metadata } from "next";
-import { Lato } from "next/font/google";
-import localFont from "next/font/local";
+import { Inter, Poppins } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
+import "animate.css";
 import "./globals.css";
 
-const lato = Lato({
-  variable: "--font-lato",
+// Inter for body copy, Poppins for headings.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "700", "900"],
 });
 
-// skyllect.com's heading face. Only the regular cut exists; headings are
-// set bold on top of it, exactly as the live site does.
-const sansation = localFont({
-  variable: "--font-sansation",
-  src: "./fonts/Sansation-Regular.ttf",
-  weight: "400",
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${lato.variable} ${sansation.variable} h-full antialiased`}>
+    <html lang="en" className={`${inter.variable} ${poppins.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-body">
         <AppShell>{children}</AppShell>
       </body>

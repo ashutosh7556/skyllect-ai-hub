@@ -69,7 +69,7 @@ export function SectionShell({
           className={cn("mb-10 max-w-3xl lg:mb-14", align === "center" && "mx-auto text-center")}
         >
           {eyebrow ? (
-            <p className="mb-4 inline-flex rounded-full bg-peach px-3.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-orange">
+            <p className="mb-4 inline-flex rounded-full bg-mist px-3.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-blue">
               {eyebrow}
             </p>
           ) : null}

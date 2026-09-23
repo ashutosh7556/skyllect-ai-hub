@@ -12,7 +12,7 @@ interface ButtonProps {
 
 const VARIANT_STYLES: Record<NonNullable<ButtonProps["variant"]>, string> = {
   primary:
-    "bg-gradient-to-r from-brand-orange to-brand-orange-soft text-white shadow-[0_10px_24px_-12px_rgba(249,122,31,0.85)] hover:from-brand-blue hover:to-brand-blue hover:shadow-[0_10px_24px_-12px_rgba(37,99,201,0.7)]",
+    "bg-gradient-to-r from-brand-orange to-brand-orange-soft text-white hover:from-brand-blue hover:to-brand-blue",
   secondary: "border border-line bg-surface text-brand-blue hover:border-brand-blue",
 };
 

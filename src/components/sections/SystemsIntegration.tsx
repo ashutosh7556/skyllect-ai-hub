@@ -44,13 +44,18 @@ export function SystemsIntegration() {
       />
 
       <div className="mt-10 grid gap-5 sm:mt-14 lg:grid-cols-[1fr_1.4fr] lg:gap-6">
-        <div className="card p-6 sm:p-8">
-          <h3 className="font-display text-lg font-bold text-heading sm:text-xl">
+        <div className="card flex flex-col p-6 sm:p-8">
+          <h3 className="font-display text-xl font-bold text-heading sm:text-2xl">
             Connected systems
           </h3>
-          <ul className="mt-5 flex flex-wrap gap-2 sm:gap-3">
+          {/* Equal-height tiles that stretch to fill the card, however tall
+              its neighbour makes it. */}
+          <ul className="mt-6 grid flex-1 auto-rows-fr grid-cols-2 gap-3 sm:grid-cols-3">
             {CONNECTED_SYSTEMS.map((system) => (
-              <li key={system} className="chip px-4 py-2 text-sm">
+              <li
+                key={system}
+                className="flex items-center justify-center rounded-xl border border-[#ffd6b8] bg-peach px-3 py-3 text-center text-[15px] font-bold leading-snug text-[#c2560c] sm:text-base"
+              >
                 {system}
               </li>
             ))}
@@ -58,12 +63,19 @@ export function SystemsIntegration() {
         </div>
 
         <div className="card p-6 sm:p-8">
-          <h3 className="font-display text-lg font-bold text-heading sm:text-xl">Your AI can</h3>
-          <ul className="mt-5 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+          <h3 className="font-display text-xl font-bold text-heading sm:text-2xl">Your AI can</h3>
+          {/* Flowing columns rather than a grid, so a two-line item does not
+              leave a gap beside its shorter neighbour. */}
+          <ul className="mt-6 columns-1 gap-x-8 sm:columns-2">
             {CAPABILITIES.map((capability) => (
-              <li key={capability} className="flex gap-2.5 text-[15px] leading-relaxed text-body">
-                <Tick />
-                {capability}
+              <li
+                key={capability}
+                className="mb-4 flex break-inside-avoid items-start gap-3 text-[15px] font-bold leading-snug text-heading sm:text-base"
+              >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-peach">
+                  <Tick className="mt-0 h-3 w-3" />
+                </span>
+                <span className="pt-0.5">{capability}</span>
               </li>
             ))}
           </ul>

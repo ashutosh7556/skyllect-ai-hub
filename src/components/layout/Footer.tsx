@@ -19,13 +19,14 @@ function Arrow() {
 }
 
 function FooterTitle({ children }: { children: React.ReactNode }) {
-  return <h2 className="mb-5 text-xl font-black text-heading sm:text-2xl">{children}</h2>;
+  return <h2 className="font-display mb-5 text-lg font-semibold text-heading sm:text-xl">{children}</h2>;
 }
 
 export function Footer() {
   return (
     <footer id="contact" className="border-t border-line bg-surface py-12 text-body sm:py-16">
-      <div className="container-site grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.2fr_1fr_1fr_1.2fr] lg:gap-8">
+      {/* Brand on the left, the contact email on the right. */}
+      <div className="container-site flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="max-w-sm">
           <Link href="/" className="inline-flex items-center">
             <Logo height={48} />
@@ -34,6 +35,27 @@ export function Footer() {
             Engineering AI into real business operations.
           </p>
         </div>
+
+        <div className="sm:text-right">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Email us</p>
+          <a
+            href="mailto:info@skyllect.com"
+            className="font-display mt-1.5 inline-flex items-center gap-2.5 text-xl font-semibold text-brand-blue hover:text-brand-orange sm:text-2xl"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2.5" />
+              <path d="m4 7 8 6 8-6" />
+            </svg>
+            info@skyllect.com
+          </a>
+        </div>
+      </div>
+
+      <div className="container-site">
+        <div className="my-10 border-t border-line sm:my-12" />
+      </div>
+
+      <div className="container-site grid gap-10 sm:grid-cols-3 lg:gap-8">
 
         <div>
           <FooterTitle>Navigation</FooterTitle>
@@ -87,11 +109,6 @@ export function Footer() {
                 <address className="not-italic">
                   339 Golden Square, Mota Varachha (Digital Valley), Surat 394101, Gujarat, India
                 </address>
-              </a>
-            </li>
-            <li>
-              <a href="mailto:info@skyllect.com" className="hover:text-brand-orange">
-                info@skyllect.com
               </a>
             </li>
             <li>Working Hours: 10:00 – 19:00</li>

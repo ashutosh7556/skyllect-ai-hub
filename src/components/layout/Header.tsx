@@ -279,7 +279,7 @@ export function Header() {
           <Link
             href={PRIMARY_CTA.href}
             onClick={closeAll}
-            className="rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-soft px-5 py-2.5 text-[15px] font-bold text-white shadow-[0_10px_24px_-12px_rgba(249,122,31,0.85)] hover:from-brand-blue hover:to-brand-blue"
+            className="rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-soft px-5 py-2.5 text-[15px] font-bold text-white hover:from-brand-blue hover:to-brand-blue"
           >
             {PRIMARY_CTA.label}
           </Link>

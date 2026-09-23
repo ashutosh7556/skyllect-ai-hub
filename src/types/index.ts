@@ -76,13 +76,15 @@ export interface NavItem {
 
 export interface IndustryAgent {
   name: string;
-  description: string;
+  description?: string;
   steps: string[];
 }
 
 export interface Industry {
   slug: string;
   name: string;
+  /** Short line under the name in the home page card header. */
+  tagline?: string;
   headline: string;
   agents: IndustryAgent[];
   ctaLabel: string;

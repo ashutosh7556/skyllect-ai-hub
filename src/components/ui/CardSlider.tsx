@@ -24,10 +24,10 @@ function ArrowButton({
       disabled={disabled}
       aria-label={direction === "prev" ? "Previous" : "Next"}
       className={cn(
-        "flex h-14 w-14 items-center justify-center rounded-full",
+        "flex items-center justify-center rounded-full transition duration-300 ease-out motion-reduce:transition-none",
         disabled
           ? "cursor-default bg-line text-muted"
-          : "bg-brand-orange text-white shadow-[0_10px_24px_-10px_rgba(249,122,31,0.7)] hover:bg-brand-blue",
+          : "bg-brand-orange text-white hover:scale-105 hover:bg-brand-blue",
         className,
       )}
     >
@@ -50,8 +50,8 @@ function ArrowButton({
 /**
  * A row of cards that pages sideways with previous/next buttons: one card per
  * view on phones, two from md, three from lg. Built on native horizontal
- * scrolling with snap points, so touch swipe works too. Jumps are instant —
- * no easing.
+ * scrolling with snap points, so touch swipe works too. Paging glides
+ * smoothly, or jumps straight there for anyone who prefers reduced motion.
  */
 export function CardSlider({ children }: { children: ReactNode }) {
   const trackRef = useRef<HTMLDivElement>(null);
@@ -75,7 +75,11 @@ export function CardSlider({ children }: { children: ReactNode }) {
     const track = trackRef.current;
     const card = track?.firstElementChild as HTMLElement | null;
     if (!track || !card) return;
-    track.scrollBy({ left: direction * (card.offsetWidth + GAP_PX), behavior: "instant" });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    track.scrollBy({
+      left: direction * (card.offsetWidth + GAP_PX),
+      behavior: reduced ? "instant" : "smooth",
+    });
   };
 
   return (
@@ -93,23 +97,25 @@ export function CardSlider({ children }: { children: ReactNode }) {
         ))}
       </div>
 
-      {/* Out beside the track only where the page margin has room for it;
-          centred beneath the track everywhere else. */}
+      {/* Beside the cards from lg up — on their edges on laptops, out in the
+          margin on wide screens — set a little above centre so they line up
+          with the cards rather than the section below. Beneath the track on
+          smaller screens. */}
       <ArrowButton
         direction="prev"
         disabled={atStart}
         onClick={() => step(-1)}
-        className="absolute top-1/2 -left-20 hidden -translate-y-1/2 min-[1400px]:flex"
+        className="absolute top-[46%] -left-6 z-20 hidden h-11 w-11 -translate-y-1/2 lg:flex wide:-left-20 wide:h-14 wide:w-14"
       />
       <ArrowButton
         direction="next"
         disabled={atEnd}
         onClick={() => step(1)}
-        className="absolute top-1/2 -right-20 hidden -translate-y-1/2 min-[1400px]:flex"
+        className="absolute top-[46%] -right-6 z-20 hidden h-11 w-11 -translate-y-1/2 lg:flex wide:-right-20 wide:h-14 wide:w-14"
       />
-      <div className="mt-8 flex justify-center gap-4 min-[1400px]:hidden">
-        <ArrowButton direction="prev" disabled={atStart} onClick={() => step(-1)} />
-        <ArrowButton direction="next" disabled={atEnd} onClick={() => step(1)} />
+      <div className="mt-8 flex justify-center gap-4 lg:hidden">
+        <ArrowButton direction="prev" disabled={atStart} onClick={() => step(-1)} className="h-14 w-14" />
+        <ArrowButton direction="next" disabled={atEnd} onClick={() => step(1)} className="h-14 w-14" />
       </div>
     </div>
   );

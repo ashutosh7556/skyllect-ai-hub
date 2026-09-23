@@ -4,6 +4,7 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "logistics",
     name: "Logistics & Freight",
+    tagline: "Quotes, shipments and freight paperwork, handled automatically.",
     headline: "Reduce manual coordination across freight operations.",
     ctaLabel: "Explore Logistics AI",
     agents: [
@@ -53,13 +54,13 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "distribution",
     name: "Distribution & Supply",
+    tagline: "RFQs, quotations, orders and purchasing, running on autopilot.",
     headline:
       "Turn manual RFQ, quotation, order, and purchasing processes into intelligent workflows.",
     ctaLabel: "Explore Distribution AI",
     agents: [
       {
         name: "AI RFQ & Quotation Agent",
-        description: "“Please quote 500 units of SKU AB-482 and 250 units of ZX-10.”",
         steps: [
           "Identifies products",
           "Checks ERP",
@@ -90,6 +91,7 @@ export const INDUSTRIES: Industry[] = [
   {
     slug: "manufacturing",
     name: "Manufacturing",
+    tagline: "Clear daily visibility across orders, production and suppliers.",
     headline: "Give management better visibility across operations.",
     ctaLabel: "Explore Manufacturing AI",
     agents: [

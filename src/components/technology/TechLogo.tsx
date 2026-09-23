@@ -265,7 +265,9 @@ export function TechLogo({ slug, className }: { slug: TechLogoSlug; className?: 
       aria-label={icon.title}
       viewBox="0 0 24 24"
       className={className ?? "h-7 w-7"}
-      fill={displayColor(icon.hex)}
+      fill="currentColor"
+      // Also exposed as `color`, so effects like a glow can pick up the brand colour.
+      style={{ color: displayColor(icon.hex) }}
     >
       <path d={icon.path} />
     </svg>
