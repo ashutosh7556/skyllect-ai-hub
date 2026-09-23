@@ -1,11 +1,8 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/** The one gradient the site uses to pick a word out of a heading. */
-const ACCENT_GRADIENT = "linear-gradient(to left, #6366f1, #a855f7, #fcd34d)";
-
 /**
- * Renders `text` with the first occurrence of `accent` in the brand gradient.
+ * Renders `text` with the first occurrence of `accent` in the orange gradient.
  * Falls back to plain text when the accent is not present, so a typo in the
  * content never blanks a heading.
  */
@@ -16,11 +13,22 @@ export function AccentHeading({ text, accent }: { text: string; accent: string }
   return (
     <>
       {text.slice(0, at)}
-      <span className="bg-clip-text text-transparent" style={{ backgroundImage: ACCENT_GRADIENT }}>
-        {accent}
-      </span>
+      <span className="text-gradient">{accent}</span>
       {text.slice(at + accent.length)}
     </>
+  );
+}
+
+/** Breadcrumb trail shared by every content page. */
+export function Breadcrumb({ section, current }: { section: string; current: string }) {
+  return (
+    <nav aria-label="Breadcrumb" className="mb-8">
+      <ol className="flex flex-wrap items-center gap-2 text-sm text-muted">
+        <li>{section}</li>
+        <li aria-hidden="true">/</li>
+        <li className="font-bold text-brand-blue">{current}</li>
+      </ol>
+    </nav>
   );
 }
 
@@ -31,7 +39,7 @@ interface SectionShellProps {
   accent: string;
   description?: string;
   align?: "left" | "center";
-  /** Alternating band, so consecutive sections separate without a rule. */
+  /** Light blue band, so consecutive sections separate without a rule. */
   muted?: boolean;
   className?: string;
   children?: ReactNode;
@@ -55,33 +63,21 @@ export function SectionShell({
   children,
 }: SectionShellProps) {
   return (
-    <section
-      id={id}
-      className={cn(
-        "px-5 py-13 sm:px-8 xl:py-25",
-        muted && "border-y border-white/5 bg-white/[0.02]",
-        className,
-      )}
-    >
-      <div className="mx-auto max-w-[1200px]">
+    <section id={id} className={cn("py-14 sm:py-20", muted && "bg-band", className)}>
+      <div className="container-site">
         <div
-          className={cn(
-            "mb-12 max-w-3xl lg:mb-14 xl:mb-18",
-            align === "center" && "mx-auto text-center",
-          )}
+          className={cn("mb-10 max-w-3xl lg:mb-14", align === "center" && "mx-auto text-center")}
         >
           {eyebrow ? (
-            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.24em] text-white/45 sm:text-xs">
+            <p className="mb-4 inline-flex rounded-full bg-peach px-3.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-orange">
               {eyebrow}
             </p>
           ) : null}
-          <h2 className="font-display text-[clamp(1.6rem,4vw,2.75rem)] font-medium leading-[1.15] tracking-tight text-white">
+          <h2 className="font-display text-[clamp(1.5rem,1.1rem+1.6vw,2.5rem)] font-bold leading-[1.25] text-heading">
             <AccentHeading text={heading} accent={accent} />
           </h2>
           {description ? (
-            <p className="mt-4 text-sm leading-relaxed text-white/55 sm:text-base">
-              {description}
-            </p>
+            <p className="mt-4 text-[15px] leading-relaxed text-body sm:text-base">{description}</p>
           ) : null}
         </div>
 

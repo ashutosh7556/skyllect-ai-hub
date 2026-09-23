@@ -1,29 +1,33 @@
+import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 
 export function FinalCta() {
   return (
-    <section className="w-full px-5 py-8 sm:px-8 sm:py-10">
-      <div className="mx-auto max-w-4xl text-center">
-        <h2 className="text-2xl font-medium leading-[1.15] tracking-tight text-white sm:text-4xl sm:leading-[1.1] md:text-6xl">
-          The Future Isn&apos;t AI Replacing Your Business.
-          <br />
-          <span className="text-white/50">It&apos;s AI Working Inside Your Business.</span>
-        </h2>
+    <Section>
+      {/* Set on its own soft gradient panel so the closing message stands apart. */}
+      <div className="card-header-soft rounded-[2rem] border border-line px-6 py-14 text-center sm:px-12 sm:py-20">
+        <div className="mx-auto max-w-4xl">
+          <h2 className="font-display text-[clamp(1.5rem,1.1rem+1.8vw,2.75rem)] font-bold leading-[1.25] text-heading">
+            The Future Isn&apos;t AI Replacing Your Business.
+            <br />
+            <span className="text-gradient">It&apos;s AI Working Inside Your Business.</span>
+          </h2>
 
-        <p className="mx-auto mt-4 max-w-xl text-sm text-white/60 sm:mt-6 sm:text-base">
-          Let Skyllect help you identify where AI can save time, reduce manual work,
-          and improve operational efficiency.
-        </p>
+          <p className="mx-auto mt-5 max-w-xl text-[15px] text-body sm:text-base">
+            Let Skyllect help you identify where AI can save time, reduce manual work, and improve
+            operational efficiency.
+          </p>
 
-        <Button href="#contact" className="mt-7 sm:mt-10">
-          Book an AI Workflow Consultation
-        </Button>
+          <div className="mt-8 flex justify-center">
+            <Button href="#contact">Book an AI Workflow Consultation</Button>
+          </div>
 
-        <p className="mt-5 text-xs text-white/40 sm:mt-6 sm:text-sm">
-          No obligation. We&apos;ll start by understanding your business and
-          identifying the workflows worth automating.
-        </p>
+          <p className="mt-5 text-sm text-muted">
+            No obligation. We&apos;ll start by understanding your business and identifying the
+            workflows worth automating.
+          </p>
+        </div>
       </div>
-    </section>
+    </Section>
   );
 }

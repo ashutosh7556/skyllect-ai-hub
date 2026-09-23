@@ -1,29 +1,50 @@
 @import "tailwindcss";
 
+/*
+ * Fresh, light palette: a cool off-white page with misty blue bands and white
+ * cards, deep navy type, and Skyllect's orange and blue as clean accents.
+ * Pastel peach and mist tints carry the soft gradient washes.
+ */
 :root {
-  --background: hsl(260 87% 3%);
-  --foreground: hsl(40 6% 95%);
-  --hero-sub: hsl(40 6% 82%);
-  --font-display-family: "General Sans", var(--font-geist-sans), Arial, sans-serif;
+  --brand-orange: #f97a1f;
+  --brand-orange-soft: #ff9d52;
+  --brand-blue: #2563c9;
+  --heading: #0f1b33;
+  --body: #4a5568;
+  --muted: #7c879b;
+  --background: #f7f8fc;
+  --band: #eef2fa;
+  --surface: #ffffff;
+  --line: #e4e8f2;
+  --peach: #fff0e4;
+  --mist: #e8f0fe;
 }
 
 @theme inline {
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-soft: var(--brand-orange-soft);
+  --color-brand-blue: var(--brand-blue);
+  --color-heading: var(--heading);
+  --color-body: var(--body);
+  --color-muted: var(--muted);
   --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-hero-sub: var(--hero-sub);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-display-family);
+  --color-band: var(--band);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-peach: var(--peach);
+  --color-mist: var(--mist);
+  --font-sans: var(--font-lato), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-sansation), var(--font-lato), Arial, sans-serif;
 }
 
 body {
   background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  color: var(--body);
+  font-family: var(--font-sans);
 }
 
 ::selection {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(249, 122, 31, 0.2);
 }
 
 .sr-only {
@@ -39,128 +60,79 @@ body {
 }
 
 /*
- * Lives in the components layer so Tailwind utilities still win against it.
- * Outside a layer this rule sits after the utilities in source order, and
- * since both are single-class selectors its `position: relative` silently
- * beat any `absolute`/`fixed` utility placed on the same element.
+ * The site is deliberately static: no transitions, keyframes or smooth
+ * scrolling anywhere, including any a utility class might still introduce.
  */
-@layer components {
-  .liquid-glass {
-    background: rgba(255, 255, 255, 0.01);
-    background-blend-mode: luminosity;
-    backdrop-filter: blur(4px);
-    border: none;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-    position: relative;
-    overflow: hidden;
-  }
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+}
 
-  .liquid-glass::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 1.4px;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.45) 0%,
-      rgba(255, 255, 255, 0.15) 20%,
-      rgba(255, 255, 255, 0) 40%,
-      rgba(255, 255, 255, 0) 60%,
-      rgba(255, 255, 255, 0.15) 80%,
-      rgba(255, 255, 255, 0.45) 100%
-    );
-    -webkit-mask:
-      linear-gradient(#fff 0 0) content-box,
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
+html {
+  scroll-behavior: auto;
 }
 
 @layer components {
-  /*
-   * Agent cards are positioned by GSAP every frame, so hover must not touch
-   * transform. Border, glow and video opacity are safe to animate here.
-   * The border lives in CSS rather than inline styles so the hover rule can
-   * actually win — an inline border-color would override it.
-   */
-  .agent-card {
-    border-color: color-mix(in srgb, var(--agent-accent) 35%, transparent);
-    transition:
-      border-color 0.35s ease,
-      box-shadow 0.35s ease;
+  .container-site {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1320px;
+    padding-inline: 1.25rem;
   }
 
-  .agent-card:hover {
-    border-color: color-mix(in srgb, var(--agent-accent) 85%, transparent);
-    box-shadow: 0 24px 70px -18px color-mix(in srgb, var(--agent-accent) 55%, transparent);
+  @media (min-width: 640px) {
+    .container-site {
+      padding-inline: 2rem;
+    }
   }
 
-  .agent-card__video {
-    transition: opacity 0.35s ease;
+  .no-scrollbar {
+    scrollbar-width: none;
   }
 
-  .agent-card:hover .agent-card__video {
-    opacity: 0.85;
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-}
 
-@layer components {
-  /*
-   * The book is one pinned screen with every leaf stacked at the same document
-   * position, so a fragment jump to #saas or #industries would land on the
-   * first leaf. BookStack sets --leaf-scroll-offset per leaf to that leaf's
-   * index in viewports; a negative scroll margin turns it into the extra
-   * scroll needed to reach that leaf's turn.
-   */
-  [style*="--leaf-scroll-offset"] > section {
-    scroll-margin-top: var(--leaf-scroll-offset, 0px);
+  /* White tile with a hairline edge and a soft, layered shadow. */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    box-shadow:
+      0 1px 2px rgba(15, 27, 51, 0.04),
+      0 14px 34px -18px rgba(15, 27, 51, 0.16);
   }
-}
 
-/*
- * Applied by app/solutions/template.tsx. A template gets a new key on every
- * route change, so this replays each time you pick a different solution while
- * the layout around it stays mounted. The blanket prefers-reduced-motion rule
- * further down neutralises it.
- */
-@keyframes solution-enter {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
+  /* Peach-to-mist wash used for card headers. */
+  .card-header-soft {
+    background: linear-gradient(135deg, var(--peach) 0%, var(--mist) 100%);
   }
-  to {
-    opacity: 1;
-    transform: none;
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 9999px;
+    background: var(--surface);
+    color: var(--body);
   }
-}
 
-.solution-enter {
-  animation: solution-enter 0.45s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-}
-
-@keyframes marquee {
-  from {
-    transform: translateX(0%);
+  /* Orange gradient for accent words in headings. */
+  .text-gradient {
+    background: linear-gradient(90deg, var(--brand-orange) 0%, var(--brand-orange-soft) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  to {
-    transform: translateX(-50%);
-  }
-}
 
-.animate-marquee {
-  animation: marquee 20s linear infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  /* Soft static colour wash behind the hero. */
+  .bg-mesh {
+    background:
+      radial-gradient(55% 65% at 88% 18%, #ffe4cf 0%, rgba(255, 228, 207, 0) 70%),
+      radial-gradient(50% 60% at 8% 85%, #dfe9ff 0%, rgba(223, 233, 255, 0) 70%),
+      var(--background);
   }
 }

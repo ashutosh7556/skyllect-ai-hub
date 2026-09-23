@@ -27,26 +27,16 @@ export function TechCardGrid({
       accent={copy.accent}
       description={copy.description}
     >
-      <div
-        className={cn(
-          "grid gap-4 sm:grid-cols-2 lg:gap-5",
-          columns === 3 && "lg:grid-cols-3",
-        )}
-      >
+      <div className={cn("grid gap-4 sm:grid-cols-2 lg:gap-6", columns === 3 && "lg:grid-cols-3")}>
         {items.map((item, i) => (
-          <article
-            key={item.title}
-            className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors duration-300 hover:border-white/20 hover:bg-white/[0.05] sm:rounded-3xl sm:p-6"
-          >
+          <article key={item.title} className="card p-6">
             {numbered ? (
-              <p className="font-mono text-xs text-white/30">
+              <p className="font-display text-xl font-bold text-brand-orange">
                 {String(i + 1).padStart(2, "0")}
               </p>
             ) : null}
-            <h3 className="font-display mt-1.5 text-base font-medium tracking-tight text-white sm:text-lg">
-              {item.title}
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-white/55">{item.description}</p>
+            <h3 className="font-display mt-1.5 text-lg font-bold text-heading">{item.title}</h3>
+            <p className="mt-2 text-[15px] leading-relaxed text-body">{item.description}</p>
           </article>
         ))}
       </div>

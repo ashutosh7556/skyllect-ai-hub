@@ -17,25 +17,17 @@ export function SectionHeading({
   className,
 }: SectionHeadingProps) {
   return (
-    <div
-      className={cn(
-        "max-w-3xl",
-        align === "center" && "mx-auto text-center",
-        className,
-      )}
-    >
+    <div className={cn("max-w-3xl", align === "center" && "mx-auto text-center", className)}>
       {eyebrow ? (
-        <p className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-white/50 sm:mb-4 sm:text-sm">
+        <p className="mb-4 inline-flex rounded-full bg-peach px-3.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-brand-orange">
           {eyebrow}
         </p>
       ) : null}
-      <h2 className="text-2xl font-medium leading-[1.15] tracking-tight text-white sm:text-4xl sm:leading-[1.1] md:text-5xl lg:text-6xl">
+      <h2 className="font-display text-[clamp(1.5rem,1.1rem+1.6vw,2.5rem)] font-bold leading-[1.25] text-heading">
         {title}
       </h2>
       {description ? (
-        <p className="mt-3 text-sm leading-relaxed text-white/60 sm:mt-6 sm:text-lg">
-          {description}
-        </p>
+        <p className="mt-4 text-[15px] leading-relaxed text-body sm:text-lg">{description}</p>
       ) : null}
     </div>
   );

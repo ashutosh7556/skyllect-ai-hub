@@ -246,14 +246,14 @@ export function techLogoTitle(slug: TechLogoSlug) {
 }
 
 /**
- * Several brands are black or near-black — Next.js, Remix and Angular all
- * are — which would make them invisible on this background. Anything below
- * the luminance floor falls back to off-white instead of its brand colour.
+ * A few brand colours are white or near-white, which would make them
+ * invisible on the white tiles. Anything above the luminance ceiling falls
+ * back to the heading colour instead of its brand colour.
  */
 function displayColor(hex: string) {
   const channel = (at: number) => parseInt(hex.slice(at, at + 2), 16) / 255;
   const luminance = 0.2126 * channel(0) + 0.7152 * channel(2) + 0.0722 * channel(4);
-  return luminance < 0.22 ? "#E6E4F0" : `#${hex}`;
+  return luminance > 0.9 ? "#323232" : `#${hex}`;
 }
 
 export function TechLogo({ slug, className }: { slug: TechLogoSlug; className?: string }) {

@@ -3,41 +3,24 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { scrollToTop } from "@/hooks/useLenis";
 import { NAV_ITEMS, PRIMARY_CTA } from "@/data/navigation";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/layout/Logo";
 import { NavIcon, monogram } from "@/components/layout/NavIcons";
 import type { NavItem, NavLink } from "@/types";
 
-/**
- * The menus sit on their own raised surface rather than on the page colour.
- * The site background is near-black, so a translucent panel disappeared into
- * it — this is a lifted slate with a hairline edge and a soft top sheen.
- */
-const PANEL_SURFACE: React.CSSProperties = {
-  background:
-    "linear-gradient(180deg, rgba(31,26,58,0.98) 0%, rgba(20,16,40,0.98) 45%, rgba(14,11,28,0.98) 100%)",
-  boxShadow:
-    "0 40px 90px -28px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.09)",
-};
+/** White panel with a hairline edge, shared by the dropdowns and mobile sheet. */
+const PANEL_CLASS = "rounded-2xl border border-line bg-surface shadow-[0_18px_40px_-18px_rgba(15,27,51,0.22)]";
 
 function Chevron({ open }: { open: boolean }) {
   return (
     <svg
       aria-hidden="true"
       viewBox="0 0 12 12"
-      className={cn(
-        "h-2.5 w-2.5 transition-transform duration-200",
-        open && "rotate-180",
-      )}
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      className={cn("h-2.5 w-2.5", open && "rotate-180")}
+      fill="currentColor"
     >
-      <path d="M2.5 4.5 6 8l3.5-3.5" />
+      <path d="M2 4h8L6 8.5z" />
     </svg>
   );
 }
@@ -47,23 +30,21 @@ function DropdownLink({ link, onDone }: { link: NavLink; onDone: () => void }) {
     <Link
       href={link.href}
       onClick={onDone}
-      className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-200 hover:bg-white/[0.07]"
+      className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 hover:bg-band"
     >
       {link.icon ? (
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/12 bg-white/[0.05] text-foreground/65 transition-colors duration-200 group-hover:border-white/25 group-hover:bg-white/[0.10] group-hover:text-foreground">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-surface text-brand-blue">
           <NavIcon name={link.icon} />
         </span>
       ) : null}
-      <span className="text-sm text-foreground/80 transition-colors duration-200 group-hover:text-foreground">
-        {link.label}
-      </span>
+      <span className="text-sm text-heading group-hover:text-brand-orange">{link.label}</span>
     </Link>
   );
 }
 
 /**
  * Large card entries, used by Case Studies. The client marks are small logo
- * files, so they sit contained on a branded panel rather than being cropped
+ * files, so they sit contained on a tinted panel rather than being cropped
  * to fill like a photograph would be.
  */
 function NavCards({ item, onDone }: { item: NavItem; onDone: () => void }) {
@@ -74,15 +55,9 @@ function NavCards({ item, onDone }: { item: NavItem; onDone: () => void }) {
           key={card.href}
           href={card.href}
           onClick={onDone}
-          className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition-colors duration-300 hover:border-white/25 hover:bg-white/[0.06]"
+          className="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface"
         >
-          <span
-            className="flex h-24 items-center justify-center border-b border-white/10 px-6"
-            style={{
-              background:
-                "radial-gradient(120% 140% at 30% 0%, rgba(99,102,241,0.22) 0%, rgba(168,85,247,0.10) 45%, rgba(12,9,25,0) 85%)",
-            }}
-          >
+          <span className="flex h-24 items-center justify-center border-b border-line bg-band px-6">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={card.image}
@@ -92,15 +67,10 @@ function NavCards({ item, onDone }: { item: NavItem; onDone: () => void }) {
           </span>
 
           <span className="flex flex-1 flex-col p-4">
-            <span className="text-sm font-medium text-foreground">{card.label}</span>
-            <span className="mt-1.5 text-xs leading-relaxed text-foreground/55">
-              {card.description}
-            </span>
-            <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-indigo-200/80 transition-colors duration-200 group-hover:text-indigo-100">
-              Explore
-              <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-0.5">
-                →
-              </span>
+            <span className="text-sm font-bold text-heading">{card.label}</span>
+            <span className="mt-1.5 text-xs leading-relaxed text-muted">{card.description}</span>
+            <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-brand-orange group-hover:text-brand-blue">
+              Explore <span aria-hidden="true">→</span>
             </span>
           </span>
         </Link>
@@ -122,17 +92,17 @@ function NavFeatures({ item, onDone }: { item: NavItem; onDone: () => void }) {
           key={feature.href}
           href={feature.href}
           onClick={onDone}
-          className="group flex flex-col border-b border-white/10 px-2 py-4 transition-colors duration-200 last:border-b-0 hover:border-white/20 sm:[&:nth-last-child(-n+2)]:border-b-0"
+          className="group flex flex-col border-b border-line px-2 py-4 last:border-b-0 sm:[&:nth-last-child(-n+2)]:border-b-0"
         >
           <span className="flex items-center gap-2.5">
-            <span className="text-indigo-200/80 transition-colors duration-200 group-hover:text-indigo-100">
+            <span className="text-brand-orange">
               <NavIcon name={feature.icon} className="h-[17px] w-[17px]" />
             </span>
-            <span className="text-sm font-semibold text-foreground">{feature.label}</span>
+            <span className="text-sm font-bold text-heading group-hover:text-brand-orange">
+              {feature.label}
+            </span>
           </span>
-          <span className="mt-2 text-xs leading-relaxed text-foreground/60 transition-colors duration-200 group-hover:text-foreground/80">
-            {feature.description}
-          </span>
+          <span className="mt-2 text-xs leading-relaxed text-muted">{feature.description}</span>
         </Link>
       ))}
     </div>
@@ -153,12 +123,12 @@ function NavItemPanel({ item, onDone }: { item: NavItem; onDone: () => void }) {
             <Link
               href={group.href}
               onClick={onDone}
-              className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-200 hover:bg-white/[0.07]"
+              className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-band"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-white/12 bg-white/[0.05] text-foreground/65 transition-colors duration-200 group-hover:border-white/25 group-hover:text-foreground">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-brand-blue">
                 <NavIcon name={group.icon} className="h-[13px] w-[13px]" />
               </span>
-              <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/55 transition-colors duration-200 group-hover:text-foreground">
+              <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-heading group-hover:text-brand-orange">
                 {group.label}
               </span>
             </Link>
@@ -168,9 +138,9 @@ function NavItemPanel({ item, onDone }: { item: NavItem; onDone: () => void }) {
               {group.items.map((tech) => (
                 <li
                   key={tech}
-                  className="flex items-center gap-2.5 rounded-lg px-2 py-1 text-sm text-foreground/65"
+                  className="flex items-center gap-2.5 rounded-lg px-2 py-1 text-sm text-body"
                 >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-white/10 bg-white/[0.04] text-[9px] font-semibold tracking-tight text-foreground/50">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded border border-line bg-band text-[9px] font-bold tracking-tight text-brand-blue">
                     {monogram(tech)}
                   </span>
                   {tech}
@@ -226,124 +196,94 @@ export function Header() {
     setMenuOpen(false);
   };
 
-  // The bar is transparent so the home hero reads full-bleed behind it, but
-  // that means anything scrolling underneath collides with the nav labels.
-  // Once the page moves at all, a scrim goes in behind the bar. Lenis drives
-  // the window scroll, so a plain scroll listener tracks it.
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // An open mobile sheet needs the scrim regardless of scroll position.
-  const solid = scrolled || menuOpen;
-
   return (
-    <header ref={navRef} className="fixed inset-x-0 top-0 z-50">
-      <div
-        aria-hidden="true"
-        className={cn(
-          "pointer-events-none absolute inset-0 -z-10 transition-opacity duration-300",
-          solid ? "opacity-100" : "opacity-0",
-        )}
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(8,5,18,0.92) 0%, rgba(8,5,18,0.80) 60%, rgba(8,5,18,0) 100%)",
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
-        }}
-      />
-
-      <div className="flex items-center justify-between px-5 py-4 sm:px-8 sm:py-5">
+    <header
+      ref={navRef}
+      className="sticky top-0 z-50 border-b border-line/70 bg-background/80 backdrop-blur-md"
+    >
+      <div className="container-site flex items-center justify-between py-3 sm:py-4">
         {/* The full lockup carries its own wordmark, so no text beside it. */}
         <Link
-          href="/#home"
+          href="/"
           className="flex items-center"
           // On home the href is already the current URL, so Next treats the
-          // click as a no-op and nothing moves. Lenis also owns the scroll
-          // position, so a hash jump would be undone on the next frame —
-          // hand the scroll to Lenis directly instead.
+          // click as a no-op — jump back to the top instead.
           onClick={(event) => {
             closeAll();
             if (pathname !== "/") return;
             event.preventDefault();
-            scrollToTop();
+            window.scrollTo(0, 0);
           }}
         >
-          <Logo variant="full" height={34} bulbOrigin />
+          <Logo height={44} />
         </Link>
 
-        <nav className="hidden lg:block">
-          <ul className="flex items-center gap-2">
-            {NAV_ITEMS.map((item) => {
-              const open = openItem === item.label;
-              return (
-                <li
-                  key={item.label}
-                  className="relative"
-                  // Guarded on pointer type so a tap does not both hover-open
-                  // and click-toggle, which would leave the menu shut.
-                  onPointerEnter={(event) => {
-                    if (event.pointerType === "mouse") setOpenItem(item.label);
-                  }}
-                  onPointerLeave={(event) => {
-                    if (event.pointerType === "mouse") setOpenItem(null);
-                  }}
-                >
-                  <button
-                    type="button"
-                    aria-expanded={open}
-                    aria-haspopup="true"
-                    onClick={() => setOpenItem(open ? null : item.label)}
-                    className={cn(
-                      "flex items-center gap-1.5 rounded-full px-3 py-2 text-sm transition-colors duration-200",
-                      open ? "text-foreground" : "text-foreground/90 hover:text-foreground",
-                    )}
+        <div className="hidden items-center gap-4 lg:flex">
+          <nav>
+            <ul className="flex items-center gap-1">
+              {NAV_ITEMS.map((item) => {
+                const open = openItem === item.label;
+                return (
+                  <li
+                    key={item.label}
+                    className="relative"
+                    // Guarded on pointer type so a tap does not both hover-open
+                    // and click-toggle, which would leave the menu shut.
+                    onPointerEnter={(event) => {
+                      if (event.pointerType === "mouse") setOpenItem(item.label);
+                    }}
+                    onPointerLeave={(event) => {
+                      if (event.pointerType === "mouse") setOpenItem(null);
+                    }}
                   >
-                    {item.label}
-                    <Chevron open={open} />
-                  </button>
-
-                  {open ? (
-                    // pt-3 rather than a margin keeps the pointer inside the
-                    // item while it travels from the trigger to the panel.
-                    <div
+                    <button
+                      type="button"
+                      aria-expanded={open}
+                      aria-haspopup="true"
+                      onClick={() => setOpenItem(open ? null : item.label)}
                       className={cn(
-                        "absolute top-full left-1/2 -translate-x-1/2 pt-3",
-                        item.groups && "w-[min(880px,calc(100vw-4rem))]",
-                        item.cards && "w-[min(660px,calc(100vw-4rem))]",
-                        item.features && "w-[min(600px,calc(100vw-4rem))]",
-                        !item.groups &&
-                          !item.cards &&
-                          !item.features &&
-                          "w-[min(320px,calc(100vw-4rem))]",
+                        "flex items-center gap-1.5 px-3 py-2 text-[15px]",
+                        open ? "text-brand-orange" : "text-heading hover:text-brand-orange",
                       )}
                     >
-                      <div
-                        className="rounded-2xl border border-white/12 p-3 backdrop-blur-xl"
-                        style={PANEL_SURFACE}
-                      >
-                        <NavItemPanel item={item} onDone={closeAll} />
-                      </div>
-                    </div>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+                      {item.label}
+                      <Chevron open={open} />
+                    </button>
 
-        <Link
-          href={PRIMARY_CTA.href}
-          onClick={closeAll}
-          className="liquid-glass hidden rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors duration-200 hover:text-foreground lg:inline-flex"
-        >
-          {PRIMARY_CTA.label}
-        </Link>
+                    {open ? (
+                      // pt-3 rather than a margin keeps the pointer inside the
+                      // item while it travels from the trigger to the panel.
+                      <div
+                        className={cn(
+                          "absolute top-full left-1/2 -translate-x-1/2 pt-3",
+                          item.groups && "w-[min(880px,calc(100vw-4rem))]",
+                          item.cards && "w-[min(660px,calc(100vw-4rem))]",
+                          item.features && "w-[min(600px,calc(100vw-4rem))]",
+                          !item.groups &&
+                            !item.cards &&
+                            !item.features &&
+                            "w-[min(320px,calc(100vw-4rem))]",
+                        )}
+                      >
+                        <div className={cn(PANEL_CLASS, "p-3")}>
+                          <NavItemPanel item={item} onDone={closeAll} />
+                        </div>
+                      </div>
+                    ) : null}
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <Link
+            href={PRIMARY_CTA.href}
+            onClick={closeAll}
+            className="rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-soft px-5 py-2.5 text-[15px] font-bold text-white shadow-[0_10px_24px_-12px_rgba(249,122,31,0.85)] hover:from-brand-blue hover:to-brand-blue"
+          >
+            {PRIMARY_CTA.label}
+          </Link>
+        </div>
 
         <button
           type="button"
@@ -356,37 +296,34 @@ export function Header() {
           aria-expanded={menuOpen}
         >
           <span
-            className={cn(
-              "h-px w-5 bg-foreground transition-transform duration-300",
-              menuOpen && "translate-y-[3.5px] rotate-45",
-            )}
+            className={cn("h-0.5 w-6 bg-heading", menuOpen && "translate-y-[4px] rotate-45")}
           />
           <span
-            className={cn(
-              "h-px w-5 bg-foreground transition-transform duration-300",
-              menuOpen && "-translate-y-[3.5px] -rotate-45",
-            )}
+            className={cn("h-0.5 w-6 bg-heading", menuOpen && "-translate-y-[4px] -rotate-45")}
           />
         </button>
       </div>
 
-      <div className="mt-[3px] h-px w-full bg-gradient-to-r from-transparent via-foreground/20 to-transparent" />
-
       {menuOpen ? (
         <div
-          className="absolute inset-x-4 top-[64px] max-h-[calc(100dvh-80px)] overflow-y-auto overscroll-contain rounded-3xl border border-white/12 p-4 backdrop-blur-xl sm:top-[72px] lg:hidden"
-          style={PANEL_SURFACE}
+          className={cn(
+            PANEL_CLASS,
+            "absolute inset-x-4 top-full mt-2 max-h-[calc(100dvh-90px)] overflow-y-auto overscroll-contain p-4 lg:hidden",
+          )}
         >
           <nav className="flex flex-col">
             {NAV_ITEMS.map((item) => {
               const open = openItem === item.label;
               return (
-                <div key={item.label} className="border-b border-white/5 last:border-b-0">
+                <div key={item.label} className="border-b border-line last:border-b-0">
                   <button
                     type="button"
                     aria-expanded={open}
                     onClick={() => setOpenItem(open ? null : item.label)}
-                    className="flex min-h-12 w-full items-center justify-between gap-2 text-left text-base text-foreground/85 transition-colors duration-200 hover:text-foreground"
+                    className={cn(
+                      "flex min-h-12 w-full items-center justify-between gap-2 text-left text-base",
+                      open ? "text-brand-orange" : "text-heading",
+                    )}
                   >
                     {item.label}
                     <Chevron open={open} />
@@ -404,7 +341,7 @@ export function Header() {
             <Link
               href={PRIMARY_CTA.href}
               onClick={closeAll}
-              className="liquid-glass mt-4 rounded-full px-5 py-3.5 text-center text-sm font-medium text-foreground"
+              className="mt-4 rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-soft px-5 py-3.5 text-center text-sm font-bold text-white"
             >
               {PRIMARY_CTA.label}
             </Link>
