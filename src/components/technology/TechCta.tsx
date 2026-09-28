@@ -19,7 +19,7 @@ export function TechCta({ content }: { content: TechnologyPageContent }) {
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <Button href="/#contact">Book a Technical Consultation</Button>
+            <Button href="/contact">Book a Technical Consultation</Button>
             <Button href="/" variant="secondary">
               Explore Skyllect
             </Button>

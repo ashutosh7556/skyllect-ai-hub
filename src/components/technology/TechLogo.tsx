@@ -245,6 +245,11 @@ export function techLogoTitle(slug: TechLogoSlug) {
   return ICONS[slug].title;
 }
 
+// Where simple-icons ships a brand's monochrome mark, use its familiar colour.
+const COLOR_OVERRIDES: Partial<Record<TechLogoSlug, string>> = {
+  angular: "#dd0031",
+};
+
 /**
  * A few brand colours are white or near-white, which would make them
  * invisible on the white tiles. Anything above the luminance ceiling falls
@@ -267,7 +272,7 @@ export function TechLogo({ slug, className }: { slug: TechLogoSlug; className?: 
       className={className ?? "h-7 w-7"}
       fill="currentColor"
       // Also exposed as `color`, so effects like a glow can pick up the brand colour.
-      style={{ color: displayColor(icon.hex) }}
+      style={{ color: COLOR_OVERRIDES[slug] ?? displayColor(icon.hex) }}
     >
       <path d={icon.path} />
     </svg>

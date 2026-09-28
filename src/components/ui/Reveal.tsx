@@ -3,15 +3,30 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-// How much of the section must be on screen before it counts as "in view".
-const THRESHOLD = 0.12;
+// A section counts as "in view" while any of it sits inside the middle 70% of
+// the screen, so the fade-out plays visibly as it passes the top or bottom
+// edge rather than once it has already scrolled away.
+const ROOT_MARGIN = "-15% 0px -15% 0px";
 
 /**
- * Fades its section in with Animate.css as it enters the viewport and back
- * out as it leaves, in either scroll direction. Until the observer reports,
- * nothing is applied, so content is never hidden if JavaScript fails.
+ * Fades its section up into place as it enters the viewport and back out as
+ * it leaves, in either scroll direction. Built on CSS transitions rather than
+ * keyframe animations: a transition always starts from the current state, so
+ * reversing mid-way is smooth instead of snapping to invisible and replaying.
+ * Until the observer reports, nothing is applied, so content is never hidden
+ * if JavaScript fails.
  */
-export function Reveal({ children }: { children: ReactNode }) {
+export function Reveal({
+  children,
+  className,
+  delay,
+}: {
+  children: ReactNode;
+  /** Classes for the wrapper itself, e.g. sizing when it sits in a grid or flex row. */
+  className?: string;
+  /** Staggers the entrance, e.g. "0.16s", for items revealed side by side. */
+  delay?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState<boolean | null>(null);
 
@@ -21,7 +36,7 @@ export function Reveal({ children }: { children: ReactNode }) {
 
     const observer = new IntersectionObserver(
       ([entry]) => setInView(entry.isIntersecting),
-      { threshold: THRESHOLD },
+      { rootMargin: ROOT_MARGIN, threshold: 0 },
     );
     observer.observe(node);
     return () => observer.disconnect();
@@ -30,11 +45,9 @@ export function Reveal({ children }: { children: ReactNode }) {
   return (
     <div
       ref={ref}
-      className={cn(
-        inView !== null && "animate__animated reveal",
-        inView === true && "animate__fadeIn",
-        inView === false && "animate__fadeOut",
-      )}
+      // The stagger only applies on the way in; leaving is immediate.
+      style={delay && inView ? { transitionDelay: delay } : undefined}
+      className={cn(className, inView !== null && "reveal", inView === true && "reveal--in")}
     >
       {children}
     </div>

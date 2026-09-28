@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { AppShell } from "@/components/layout/AppShell";
-import "animate.css";
 import "./globals.css";
 
 // Inter for body copy, Poppins for headings.

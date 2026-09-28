@@ -39,7 +39,7 @@ export function TechCapabilities({
       </div>
 
       <div className="mt-10 flex justify-center">
-        <Button href="/#contact">Discuss Your Requirements</Button>
+        <Button href="/contact">Discuss Your Requirements</Button>
       </div>
     </SectionShell>
   );

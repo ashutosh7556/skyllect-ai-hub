@@ -1,6 +1,31 @@
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Reveal } from "@/components/ui/Reveal";
 import { WORKFLOW_STEPS } from "@/data/workflow";
+
+// One line icon per step, in the same order as WORKFLOW_STEPS (24px grid).
+const STEP_ICONS = [
+  // Incoming email
+  <><rect key="a" x="3" y="5" width="18" height="14" rx="2.5" /><path key="b" d="m4 7 8 6 8-6" /></>,
+  // AI understands the request
+  <path key="a" d="M12 3.5 13.8 8.2 18.5 10l-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8L12 3.5ZM18.5 16l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2Z" />,
+  // Extracting information
+  <><path key="a" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" /><path key="b" d="M14 3v5h5M9 13h6M9 17h4" /></>,
+  // Checking business systems
+  <><ellipse key="a" cx="10" cy="6" rx="6" ry="2.5" /><path key="b" d="M4 6v5c0 1.4 2.7 2.5 6 2.5M4 11v5c0 1.4 2.7 2.5 6 2.5" /><circle key="c" cx="17" cy="16" r="3" /><path key="d" d="m19.2 18.2 1.8 1.8" /></>,
+  // Preparing a recommendation
+  <path key="a" d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3Z" />,
+  // Requesting approval
+  <path key="a" d="M12 3 5 6v5c0 4.5 3 8.4 7 10 4-1.6 7-5.5 7-10V6l-7-3ZM9 12l2 2 4-4" />,
+  // Updating CRM & ERP
+  <path key="a" d="M20 12a8 8 0 0 1-14 5.3M4 12a8 8 0 0 1 14-5.3M18 3v3.7h-3.7M6 21v-3.7h3.7" />,
+  // Sending the response
+  <path key="a" d="m21 3-9.5 9.5M21 3l-6.5 18-3-8.5-8.5-3L21 3Z" />,
+  // Creating a follow-up
+  <><rect key="a" x="3.5" y="5" width="17" height="15.5" rx="2.5" /><path key="b" d="M3.5 10h17M8 3v4M16 3v4M9 15l2 2 4-4" /></>,
+];
+
+const COLUMNS = 3;
 
 // A looping flight path across the top of the section, in a 1440-wide
 // coordinate space. It starts and ends just off-canvas so the plane glides in
@@ -73,15 +98,38 @@ export function WorkflowTopic() {
           description="Replace repetitive manual processes with intelligent workflows."
         />
 
+        {/* Icon, step number and name per card, in order. */}
         <ol className="mt-10 grid gap-4 sm:mt-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
-          {WORKFLOW_STEPS.map((step, i) => (
-            <li key={step} className="card flex items-center gap-4 p-5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-peach text-sm font-bold text-brand-orange">
-                {i + 1}
-              </span>
-              <span className="text-base font-bold text-heading">{step}</span>
-            </li>
-          ))}
+          {WORKFLOW_STEPS.map((step, i) => {
+            return (
+              <li key={step}>
+                <Reveal delay={`${(i % COLUMNS) * 0.08}s`} className="h-full">
+                  <div className="card flex h-full items-center gap-4 p-5 transition duration-200 hover:border-brand-blue motion-reduce:transition-none">
+                    <span className="card-header-strong flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white">
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        className="h-[22px] w-[22px]"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={1.8}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        {STEP_ICONS[i]}
+                      </svg>
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-orange">
+                        Step {String(i + 1).padStart(2, "0")}
+                      </p>
+                      <p className="mt-1 text-base font-semibold text-heading sm:text-[17px]">{step}</p>
+                    </div>
+                  </div>
+                </Reveal>
+              </li>
+            );
+          })}
         </ol>
       </div>
     </Section>

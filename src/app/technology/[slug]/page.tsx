@@ -8,6 +8,7 @@ import { TechProcess } from "@/components/technology/TechProcess";
 import { TechChallenges } from "@/components/technology/TechChallenges";
 import { TechCardGrid } from "@/components/technology/TechCardGrid";
 import { TechCta } from "@/components/technology/TechCta";
+import { Reveal } from "@/components/ui/Reveal";
 
 // Every technology page is known at build time, so prerender the lot and turn
 // away anything that is not one of them.
@@ -45,13 +46,27 @@ export default async function TechnologyPage({
   // between them, matching the reference layout's banded rhythm.
   return (
     <>
-      <TechHero content={content} />
-      <TechCapabilities content={content} muted />
-      <TechChallenges content={content} />
-      <TechStack content={content} muted />
-      <TechProcess content={content} />
-      <TechCardGrid copy={content.whyUs} items={content.whyUs.items} numbered muted />
-      <TechCta content={content} />
+      <Reveal>
+        <TechHero content={content} />
+      </Reveal>
+      <Reveal>
+        <TechCapabilities content={content} muted />
+      </Reveal>
+      <Reveal>
+        <TechChallenges content={content} />
+      </Reveal>
+      <Reveal>
+        <TechStack content={content} muted />
+      </Reveal>
+      <Reveal>
+        <TechProcess content={content} />
+      </Reveal>
+      <Reveal>
+        <TechCardGrid copy={content.whyUs} items={content.whyUs.items} numbered muted />
+      </Reveal>
+      <Reveal>
+        <TechCta content={content} />
+      </Reveal>
     </>
   );
 }

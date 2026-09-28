@@ -29,7 +29,7 @@ export function TechHero({ content }: { content: TechnologyPageContent }) {
           </p>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <Button href="/#contact">Start a {content.navLabel} Project</Button>
+            <Button href="/contact">Start a {content.navLabel} Project</Button>
             <Button href="#technology-stack" variant="secondary">
               See the Stack
             </Button>

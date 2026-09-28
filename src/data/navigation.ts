@@ -104,10 +104,10 @@ export const FOOTER_LINKS: NavLink[] = [
   { label: "Home", href: "/#home" },
   ...AI_SOLUTIONS,
   { label: "Industries", href: "/#industries" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export const PRIMARY_CTA = {
   label: "Book an AI Workflow Consultation",
-  href: "/#contact",
+  href: "/contact",
 };

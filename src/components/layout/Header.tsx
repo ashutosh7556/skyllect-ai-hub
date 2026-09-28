@@ -30,7 +30,7 @@ function DropdownLink({ link, onDone }: { link: NavLink; onDone: () => void }) {
     <Link
       href={link.href}
       onClick={onDone}
-      className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 hover:bg-band"
+      className="group flex items-center gap-3 rounded-xl px-2.5 py-2.5 transition-colors duration-300 hover:bg-band motion-reduce:transition-none"
     >
       {link.icon ? (
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-line bg-surface text-brand-blue">
@@ -123,7 +123,7 @@ function NavItemPanel({ item, onDone }: { item: NavItem; onDone: () => void }) {
             <Link
               href={group.href}
               onClick={onDone}
-              className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-band"
+              className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition-colors duration-300 hover:bg-band motion-reduce:transition-none"
             >
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-brand-blue">
                 <NavIcon name={group.icon} className="h-[13px] w-[13px]" />
@@ -242,20 +242,23 @@ export function Header() {
                       aria-haspopup="true"
                       onClick={() => setOpenItem(open ? null : item.label)}
                       className={cn(
-                        "flex items-center gap-1.5 px-3 py-2 text-[15px]",
-                        open ? "text-brand-orange" : "text-heading hover:text-brand-orange",
+                        "flex items-center gap-1.5 rounded-full px-3 py-2 text-[15px] transition-colors duration-300 ease-out motion-reduce:transition-none",
+                        open ? "bg-peach text-brand-orange" : "text-heading hover:bg-peach hover:text-brand-orange",
                       )}
                     >
                       {item.label}
                       <Chevron open={open} />
                     </button>
 
-                    {open ? (
-                      // pt-3 rather than a margin keeps the pointer inside the
-                      // item while it travels from the trigger to the panel.
-                      <div
+                    {/* Always mounted so it can fade out as well as in. pt-3
+                        rather than a margin keeps the pointer inside the item
+                        while it travels from the trigger to the panel. */}
+                    <div
+                        aria-hidden={!open}
+                        inert={!open}
                         className={cn(
-                          "absolute top-full left-1/2 -translate-x-1/2 pt-3",
+                          "nav-dropdown absolute top-full left-1/2 -translate-x-1/2 pt-3",
+                          open && "nav-dropdown--open",
                           item.groups && "w-[min(880px,calc(100vw-4rem))]",
                           item.cards && "w-[min(660px,calc(100vw-4rem))]",
                           item.features && "w-[min(600px,calc(100vw-4rem))]",
@@ -268,8 +271,7 @@ export function Header() {
                         <div className={cn(PANEL_CLASS, "p-3")}>
                           <NavItemPanel item={item} onDone={closeAll} />
                         </div>
-                      </div>
-                    ) : null}
+                    </div>
                   </li>
                 );
               })}
@@ -279,7 +281,7 @@ export function Header() {
           <Link
             href={PRIMARY_CTA.href}
             onClick={closeAll}
-            className="rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-soft px-5 py-2.5 text-[15px] font-bold text-white hover:from-brand-blue hover:to-brand-blue"
+            className="btn-primary rounded-full px-5 py-2.5 text-[15px] font-bold"
           >
             {PRIMARY_CTA.label}
           </Link>
@@ -330,7 +332,7 @@ export function Header() {
                   </button>
 
                   {open ? (
-                    <div className="pb-3">
+                    <div className="nav-accordion-in pb-3">
                       <NavItemPanel item={item} onDone={closeAll} />
                     </div>
                   ) : null}
@@ -341,7 +343,7 @@ export function Header() {
             <Link
               href={PRIMARY_CTA.href}
               onClick={closeAll}
-              className="mt-4 rounded-full bg-gradient-to-r from-brand-orange to-brand-orange-soft px-5 py-3.5 text-center text-sm font-bold text-white"
+              className="btn-primary mt-4 rounded-full px-5 py-3.5 text-center text-sm font-bold text-white"
             >
               {PRIMARY_CTA.label}
             </Link>

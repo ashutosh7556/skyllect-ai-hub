@@ -97,51 +97,93 @@ body {
   }
 }
 
-/* Hero tech logos glow in their own brand colour, softly breathing. */
-@keyframes tech-glow {
-  0%,
-  100% {
-    filter: drop-shadow(0 0 3px color-mix(in srgb, currentColor 45%, transparent));
-  }
-  50% {
-    filter: drop-shadow(0 0 10px color-mix(in srgb, currentColor 80%, transparent));
-  }
-}
-
-/* A faint band of light that drifts across the circle, then rests. */
-@keyframes bulb-shine {
-  0% {
-    transform: translateX(-160%) rotate(20deg);
-  }
-  55%,
-  100% {
-    transform: translateX(360%) rotate(20deg);
-  }
-}
-
 .bulb-ripple {
   animation: bulb-ripple 4.8s ease-out var(--delay, 0s) infinite !important;
 }
 
 .bulb-orbit {
-  animation: bulb-orbit var(--duration, 24s) linear infinite !important;
+  animation: bulb-orbit var(--duration, 24s) linear var(--delay, 0s) infinite !important;
 }
 
 .bulb-orbit--reverse {
   animation-direction: reverse !important;
 }
 
-.bulb-shine {
-  animation: bulb-shine 9s ease-in-out infinite !important;
-}
-
+/*
+ * Hero tech logos: a steady glow in each logo's own brand colour. Static on
+ * purpose — animating a filter while the rings turn re-rasterises the logos
+ * every frame and blurs them.
+ */
 .tech-glow {
-  animation: tech-glow 3s ease-in-out infinite !important;
+  filter: drop-shadow(0 0 1px color-mix(in srgb, currentColor 35%, transparent))
+    drop-shadow(0 0 8px color-mix(in srgb, currentColor 50%, transparent));
+  shape-rendering: geometricPrecision;
 }
 
-/* Section fades: a touch quicker than Animate.css's 1s default. */
+/* Halo behind the hero bulb: a slow brighten and soften. */
+@keyframes bulb-halo {
+  0%,
+  100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.bulb-halo {
+  animation: bulb-halo 5s ease-in-out infinite !important;
+}
+
+/*
+ * A comet of light on an orbit ring: a conic gradient that fades in towards
+ * the leading edge (the top, where its dot sits), masked down to a thin ring.
+ */
+.orbit-trail {
+  background: conic-gradient(
+    from 250deg,
+    transparent 0deg,
+    color-mix(in srgb, var(--trail) 70%, transparent) 105deg,
+    transparent 110deg
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+  filter: drop-shadow(0 0 4px var(--trail));
+}
+
+/* Counter-clockwise rings: the tail trails off the other way, so the dot still leads. */
+.orbit-trail--reverse {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    color-mix(in srgb, var(--trail) 70%, transparent) 5deg,
+    transparent 110deg
+  );
+}
+
+/*
+ * Section reveals: rise 48px and fade. Transitions (not keyframes) so a
+ * section that turns around mid-fade eases back from where it is, with no blink.
+ */
 .reveal {
-  --animate-duration: 0.7s;
+  opacity: 0;
+  transform: translate3d(0, 48px, 0);
+  transition:
+    opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) !important;
+}
+
+.reveal--in {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none !important;
+  }
 }
 
 /* System tiles beside the services slider bob gently, each on its own beat. */
@@ -223,14 +265,12 @@ body {
   }
 
   .bulb-ripple,
-  .bulb-orbit,
-  .bulb-shine {
+  .bulb-orbit {
     animation: none !important;
   }
 
-  .tech-glow {
+  .bulb-halo {
     animation: none !important;
-    filter: drop-shadow(0 0 6px color-mix(in srgb, currentColor 60%, transparent));
   }
 
   .paper-plane {
@@ -240,6 +280,157 @@ body {
 
 html {
   scroll-behavior: auto;
+}
+
+/*
+ * Primary button: orange gradient with a solid blue layer on top that fades in
+ * on hover. Gradients cannot be transitioned directly, so the fade is on the
+ * layer's opacity, which animates smoothly both in and out.
+ */
+.btn-primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-image: linear-gradient(90deg, var(--brand-orange), var(--brand-orange-soft));
+  color: #fff;
+  transition: transform 0.3s ease !important;
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--brand-blue);
+  opacity: 0;
+  transition: opacity 0.35s ease !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary:hover::before,
+.btn-primary:focus-visible::before {
+  opacity: 1;
+}
+
+/* Secondary button: border and text colour ease in and out. */
+.btn-secondary {
+  transition:
+    border-color 0.3s ease,
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease !important;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-primary,
+  .btn-primary::before,
+  .btn-secondary {
+    transition: none !important;
+  }
+
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    transform: none;
+  }
+}
+
+/*
+ * Header dropdowns fade and drift into place, and fade back out on leave.
+ * Visibility waits for the fade-out to finish before hiding the panel. The
+ * drift uses `transform`, not `translate`: Tailwind's centring utility owns
+ * `translate`, and overriding it knocked the panel off centre.
+ */
+.nav-dropdown {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s linear 0.25s !important;
+}
+
+.nav-dropdown--open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease,
+    visibility 0s !important;
+}
+
+@keyframes nav-accordion-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nav-accordion-in {
+  animation: nav-accordion-in 0.25s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-dropdown,
+  .nav-dropdown--open {
+    transition: none !important;
+  }
+
+  .nav-accordion-in {
+    animation: none !important;
+  }
+}
+
+/*
+ * Systems section background video: the source is cyan circuits on black, so
+ * it is inverted (and hue-shifted back to blue) to read as dark lines on a
+ * light surface, matching the rest of the page.
+ */
+.systems-bg-video {
+  filter: invert(1) hue-rotate(180deg) saturate(1.4);
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .systems-bg-video {
+    display: none;
+  }
+}
+
+/* Everything clickable shows a pointer; disabled controls do not. */
+a[href],
+button,
+[role="button"],
+summary,
+label[for],
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: default;
+}
+
+/* Clear keyboard focus ring on every interactive element (mouse clicks don't show it). */
+:where(a, button, [role="button"], summary, input, select, textarea):focus-visible {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 @layer components {

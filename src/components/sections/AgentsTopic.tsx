@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { AGENTS } from "@/data/agents";
+import { Reveal } from "@/components/ui/Reveal";
 
 export function AgentsTopic() {
   return (
@@ -27,19 +28,26 @@ export function AgentsTopic() {
           {/* Flex rather than grid so an incomplete last row sits centred. */}
           <div className="flex flex-wrap justify-center gap-5 lg:gap-6">
             {AGENTS.map((agent, i) => (
-              <div
+              // Each card reveals on its own as it scrolls into view, staggered
+              // across the row, so they animate when you actually reach them.
+              <Reveal
                 key={agent.name}
-                style={{ ["--agent-accent" as string]: agent.accent }}
-                className="card agent-card-hover w-full px-6 py-8 text-center sm:w-[calc(50%-10px)] sm:px-8 sm:py-10 lg:w-[calc(25%-18px)] xl:w-[calc((100%-48px)/3)] 3xl:w-[calc(25%-18px)]"
+                delay={`${(i % 4) * 0.08}s`}
+                className="flex w-full sm:w-[calc(50%-10px)] lg:w-[calc(25%-18px)] xl:w-[calc((100%-48px)/3)] 3xl:w-[calc(25%-18px)]"
               >
-                <p className="agent-label text-xs font-bold uppercase tracking-[0.25em] text-brand-orange">
-                  Agent {String(i + 1).padStart(2, "0")}
-                </p>
-                <h3 className="agent-title font-display mt-3 text-xl font-bold text-heading sm:text-2xl">
-                  {agent.name}
-                </h3>
-                <p className="mt-4 text-base leading-relaxed text-body sm:text-[17px]">{agent.description}</p>
-              </div>
+                <div
+                  style={{ ["--agent-accent" as string]: agent.accent }}
+                  className="card agent-card-hover w-full px-6 py-8 text-center sm:px-8 sm:py-10"
+                >
+                  <p className="agent-label text-xs font-bold uppercase tracking-[0.25em] text-brand-orange">
+                    Agent {String(i + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="agent-title font-display mt-3 text-xl font-bold text-heading sm:text-2xl">
+                    {agent.name}
+                  </h3>
+                  <p className="mt-4 text-base leading-relaxed text-body sm:text-[17px]">{agent.description}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
 

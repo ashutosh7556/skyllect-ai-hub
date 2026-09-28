@@ -60,7 +60,7 @@ function ServiceCard({ id, eyebrow, title, tagline, description, chips, cta }: S
       </div>
 
       <div className="mt-auto border-t border-line px-5 py-4">
-        <Button href="#contact">{cta}</Button>
+        <Button href="/contact">{cta}</Button>
       </div>
     </article>
   );
@@ -145,7 +145,7 @@ export function ServicesAndIndustries() {
                   </div>
 
                   <div className="mt-auto border-t border-line px-5 py-4">
-                    <Button href="#contact">{industry.ctaLabel}</Button>
+                    <Button href="/contact">{industry.ctaLabel}</Button>
                   </div>
                 </article>
               ))}

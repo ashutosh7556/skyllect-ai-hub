@@ -11,9 +11,8 @@ interface ButtonProps {
 }
 
 const VARIANT_STYLES: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary:
-    "bg-gradient-to-r from-brand-orange to-brand-orange-soft text-white hover:from-brand-blue hover:to-brand-blue",
-  secondary: "border border-line bg-surface text-brand-blue hover:border-brand-blue",
+  primary: "btn-primary",
+  secondary: "btn-secondary border border-line bg-surface text-brand-blue hover:border-brand-blue hover:bg-mist",
 };
 
 /** Pill button with a trailing arrow. */

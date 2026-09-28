@@ -32,6 +32,15 @@ const ORBITS: {
   },
 ];
 
+// Light trails on the orbit rings. Insets match the rings in ORBITS; the
+// start angle staggers two trails sharing a ring.
+const TRAILS: { inset: string; color: string; duration: string; reverse: boolean; start: number }[] = [
+  { inset: "6%", color: "#3b82f6", duration: "9s", reverse: false, start: 0 },
+  { inset: "6%", color: "#ff7a1a", duration: "9s", reverse: false, start: 180 },
+  { inset: "15%", color: "#ff7a1a", duration: "7s", reverse: true, start: 90 },
+  { inset: "15%", color: "#3b82f6", duration: "7s", reverse: true, start: 270 },
+];
+
 // Short trust points under the hero copy.
 const HERO_BADGES: { label: string; icon: ReactNode; iconClass: string }[] = [
   {
@@ -94,7 +103,7 @@ export function Hero() {
           </ul>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-            <Button href="#contact">Book an AI Workflow Consultation</Button>
+            <Button href="/contact">Book an AI Workflow Consultation</Button>
             <Button href="#automation" variant="secondary">
               See What We Can Automate
             </Button>
@@ -102,9 +111,17 @@ export function Hero() {
         </div>
 
         <div className="flex justify-center lg:justify-end">
-          {/* The bulb and its orbits on a soft filled circle, without a border ring. */}
-          <div className="relative flex aspect-square w-[min(500px,80vw)] items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-peach to-[#e3edff] shadow-[0_30px_60px_-30px_rgba(15,27,51,0.25)]">
+          {/* The bulb and its orbits, set straight on the hero background. */}
+          <div className="relative flex aspect-square w-[min(500px,80vw)] items-center justify-center">
             <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+              {/* Soft light behind the bulb, slowly breathing. */}
+              <span
+                className="bulb-halo absolute top-1/2 left-1/2 h-[62%] w-[62%] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(255,176,110,0.55) 0%, rgba(255,176,110,0.2) 38%, rgba(120,160,255,0.22) 62%, rgba(120,160,255,0) 75%)",
+                }}
+              />
               {RIPPLE_DELAYS.map((delay) => (
                 <span
                   key={delay}
@@ -112,7 +129,35 @@ export function Hero() {
                   style={{ ["--delay" as string]: delay }}
                 />
               ))}
-              <span className="bulb-shine absolute -top-1/4 left-0 h-[150%] w-1/4 bg-gradient-to-r from-transparent via-white/45 to-transparent" />
+
+              {/* Streaks of light running round each orbit ring, each led by a
+                  glowing dot. They travel at their own pace, apart from the logos. */}
+              {TRAILS.map((trail) => (
+                // The wrapper turns; the streak inside is masked to the ring,
+                // and the dot sits outside that mask so it stays visible.
+                <span
+                  key={trail.inset + trail.color}
+                  className={cn("bulb-orbit absolute", trail.reverse && "bulb-orbit--reverse")}
+                  style={{
+                    inset: trail.inset,
+                    ["--trail" as string]: trail.color,
+                    ["--duration" as string]: trail.duration,
+                    // A negative delay starts the trail part-way round its lap.
+                    ["--delay" as string]: `-${(trail.start / 360) * parseFloat(trail.duration)}s`,
+                  }}
+                >
+                  <span
+                    className={cn(
+                      "orbit-trail absolute inset-0 rounded-full",
+                      trail.reverse && "orbit-trail--reverse",
+                    )}
+                  />
+                  <span
+                    className="absolute top-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                    style={{ background: trail.color, boxShadow: `0 0 10px 3px ${trail.color}` }}
+                  />
+                </span>
+              ))}
             </div>
 
             <Image
@@ -153,7 +198,7 @@ export function Hero() {
                           className={cn("bulb-orbit block", !orbit.reverse && "bulb-orbit--reverse")}
                           style={{ ["--duration" as string]: orbit.duration }}
                         >
-                          <TechLogo slug={slug} className="tech-glow h-6 w-6 sm:h-8 sm:w-8" />
+                          <TechLogo slug={slug} className="tech-glow h-7 w-7 sm:h-9 sm:w-9" />
                         </span>
                       </span>
                     );

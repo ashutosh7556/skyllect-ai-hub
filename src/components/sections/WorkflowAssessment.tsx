@@ -1,18 +1,86 @@
+import type { ReactNode } from "react";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Button } from "@/components/ui/Button";
-import { Tick } from "@/components/ui/Tick";
+import { LineIcon } from "@/components/ui/FeatureCards";
 
-const AREAS = [
-  "Sales",
-  "Customer support",
-  "Operations",
-  "Procurement",
-  "Inventory",
-  "Documents",
-  "Finance administration",
-  "Reporting",
-  "Internal communication",
+const AREAS: { label: string; icon: ReactNode }[] = [
+  {
+    label: "Sales",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="m3 17 6-6 4 4 8-8M15 7h6v6" />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Customer support",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="M4 13v-1a8 8 0 0 1 16 0v1M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2v-2ZM20 13a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2v-2ZM17 17c0 2-2 3-5 3" />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Operations",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <circle cx="12" cy="12" r="3.5" />
+        <path d="M12 2.8v2.4M12 18.8v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.8 12h2.4M18.8 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Procurement",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6.2" />
+        <circle cx="9" cy="20" r="1.3" />
+        <circle cx="17" cy="20" r="1.3" />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Inventory",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5v-9ZM3.5 7.5 12 12l8.5-4.5M12 12v9" />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Documents",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
+        <path d="M14 3v5h5M9 13h6M9 17h4" />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Finance administration",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="M4 7h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Zm0 0 1.5-3.2h11" />
+        <path d="M16 13.5h.01" strokeWidth={2.6} />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Reporting",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="M4 20h16M7 16v-5M12 16V7M17 16v-8" />
+      </LineIcon>
+    ),
+  },
+  {
+    label: "Internal communication",
+    icon: (
+      <LineIcon className="h-4 w-4">
+        <path d="M4 5h11a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H9l-4 3.5V15H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2ZM17 9h3a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-1v3l-3.5-3H14" />
+      </LineIcon>
+    ),
+  },
 ];
 
 const IDENTIFIES = [
@@ -24,6 +92,18 @@ const IDENTIFIES = [
   "Opportunities for AI-assisted decision making",
 ];
 
+/** Stage heading: a numbered badge beside the stage name. */
+function StageLabel({ number, title }: { number: string; title: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="font-display flex h-10 w-10 items-center justify-center rounded-xl bg-mist text-sm font-bold text-brand-blue ring-1 ring-brand-blue/15">
+        {number}
+      </span>
+      <h3 className="font-display text-xl font-bold text-heading sm:text-2xl">{title}</h3>
+    </div>
+  );
+}
+
 export function WorkflowAssessment() {
   return (
     <Section>
@@ -33,51 +113,59 @@ export function WorkflowAssessment() {
         description="You may already have dozens of workflows that can be improved with AI. We help identify them."
       />
 
-      {/* Same layout as the Connected systems / Your AI can pair above. */}
-      <div className="mt-10 grid gap-5 sm:mt-14 lg:grid-cols-[1fr_1.4fr] lg:gap-6">
-        <div className="card flex flex-col p-6 sm:p-8">
-          <h3 className="font-display text-xl font-bold text-heading sm:text-2xl">We analyze</h3>
-          <ul className="mt-6 grid flex-1 auto-rows-fr grid-cols-2 gap-3 sm:grid-cols-3">
-            {AREAS.map((area) => (
-              <li
-                key={area}
-                className="flex items-center justify-center rounded-xl border border-[#ffd6b8] bg-peach px-3 py-3 text-center text-[15px] font-bold leading-snug text-[#c2560c] sm:text-base"
-              >
-                {area}
-              </li>
-            ))}
-          </ul>
+      {/* One panel read left to right as a process: what we look at, the
+          assessment itself, then what it surfaces. */}
+      <div className="card mt-10 overflow-hidden sm:mt-14">
+        <div className="grid lg:grid-cols-[1fr_auto_1fr]">
+          <div className="p-6 sm:p-9">
+            <StageLabel number="01" title="We analyze" />
+            <ul className="mt-6 flex flex-wrap gap-2.5">
+              {AREAS.map((area) => (
+                <li
+                  key={area.label}
+                  className="inline-flex items-center gap-2 rounded-full border border-line bg-background py-1.5 pr-4 pl-1.5 text-[15px] font-semibold text-heading transition-colors duration-200 hover:border-brand-blue hover:bg-mist motion-reduce:transition-none"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full bg-surface text-brand-blue shadow-[0_2px_8px_-3px_rgba(15,27,51,0.25)]">
+                    {area.icon}
+                  </span>
+                  {area.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Connector: a vertical divider with the assessment badge on desktop,
+              a horizontal one with a downward arrow when stacked. */}
+          <div className="relative flex items-center justify-center py-2 lg:px-4 lg:py-0">
+            <span aria-hidden="true" className="absolute inset-x-6 top-1/2 h-px bg-line lg:inset-x-auto lg:inset-y-8 lg:top-auto lg:left-1/2 lg:h-auto lg:w-px" />
+            <div className="card-header-strong relative flex items-center gap-2.5 rounded-full px-4 py-2.5 text-white shadow-[0_10px_24px_-12px_rgba(29,95,209,0.8)] lg:flex-col lg:gap-2 lg:rounded-2xl lg:px-4 lg:py-5">
+              <LineIcon className="h-6 w-6">
+                <path d="M12 3.5 13.8 8.2 18.5 10l-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8L12 3.5ZM18.5 16l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2Z" />
+              </LineIcon>
+              <span className="text-xs font-bold uppercase tracking-[0.16em] lg:text-center lg:leading-snug">
+                AI
+                <br className="hidden lg:block" /> assessment
+              </span>
+              <LineIcon className="h-4 w-4 rotate-90 lg:rotate-0">
+                <path d="M5 12h13M13 6l6 6-6 6" />
+              </LineIcon>
+            </div>
+          </div>
+
+          <div className="bg-background/60 p-6 sm:p-9">
+            <StageLabel number="02" title="Then identify" />
+            <ol className="mt-4">
+              {IDENTIFIES.map((item, i) => (
+                <li key={item} className="flex items-baseline gap-4 border-b border-line py-3.5 last:border-b-0">
+                  <span className="font-display text-sm font-bold text-brand-orange tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-base font-semibold text-heading">{item}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
-
-        <div className="card p-6 sm:p-8">
-          <h3 className="font-display text-xl font-bold text-heading sm:text-2xl">
-            Then identify
-          </h3>
-          <ul className="mt-6 columns-1 gap-x-8 sm:columns-2">
-            {IDENTIFIES.map((item) => (
-              <li
-                key={item}
-                className="mb-4 flex break-inside-avoid items-start gap-3 text-[15px] font-bold leading-snug text-heading sm:text-base"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-peach">
-                  <Tick className="mt-0 h-3 w-3" />
-                </span>
-                <span className="pt-0.5">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <p className="mt-8 max-w-2xl text-[15px] text-body sm:mt-10 sm:text-base">
-        You receive a practical automation roadmap based on business impact.
-      </p>
-
-      <div className="mt-6 flex flex-wrap gap-3 sm:gap-4">
-        <Button href="#contact">Book an AI Workflow Assessment</Button>
-        <Button href="" variant="secondary">
-          View More
-        </Button>
       </div>
     </Section>
   );
