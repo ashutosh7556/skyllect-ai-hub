@@ -103,10 +103,7 @@ export function Hero() {
           </ul>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-            <Button href="/contact">Book an AI Workflow Consultation</Button>
-            <Button href="#automation" variant="secondary">
-              See What We Can Automate
-            </Button>
+            <Button href="/contact">Contact Us</Button>
           </div>
         </div>
 

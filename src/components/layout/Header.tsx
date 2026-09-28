@@ -257,7 +257,11 @@ export function Header() {
                         aria-hidden={!open}
                         inert={!open}
                         className={cn(
-                          "nav-dropdown absolute top-full left-1/2 -translate-x-1/2 pt-3",
+                          "nav-dropdown absolute top-full pt-3",
+                          // The last menu is wide, so it opens aligned to its
+                          // trigger's right edge instead of centred, which
+                          // would push it past the edge of the screen.
+                          item.cards ? "right-0" : "left-1/2 -translate-x-1/2",
                           open && "nav-dropdown--open",
                           item.groups && "w-[min(880px,calc(100vw-4rem))]",
                           item.cards && "w-[min(660px,calc(100vw-4rem))]",

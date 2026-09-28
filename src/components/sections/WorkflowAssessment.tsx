@@ -92,33 +92,24 @@ const IDENTIFIES = [
   "Opportunities for AI-assisted decision making",
 ];
 
-/** Stage heading: a numbered badge beside the stage name. */
-function StageLabel({ number, title }: { number: string; title: string }) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className="font-display flex h-10 w-10 items-center justify-center rounded-xl bg-mist text-sm font-bold text-brand-blue ring-1 ring-brand-blue/15">
-        {number}
-      </span>
-      <h3 className="font-display text-xl font-bold text-heading sm:text-2xl">{title}</h3>
-    </div>
-  );
+/** Stage heading for each half of the panel. */
+function StageLabel({ title }: { title: string }) {
+  return <h3 className="font-display text-xl font-bold text-heading sm:text-2xl">{title}</h3>;
 }
 
 export function WorkflowAssessment() {
   return (
     <Section>
       <SectionHeading
-        eyebrow="AI workflow assessment"
         title="What Can We Automate in Your Business?"
         description="You may already have dozens of workflows that can be improved with AI. We help identify them."
       />
 
-      {/* One panel read left to right as a process: what we look at, the
-          assessment itself, then what it surfaces. */}
+      {/* One panel in two halves: what we look at, then what it surfaces. */}
       <div className="card mt-10 overflow-hidden sm:mt-14">
-        <div className="grid lg:grid-cols-[1fr_auto_1fr]">
+        <div className="grid lg:grid-cols-2">
           <div className="p-6 sm:p-9">
-            <StageLabel number="01" title="We analyze" />
+            <StageLabel title="We analyze" />
             <ul className="mt-6 flex flex-wrap gap-2.5">
               {AREAS.map((area) => (
                 <li
@@ -134,26 +125,9 @@ export function WorkflowAssessment() {
             </ul>
           </div>
 
-          {/* Connector: a vertical divider with the assessment badge on desktop,
-              a horizontal one with a downward arrow when stacked. */}
-          <div className="relative flex items-center justify-center py-2 lg:px-4 lg:py-0">
-            <span aria-hidden="true" className="absolute inset-x-6 top-1/2 h-px bg-line lg:inset-x-auto lg:inset-y-8 lg:top-auto lg:left-1/2 lg:h-auto lg:w-px" />
-            <div className="card-header-strong relative flex items-center gap-2.5 rounded-full px-4 py-2.5 text-white shadow-[0_10px_24px_-12px_rgba(29,95,209,0.8)] lg:flex-col lg:gap-2 lg:rounded-2xl lg:px-4 lg:py-5">
-              <LineIcon className="h-6 w-6">
-                <path d="M12 3.5 13.8 8.2 18.5 10l-4.7 1.8L12 16.5l-1.8-4.7L5.5 10l4.7-1.8L12 3.5ZM18.5 16l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2Z" />
-              </LineIcon>
-              <span className="text-xs font-bold uppercase tracking-[0.16em] lg:text-center lg:leading-snug">
-                AI
-                <br className="hidden lg:block" /> assessment
-              </span>
-              <LineIcon className="h-4 w-4 rotate-90 lg:rotate-0">
-                <path d="M5 12h13M13 6l6 6-6 6" />
-              </LineIcon>
-            </div>
-          </div>
 
-          <div className="bg-background/60 p-6 sm:p-9">
-            <StageLabel number="02" title="Then identify" />
+          <div className="border-t border-line bg-background/60 p-6 sm:p-9 lg:border-t-0 lg:border-l">
+            <StageLabel title="Then identify" />
             <ol className="mt-4">
               {IDENTIFIES.map((item, i) => (
                 <li key={item} className="flex items-baseline gap-4 border-b border-line py-3.5 last:border-b-0">

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 const ROOT_MARGIN = "-15% 0px -15% 0px";
 
 /**
- * Fades its section up into place as it enters the viewport and back out as
+ * Fades its section in as it enters the viewport and back out as
  * it leaves, in either scroll direction. Built on CSS transitions rather than
  * keyframe animations: a transition always starts from the current state, so
  * reversing mid-way is smooth instead of snapping to invisible and replaying.

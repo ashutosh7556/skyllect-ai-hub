@@ -36,8 +36,8 @@ const FLIGHT_PATH =
   "C 1375 28, 1402 70, 1382 82 C 1362 94, 1348 66, 1372 60 C 1405 52, 1440 92, 1500 104";
 
 /**
- * Decorative dashed flight path with a paper plane gliding along it, lifted to
- * run along the seam with the section above. Uses SVG's own animateMotion, so
+ * Decorative dashed flight path with a paper plane gliding along it, kept
+ * within the top of this section. Uses SVG's own animateMotion, so
  * it follows the curve, turns with it and scales with the viewBox — the
  * site-wide CSS animation freeze does not apply to it.
  */
@@ -47,7 +47,7 @@ function PaperPlaneFlight() {
       aria-hidden="true"
       viewBox="0 0 1440 220"
       preserveAspectRatio="xMidYMid slice"
-      className="pointer-events-none absolute inset-x-0 -top-[45px] h-[180px] w-full sm:-top-[60px] sm:h-[220px]"
+      className="pointer-events-none absolute inset-x-0 top-0 h-[160px] w-full sm:h-[200px]"
     >
       <path
         id="workflow-flight-path"
@@ -90,10 +90,10 @@ export function WorkflowTopic() {
     <Section id="automation" className="relative">
       <PaperPlaneFlight />
 
-      <div className="relative">
+      {/* Extra room on top so the flight path runs above the heading. */}
+      <div className="relative pt-16 sm:pt-20">
         <SectionHeading
           align="center"
-          eyebrow="02"
           title="AI Workflow Automation"
           description="Replace repetitive manual processes with intelligent workflows."
         />

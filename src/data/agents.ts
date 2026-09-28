@@ -4,56 +4,64 @@ export interface Agent {
   /** Per-agent colour the card takes on when hovered. */
   accent: string;
   /** Looping clip shown faintly behind the card content. */
-  video: string;
+  video?: string;
 }
 
+// Written for non-technical readers: what each automation does for the
+// business, in everyday words.
 export const AGENTS: Agent[] = [
   {
-    name: "Sales Agent",
+    name: "WhatsApp Automation",
     description:
-      "Qualifies leads, answers product questions, and hands off warm opportunities to your team.",
+      "Replies to customer messages on WhatsApp instantly, day or night - answers questions, shares updates, and takes orders.",
+    accent: "#16a34a",
+  },
+  {
+    name: "Sales Automation Assistant",
+    description:
+      "Answers questions from new enquiries and passes the serious buyers to your sales team.",
     accent: "#f97316",
     video: "/videos/cards/sales.mp4",
   },
   {
-    name: "Customer Support Agent",
+    name: "Customer Support Automation Assistant",
     description:
-      "Resolves common tickets instantly and escalates complex issues with full context.",
+      "Handles common customer questions straight away and hands tricky ones to your team with the full story.",
     accent: "#0891b2",
     video: "/videos/cards/support.mp4",
   },
   {
-    name: "Logistics Agent",
+    name: "Delivery Updates Automation",
     description:
-      "Tracks shipments, flags delays, and keeps customers updated automatically.",
-    accent: "#059669",
+      "Keeps an eye on every shipment, spots delays early, and lets customers know automatically.",
+    accent: "#4f46e5",
     video: "/videos/cards/logistics.mp4",
   },
   {
-    name: "Procurement Agent",
+    name: "Supplier Price Comparison Automation",
     description:
-      "Compares supplier quotes and recommends the best option on price, lead time, and terms.",
+      "Compares quotes from your suppliers and shows you the best deal on price and delivery time.",
     accent: "#ca8a04",
     video: "/videos/cards/procurement.mp4",
   },
   {
-    name: "Operations Copilot",
+    name: "Daily Business Overview Automation",
     description:
-      "Surfaces what needs attention today across orders, inventory, and production.",
+      "Tells you each morning what needs your attention — orders, stock, and production.",
     accent: "#e11d48",
     video: "/videos/cards/operations.mp4",
   },
   {
-    name: "Document Processing Agent",
+    name: "Paperwork & Invoice Reader Automation",
     description:
-      "Reads invoices, purchase orders, and contracts, then extracts what your systems need.",
+      "Reads invoices, orders, and contracts for you and fills the details into your systems.",
     accent: "#9333ea",
     video: "/videos/cards/documents.mp4",
   },
   {
-    name: "Internal Knowledge Assistant",
+    name: "Company Q&A Automation Assistant",
     description:
-      "Answers employee questions instantly from your internal docs and systems.",
+      "Gives your staff instant answers about company policies, processes, and files.",
     accent: "#2563eb",
     video: "/videos/cards/knowledge.mp4",
   },

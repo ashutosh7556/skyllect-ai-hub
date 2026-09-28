@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { Button } from "@/components/ui/Button";
 import { CardSlider } from "@/components/ui/CardSlider";
 import { ServicesSideArt } from "@/components/sections/ServicesSideArt";
 import { INDUSTRIES } from "@/data/industries";
@@ -34,10 +33,9 @@ interface ServiceCardProps {
   tagline?: string;
   description: string;
   chips: string[];
-  cta: string;
 }
 
-function ServiceCard({ id, eyebrow, title, tagline, description, chips, cta }: ServiceCardProps) {
+function ServiceCard({ id, eyebrow, title, tagline, description, chips }: ServiceCardProps) {
   return (
     <article id={id} className="card card-lift flex w-full scroll-mt-24 flex-col overflow-hidden shadow-none">
       {/* Same blue header as the industry cards, so the slider reads as one set. */}
@@ -57,10 +55,6 @@ function ServiceCard({ id, eyebrow, title, tagline, description, chips, cta }: S
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className="mt-auto border-t border-line px-5 py-4">
-        <Button href="/contact">{cta}</Button>
       </div>
     </article>
   );
@@ -93,7 +87,6 @@ export function ServicesAndIndustries() {
                 description="We integrate AI into your existing technology stack. AI becomes an intelligent layer across your existing systems."
                 tagline="Works alongside the CRM, ERP and tools you already use."
                 chips={INTEGRATION_SYSTEMS}
-                cta="Discuss an Integration"
               />
               <ServiceCard
                 id="saas"
@@ -102,7 +95,6 @@ export function ServicesAndIndustries() {
                 description="We help startups and businesses design, build, and scale AI-enabled software products — from prototype to production."
                 tagline="From first prototype to a production-ready product, built end to end."
                 chips={SAAS_CAPABILITIES}
-                cta="Build Your AI Product"
               />
               <ServiceCard
                 id="modernization"
@@ -111,7 +103,6 @@ export function ServicesAndIndustries() {
                 tagline="It doesn't need to be replaced just because AI has arrived."
                 description="We modernize older applications and introduce AI capabilities without rebuilding everything from scratch."
                 chips={MODERNIZATION_EXAMPLES}
-                cta="Modernize Your Software"
               />
               {INDUSTRIES.map((industry, index) => (
                 <article
@@ -142,10 +133,6 @@ export function ServicesAndIndustries() {
                         </li>
                       ))}
                     </ul>
-                  </div>
-
-                  <div className="mt-auto border-t border-line px-5 py-4">
-                    <Button href="/contact">{industry.ctaLabel}</Button>
                   </div>
                 </article>
               ))}

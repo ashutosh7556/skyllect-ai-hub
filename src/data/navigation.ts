@@ -108,6 +108,6 @@ export const FOOTER_LINKS: NavLink[] = [
 ];
 
 export const PRIMARY_CTA = {
-  label: "Book an AI Workflow Consultation",
+  label: "Contact Us",
   href: "/contact",
 };

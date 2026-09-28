@@ -64,7 +64,7 @@ body {
 }
 
 /*
- * Motion is kept deliberate: section fades (Animate.css), the hero bulb, the
+ * Motion is kept deliberate: section fades, the hero bulb, the
  * side-art tiles, card hovers and the Workflow paper plane. Everything below
  * switches off for anyone who prefers reduced motion.
  */
@@ -162,26 +162,26 @@ body {
 }
 
 /*
- * Section reveals: rise 48px and fade. Transitions (not keyframes) so a
- * section that turns around mid-fade eases back from where it is, with no blink.
+ * Section reveals: a plain opacity fade, nothing else. No transform, so a
+ * section never shifts up or down, and no blur, which would bleed past its
+ * edges into the neighbouring sections. Isolated so its stacking context is
+ * the same at every point of the fade and children never pop over or under
+ * the next section when it finishes.
+ * Transitions (not keyframes) so turning around mid-fade eases back smoothly.
  */
 .reveal {
+  isolation: isolate;
   opacity: 0;
-  transform: translate3d(0, 48px, 0);
-  transition:
-    opacity 0.8s cubic-bezier(0.22, 0.61, 0.36, 1),
-    transform 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) !important;
+  transition: opacity 0.8s cubic-bezier(0.45, 0, 0.25, 1) !important;
 }
 
 .reveal--in {
   opacity: 1;
-  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;
-    transform: none;
     transition: none !important;
   }
 }
@@ -408,6 +408,59 @@ html {
 @media (prefers-reduced-motion: reduce) {
   .systems-bg-video {
     display: none;
+  }
+}
+
+/* Contact page: faint square grid in the section background. */
+.contact-grid-bg {
+  isolation: isolate;
+}
+
+/* On its own layer, so the fade-out mask never touches the content. */
+.contact-grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(29, 95, 209, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 95, 209, 0.07) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse at center, transparent 35%, #000 90%);
+  pointer-events: none;
+}
+
+/* Contact form panel: deep blue fading to pale blue, with a soft tech grid. */
+.contact-panel {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px) 0 0 / 44px 44px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px) 0 0 / 44px 44px,
+    radial-gradient(90% 80% at 80% 10%, rgba(255, 255, 255, 0.18), transparent 60%),
+    linear-gradient(160deg, #5f88b8 0%, #8fb0d3 45%, #c7d8ea 100%);
+}
+
+/*
+ * Orange arrow cursor, drawn natively by the OS so it moves with zero lag.
+ * Only for precise pointers that hover (mouse, trackpad); touch never sees it.
+ * The number pair is the hotspot (the arrow's tip); the keyword is a fallback.
+ */
+@media (hover: hover) and (pointer: fine) {
+  html {
+    cursor: url("/cursors/cursor.png") 3 3, auto;
+  }
+
+  a[href],
+  button:not(:disabled),
+  [role="button"],
+  summary,
+  label[for],
+  select {
+    cursor: url("/cursors/cursor.png") 3 3, pointer !important;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+  textarea {
+    cursor: text;
   }
 }
 

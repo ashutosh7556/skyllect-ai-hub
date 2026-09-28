@@ -11,9 +11,8 @@ export function AgentsTopic() {
       <div className="mx-auto w-full max-w-[1840px] px-5 sm:px-8">
         <SectionHeading
           align="center"
-          eyebrow="01"
-          title="AI Agents"
-          description="AI assistants designed around your actual business processes."
+          title="AI Automation for Your Business"
+          description="Smart digital assistants that take care of everyday tasks for your team — around the clock."
         />
 
         <div className="mt-10 sm:mt-14 xl:grid xl:grid-cols-[1fr_minmax(0,960px)_1fr] xl:items-center xl:gap-6 3xl:grid-cols-[1fr_minmax(0,1320px)_1fr]">
@@ -40,7 +39,7 @@ export function AgentsTopic() {
                   className="card agent-card-hover w-full px-6 py-8 text-center sm:px-8 sm:py-10"
                 >
                   <p className="agent-label text-xs font-bold uppercase tracking-[0.25em] text-brand-orange">
-                    Agent {String(i + 1).padStart(2, "0")}
+                    Automation {String(i + 1).padStart(2, "0")}
                   </p>
                   <h3 className="agent-title font-display mt-3 text-xl font-bold text-heading sm:text-2xl">
                     {agent.name}

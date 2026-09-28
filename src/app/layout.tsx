@@ -15,6 +15,11 @@ const poppins = Poppins({
   weight: ["500", "600", "700"],
 });
 
+// Server-side rendering: every page is rendered on the server for each request
+// rather than prerendered at build time. Set on the root layout so it applies
+// to all routes. Remove this line to return to static prerendering.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Skyllect — AI Working Inside Your Business",
   description:
