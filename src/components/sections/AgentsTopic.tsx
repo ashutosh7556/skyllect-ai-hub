@@ -39,7 +39,7 @@ export function AgentsTopic() {
                   className="card agent-card-hover w-full px-6 py-8 text-center sm:px-8 sm:py-10"
                 >
                   <p className="agent-label text-xs font-bold uppercase tracking-[0.25em] text-brand-orange">
-                    Automation {String(i + 1).padStart(2, "0")}
+                    {agent.topic}
                   </p>
                   <h3 className="agent-title font-display mt-3 text-xl font-bold text-heading sm:text-2xl">
                     {agent.name}

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { Tick } from "@/components/ui/Tick";
@@ -38,23 +39,43 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
               </div>
             </div>
 
-            {/*
-             * The client mark, contained on a panel. These are small logo files
-             * rather than screenshots, so cropping them to fill would wreck them.
-             */}
-            <div className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl bg-band p-10">
-              {/*
-               * Sized by height so both marks scale by the same factor despite
-               * very different aspect ratios. Both sources are 32px tall, so
-               * this is capped at roughly 1.5x — larger visibly pixelates.
-               */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={study.logo}
-                alt={study.logoAlt}
-                className="h-10 w-auto max-w-full object-contain sm:h-12"
-              />
-            </div>
+            {study.preview ? (
+              // The client's live homepage in a simple browser frame.
+              <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-[0_24px_50px_-28px_rgba(15,27,51,0.45)]">
+                <div className="flex items-center gap-3 border-b border-line bg-background px-4 py-2.5">
+                  <span aria-hidden="true" className="flex gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+                  </span>
+                  <span className="truncate rounded-md bg-surface px-3 py-0.5 text-xs text-muted">
+                    {study.siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                  </span>
+                </div>
+                <Image
+                  src={study.preview.src}
+                  alt={study.preview.alt}
+                  width={1600}
+                  height={1000}
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 600px"
+                  className="h-auto w-full"
+                />
+              </div>
+            ) : (
+              /*
+               * The client mark, contained on a panel. These are small logo
+               * files, so cropping them to fill would wreck them.
+               */
+              <div className="flex aspect-[4/3] w-full items-center justify-center rounded-2xl bg-band p-10">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={study.logo}
+                  alt={study.logoAlt}
+                  className="h-10 w-auto max-w-full object-contain sm:h-12"
+                />
+              </div>
+            )}
           </section>
         </Reveal>
 
@@ -73,6 +94,35 @@ export function CaseStudyBody({ study }: { study: CaseStudyContent }) {
             </dl>
           </section>
         </Reveal>
+
+        {/* Product imagery from the client's site, on their brand colour. */}
+        {study.showcase?.length ? (
+          <Reveal>
+            <section className="mt-14 sm:mt-20">
+              <SubHeading>The product</SubHeading>
+              <div
+                className="mt-6 flex flex-col items-center gap-6 overflow-hidden rounded-[1.75rem] px-5 py-8 sm:px-10 sm:py-12 lg:flex-row lg:justify-center"
+                style={{ background: study.brandColor ?? "var(--band)" }}
+              >
+                {study.showcase.map((shot, i) => (
+                  <Image
+                    key={shot.src}
+                    src={shot.src}
+                    alt={shot.alt}
+                    width={shot.width}
+                    height={shot.height}
+                    sizes="(max-width: 1024px) 100vw, 900px"
+                    className={
+                      study.showcase!.length > 1 && i > 0
+                        ? "h-auto w-full max-w-[320px] lg:w-[28%]"
+                        : "h-auto w-full lg:w-auto lg:max-w-full lg:flex-1"
+                    }
+                  />
+                ))}
+              </div>
+            </section>
+          </Reveal>
+        ) : null}
 
         {/* Challenge */}
         <Reveal>

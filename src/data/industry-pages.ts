@@ -17,7 +17,7 @@ export const INDUSTRY_PAGES: SolutionContent[] = [
     heading: "AI for Healthcare Operations",
     accent: "Healthcare",
     summary:
-      "Clinical teams lose hours to coordination rather than care: chasing referrals, rekeying forms, confirming appointments, answering the same administrative questions. Skyllect automates that layer with the controls a healthcare environment demands — every action logged, sensitive steps gated behind a human.",
+      "Clinical teams lose hours to coordination rather than care: chasing referrals, rekeying forms, confirming appointments, answering the same administrative questions. Skyllect automates that layer with the controls a healthcare environment demands - every action logged, sensitive steps gated behind a human.",
     image: "/images/healthcare.jpg",
     imageAlt: "AI supporting healthcare operations and patient workflows",
     handles: [
@@ -98,7 +98,7 @@ export const INDUSTRY_PAGES: SolutionContent[] = [
     heading: "AI for E-Commerce",
     accent: "E-Commerce",
     summary:
-      "Online retail runs on volume, and volume is exactly what breaks a support team. Skyllect handles the repeating work — order enquiries, product questions, returns, follow-ups — against your live systems, and escalates anything that genuinely needs a person.",
+      "Online retail runs on volume, and volume is exactly what breaks a support team. Skyllect handles the repeating work - order enquiries, product questions, returns, follow-ups - against your live systems, and escalates anything that genuinely needs a person.",
     // Distinct from the support-AI solution's image, which keeps E-commerce.jpg.
     image: "/images/E-commerce-industies.jpg",
     imageAlt: "AI supporting e-commerce customer support and order operations",

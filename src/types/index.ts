@@ -232,6 +232,12 @@ export interface CaseStudyContent {
   logo: string;
   logoAlt: string;
   siteUrl: string;
+  /** Screenshot of the client's live homepage, shown in a browser frame. */
+  preview?: { src: string; alt: string };
+  /** Product imagery, shown on the client's brand colour. */
+  showcase?: { src: string; alt: string; width: number; height: number }[];
+  /** The client's own background colour, used behind the showcase. */
+  brandColor?: string;
   summary: string;
   facts: { label: string; value: string }[];
   challenge: { heading: string; accent: string; body: string[] };

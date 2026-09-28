@@ -1,9 +1,9 @@
 import type { CaseStudyContent } from "@/types";
 
 /**
- * Case studies. Written from the briefs for each product rather than from
- * scraped copy — kwot.com renders client-side and jobtalk.ai refuses
- * automated requests, so nothing here is lifted from their sites.
+ * Case studies. Copy is written from the briefs for each product. The
+ * graphics are taken from the clients' own live sites: homepage screenshots
+ * and, for Kwot, its published app screens.
  *
  * Outcomes are deliberately qualitative. These are real named clients and we
  * do not publish figures we have not been given.
@@ -19,8 +19,24 @@ export const CASE_STUDIES: CaseStudyContent[] = [
     logo: "/images/kwot.png",
     logoAlt: "Kwot",
     siteUrl: "https://content.kwot.com/",
+    preview: { src: "/images/case-studies/kwot-site.jpg", alt: "The Kwot homepage" },
+    brandColor: "#123446",
+    showcase: [
+      {
+        src: "/images/case-studies/kwot-screens.png",
+        alt: "Kwot app screens: player, playlists, listen now, album and artist pages",
+        width: 1499,
+        height: 480,
+      },
+      {
+        src: "/images/case-studies/kwot-playlists.png",
+        alt: "Kwot playlist and radio screens",
+        width: 617,
+        height: 538,
+      },
+    ],
     summary:
-      "Kwot is a streaming platform for African music, podcasts, video and radio. The hard part was never playback — it was discovery. Getting a listener in another country to the right track, show or station, and giving the creators behind them somewhere to grow an audience.",
+      "Kwot is a streaming platform for African music, podcasts, video and radio. The hard part was never playback - it was discovery. Getting a listener in another country to the right track, show or station, and giving the creators behind them somewhere to grow an audience.",
     facts: [
       { label: "Sector", value: "Media & streaming" },
       { label: "Surface", value: "Web and mobile" },
@@ -79,8 +95,18 @@ export const CASE_STUDIES: CaseStudyContent[] = [
     logo: "/images/jobtalk.avif",
     logoAlt: "JobTalk AI",
     siteUrl: "https://www.jobtalk.ai/",
+    preview: { src: "/images/case-studies/jobtalk-site.jpg", alt: "The JobTalk AI homepage" },
+    brandColor: "#0b0b0b",
+    showcase: [
+      {
+        src: "/images/case-studies/jobtalk-overview.jpg",
+        alt: "JobTalk AI overview: 10x faster screening, 85% less manual work, available 24/7",
+        width: 1600,
+        height: 615,
+      },
+    ],
     summary:
-      "JobTalk AI screens candidates by voice. The bottleneck in hiring is rarely the decision — it is the days spent arranging and running first-round calls. JobTalk runs that round conversationally, then pushes structured results back into the systems recruiters already work in.",
+      "JobTalk AI screens candidates by voice. The bottleneck in hiring is rarely the decision - it is the days spent arranging and running first-round calls. JobTalk runs that round conversationally, then pushes structured results back into the systems recruiters already work in.",
     facts: [
       { label: "Sector", value: "Recruiting technology" },
       { label: "Surface", value: "Voice and web" },

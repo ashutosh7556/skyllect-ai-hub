@@ -19,7 +19,7 @@ export function FinalCta() {
           </p>
 
           <div className="mt-8 flex justify-center">
-            <Button href="/contact">Contact Us</Button>
+            <Button href="/contact">Connect With Us</Button>
           </div>
 
           <p className="mt-5 text-sm text-muted">

@@ -103,7 +103,7 @@ export function Hero() {
           </ul>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-            <Button href="/contact">Contact Us</Button>
+            <Button href="/contact">Connect With Us</Button>
           </div>
         </div>
 

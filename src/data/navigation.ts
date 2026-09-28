@@ -94,7 +94,8 @@ const CASE_STUDIES: NavCard[] = [
 
 export const NAV_ITEMS: NavItem[] = [
   { label: "AI Solutions", links: AI_SOLUTIONS },
-  { label: "Technologies", groups: TECHNOLOGIES },
+  // Hidden for now — uncomment to show the Technologies menu again.
+  // { label: "Technologies", groups: TECHNOLOGIES },
   { label: "Industries", features: INDUSTRIES },
   { label: "Case Studies", cards: CASE_STUDIES },
 ];
@@ -108,6 +109,6 @@ export const FOOTER_LINKS: NavLink[] = [
 ];
 
 export const PRIMARY_CTA = {
-  label: "Contact Us",
+  label: "Connect With Us",
   href: "/contact",
 };
