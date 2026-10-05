@@ -166,18 +166,45 @@ body {
 }
 
 /*
- * App download QR card. Only plays once a phone scans the code: a tick pops
- * in with two rings pulsing out, and the message fades up with trailing dots.
+ * App download QR card. Only plays once a phone scans the code: the white
+ * code box turns into a night scene where the app icon rises from a glowing
+ * platform and floats, circled by orange and blue orbits with sparkles,
+ * while the message below fades up with trailing dots.
  */
-@keyframes scan-pop {
-  0% { transform: scale(0.3); opacity: 0; }
-  60% { transform: scale(1.12); opacity: 1; }
-  100% { transform: scale(1); }
+@keyframes scan-scene-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes scan-ring-out {
-  0% { transform: scale(0.6); opacity: 0.55; }
-  100% { transform: scale(2.2); opacity: 0; }
+@keyframes scan-rise {
+  0% { transform: translate(-50%, 10%) scale(0.35); opacity: 0; }
+  70% { transform: translate(-50%, -54%) scale(1.06); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes scan-float {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -5%; }
+}
+
+@keyframes scan-orbit-spin {
+  from { transform: translate(-50%, -50%) rotate(var(--tilt)) rotateX(74deg) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(var(--tilt)) rotateX(74deg) rotate(360deg); }
+}
+
+@keyframes scan-orbit-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scan-platform-pulse {
+  0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+@keyframes scan-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1); }
 }
 
 @keyframes scan-fade-up {
@@ -192,17 +219,138 @@ body {
   75%, 100% { content: "..."; }
 }
 
-.scan-tick {
-  animation: scan-pop 0.55s cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+.scan-scene {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background:
+    radial-gradient(60% 45% at 50% 42%, rgba(99, 102, 241, 0.35) 0%, rgba(99, 102, 241, 0) 70%),
+    radial-gradient(120% 100% at 50% 0%, #1e1756 0%, #0d0a2b 55%, #06051a 100%);
+  perspective: 600px;
+  animation: scan-scene-in 0.45s ease-out both;
 }
 
-.scan-ring {
+/* Soft column of light from the platform up to the icon. */
+.scan-beam {
   position: absolute;
-  height: 6rem;
-  width: 6rem;
+  left: 50%;
+  bottom: 16%;
+  width: 34%;
+  height: 46%;
+  transform: translateX(-50%);
+  background: linear-gradient(to top, rgba(129, 140, 248, 0.55), rgba(129, 140, 248, 0));
+  filter: blur(8px);
+  clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%);
+}
+
+/* Concentric glowing ellipses the icon hovers over. */
+.scan-platform {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  width: 84%;
+  aspect-ratio: 4 / 1;
+  transform: translate(-50%, 50%);
+}
+
+.scan-platform-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  animation: scan-platform-pulse 2.4s ease-in-out infinite;
+}
+
+.scan-platform-ring--outer {
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(255, 154, 60, 0.9);
+  box-shadow: 0 0 14px 2px rgba(255, 140, 40, 0.65), inset 0 0 12px rgba(255, 140, 40, 0.4);
+}
+
+.scan-platform-ring--mid {
+  width: 72%;
+  height: 72%;
+  border: 2px solid rgba(110, 130, 255, 0.95);
+  box-shadow: 0 0 12px 2px rgba(99, 102, 241, 0.7);
+  animation-delay: 0.3s;
+}
+
+.scan-platform-ring--inner {
+  width: 44%;
+  height: 44%;
+  background: radial-gradient(closest-side, rgba(199, 210, 254, 0.85), rgba(129, 140, 248, 0.15) 70%, transparent);
+  animation-delay: 0.6s;
+}
+
+/* The app icon, tilted a little in 3D, glowing orange and blue. */
+.scan-icon {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 40%;
+  aspect-ratio: 1;
+  border-radius: 22%;
+  transform: translate(-50%, -50%);
+  box-shadow:
+    0 0 0 2px rgba(255, 200, 150, 0.55),
+    0 0 22px 4px rgba(255, 120, 40, 0.6),
+    0 0 50px 10px rgba(99, 102, 241, 0.45);
+  animation:
+    scan-rise 0.8s cubic-bezier(0.2, 0.8, 0.3, 1.1) both,
+    scan-float 3s ease-in-out 0.8s infinite;
+}
+
+.scan-icon img {
+  transform: rotateY(-12deg) rotateX(6deg);
+}
+
+/* Tilted rings orbiting the icon; one sits behind it, two cross in front. */
+.scan-orbit {
+  --tilt: -16deg;
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 92%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #ffb057;
+  border-left-color: rgba(255, 176, 87, 0.45);
+  filter: drop-shadow(0 0 4px #ff8a2a);
+  animation:
+    scan-orbit-in 0.6s ease-out 0.35s both,
+    scan-orbit-spin 3.6s linear infinite;
+}
+
+.scan-orbit--back {
+  opacity: 0.55;
+  border-top-color: rgba(255, 176, 87, 0.6);
+}
+
+.scan-orbit--front {
+  border-bottom-color: #ffb057;
+  border-top-color: transparent;
+}
+
+.scan-orbit--blue {
+  --tilt: 22deg;
+  width: 80%;
+  border-top-color: transparent;
+  border-bottom-color: #8b9bff;
+  border-right-color: rgba(139, 155, 255, 0.5);
+  filter: drop-shadow(0 0 4px #6366f1);
+  animation-duration: 0.6s, 5s;
+  animation-direction: normal, reverse;
+}
+
+.scan-sparkle {
+  position: absolute;
   border-radius: 9999px;
-  border: 3px solid #16a34a;
-  animation: scan-ring-out 1.4s ease-out infinite;
+  background: #ffd9a8;
+  box-shadow: 0 0 6px 2px rgba(255, 190, 120, 0.8);
+  animation: scan-twinkle 1.8s ease-in-out infinite;
 }
 
 .scan-fade-in {
@@ -217,14 +365,25 @@ body {
   animation: scan-dots 1.2s steps(1) infinite;
 }
 
+/* Reduced motion: show the finished scene, still. */
 @media (prefers-reduced-motion: reduce) {
-  .scan-ring {
-    display: none;
-  }
-
-  .scan-tick,
+  .scan-scene,
+  .scan-platform-ring,
+  .scan-orbit,
   .scan-fade-in,
   .scan-dots::after {
     animation: none;
+  }
+
+  .scan-orbit {
+    transform: translate(-50%, -50%) rotate(var(--tilt)) rotateX(74deg);
+  }
+
+  .scan-icon {
+    animation: none;
+  }
+
+  .scan-sparkle {
+    display: none;
   }
 }

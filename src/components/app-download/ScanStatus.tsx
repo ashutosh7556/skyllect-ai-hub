@@ -13,6 +13,18 @@ const PLATFORM_COPY: Record<MobilePlatform, { device: string; store: string }> =
   android: { device: "Android phone", store: "Google Play" },
 };
 
+/** Twinkling dots around the icon: left %, top %, size px, delay s. */
+const SPARKLES: [number, number, number, number][] = [
+  [14, 22, 4, 0],
+  [82, 16, 3, 0.4],
+  [88, 52, 5, 0.9],
+  [10, 60, 3, 1.3],
+  [26, 8, 3, 0.7],
+  [70, 70, 4, 0.2],
+  [52, 6, 3, 1.1],
+  [20, 78, 4, 0.5],
+];
+
 type Status = { state: "waiting" } | { state: "scanned"; platform: MobilePlatform; at: number };
 
 /**
@@ -86,13 +98,27 @@ export function ScanStatus({
         </div>
 
         {scanned && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span aria-hidden="true" className="scan-ring" />
-            <span aria-hidden="true" className="scan-ring [animation-delay:0.35s]" />
-            <svg aria-hidden="true" viewBox="0 0 52 52" className="scan-tick relative h-24 w-24">
-              <circle cx="26" cy="26" r="25" fill="#16a34a" />
-              <path d="M15 27l7 7 15-16" fill="none" stroke="#fff" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          // The app icon rising from a glowing platform, circled by orbits.
+          <div aria-hidden="true" className="scan-scene">
+            <span className="scan-beam" />
+            <span className="scan-platform">
+              <span className="scan-platform-ring scan-platform-ring--outer" />
+              <span className="scan-platform-ring scan-platform-ring--mid" />
+              <span className="scan-platform-ring scan-platform-ring--inner" />
+            </span>
+            <span className="scan-orbit scan-orbit--back" />
+            <span className="scan-icon">
+              <Image src={icon} alt="" width={256} height={256} className="h-full w-full rounded-[22%]" />
+            </span>
+            <span className="scan-orbit scan-orbit--front" />
+            <span className="scan-orbit scan-orbit--blue" />
+            {SPARKLES.map(([left, top, size, delay]) => (
+              <span
+                key={`${left}-${top}`}
+                className="scan-sparkle"
+                style={{ left: `${left}%`, top: `${top}%`, width: size, height: size, animationDelay: `${delay}s` }}
+              />
+            ))}
           </div>
         )}
 
