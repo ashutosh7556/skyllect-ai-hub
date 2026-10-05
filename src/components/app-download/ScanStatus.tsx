@@ -5,20 +5,21 @@ import { useEffect, useState } from "react";
 import type { MobilePlatform } from "@/lib/app-platform";
 
 const POLL_MS = 2000;
+/** Matches the server's session lifetime; after this the code can no longer be tracked. */
+const STOP_AFTER_MS = 15 * 60 * 1000;
 
 const PLATFORM_COPY: Record<MobilePlatform, { device: string; store: string }> = {
   ios: { device: "iPhone", store: "the App Store" },
   android: { device: "Android phone", store: "Google Play" },
 };
 
-type Status =
-  | { state: "waiting" }
-  | { state: "scanned"; platform: MobilePlatform; at: number }
-  | { state: "expired" };
+type Status = { state: "waiting" } | { state: "scanned"; platform: MobilePlatform; at: number };
 
 /**
  * The QR code and the line under it. Polls the server until a phone scans
- * this view's code, then swaps the code for an animated tick.
+ * this view's code, then swaps the code for an animated tick. Nothing moves
+ * or changes before a scan: if the server cannot find the session, the card
+ * simply stays a plain QR code.
  */
 export function ScanStatus({
   sessionId,
@@ -38,16 +39,20 @@ export function ScanStatus({
   useEffect(() => {
     if (status.state !== "waiting") return;
     let stopped = false;
+    const startedAt = Date.now();
 
     async function check() {
       // Skip while the tab is in the background; the next visible tick catches up.
       if (document.hidden) return;
+      if (Date.now() - startedAt > STOP_AFTER_MS) {
+        clearInterval(timer);
+        return;
+      }
       try {
         const res = await fetch(`/app/tkps/status?s=${sessionId}`, { cache: "no-store" });
         const data: { status: string; scan: { platform: MobilePlatform; at: number } | null } = await res.json();
         if (stopped) return;
-        if (data.status === "expired") setStatus({ state: "expired" });
-        else if (data.scan && data.scan.at > seenAt) setStatus({ state: "scanned", ...data.scan });
+        if (data.scan && data.scan.at > seenAt) setStatus({ state: "scanned", ...data.scan });
       } catch {
         // Network blip: try again on the next tick.
       }
@@ -67,7 +72,7 @@ export function ScanStatus({
       <div className="relative mx-auto mt-5 aspect-square w-full max-w-[260px] overflow-hidden rounded-2xl bg-white p-4">
         <div
           className={`relative h-full w-full transition-[opacity,filter,transform] duration-500 motion-reduce:transition-none ${
-            status.state === "waiting" ? "" : "scale-95 opacity-15 blur-[2px]"
+            scanned ? "scale-95 opacity-15 blur-[2px]" : ""
           }`}
         >
           <div aria-hidden="true" className="h-full w-full [&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
@@ -80,9 +85,6 @@ export function ScanStatus({
           />
         </div>
 
-        {/* Sweeping line while waiting, so the code reads as a live scanner. */}
-        {status.state === "waiting" && <span aria-hidden="true" className="scan-line" />}
-
         {scanned && (
           <div className="absolute inset-0 flex items-center justify-center">
             <span aria-hidden="true" className="scan-ring" />
@@ -91,18 +93,6 @@ export function ScanStatus({
               <circle cx="26" cy="26" r="25" fill="#16a34a" />
               <path d="M15 27l7 7 15-16" fill="none" stroke="#fff" strokeWidth={4} strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </div>
-        )}
-
-        {status.state === "expired" && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="rounded-full bg-[#0c0919] px-5 py-2.5 text-sm font-medium text-white transition-transform duration-300 hover:-translate-y-0.5 motion-reduce:transition-none"
-            >
-              Refresh code
-            </button>
           </div>
         )}
 
@@ -129,11 +119,6 @@ export function ScanStatus({
               Show the code again
             </button>
           </div>
-        ) : status.state === "expired" ? (
-          <>
-            <p className="mt-6 font-display text-lg font-medium text-white">This code has expired</p>
-            <p className="mt-1.5 text-sm leading-relaxed text-white/55">Refresh to get a new one.</p>
-          </>
         ) : (
           <>
             <p className="mt-6 font-display text-lg font-medium text-white">Point your phone camera here</p>
