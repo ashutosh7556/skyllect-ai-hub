@@ -101,6 +101,14 @@ export function StoreSplash({ platform, storeUrl, icon }: { platform: MobilePlat
           Not opening? Tap to open {store}
         </a>
       </div>
+
+      {/* Skyllect branding along the bottom, on white so the blue reads. */}
+      <div className="tkps-splash-brand">
+        <span className="text-[11px] font-medium tracking-[0.2em] text-white/60 uppercase">Powered by</span>
+        <span className="rounded-full bg-white/95 px-4 py-2 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.5)]">
+          <Image src="/images/skyllect-logo.png" alt="Skyllect" width={1224} height={283} className="h-6 w-auto" />
+        </span>
+      </div>
     </div>
   );
 

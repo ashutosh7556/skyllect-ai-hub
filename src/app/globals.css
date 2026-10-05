@@ -613,6 +613,18 @@ body {
   animation: tkps-splash-dots 1.2s steps(1) infinite;
 }
 
+/* Skyllect logo along the bottom, clear of the phone's home indicator. */
+.tkps-splash-brand {
+  position: absolute;
+  inset-inline: 0;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  animation: tkps-splash-rise 0.5s ease-out 0.5s both;
+}
+
 /* Red-to-white fill with a bright tip, timed to the redirect. */
 .tkps-splash-progress {
   width: 6%;
@@ -625,6 +637,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .tkps-splash,
   .tkps-splash-rise,
+  .tkps-splash-brand,
   .tkps-splash-ring,
   .tkps-splash-orbit,
   .tkps-splash-dots::after {
