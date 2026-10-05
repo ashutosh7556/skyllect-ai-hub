@@ -61,7 +61,7 @@ export default async function TkpsAppPage({ searchParams }: PageProps<"/app/tkps
         <noscript>
           <meta httpEquiv="refresh" content={`3;url=${storeUrl}`} />
         </noscript>
-        <StoreSplash platform={platform} storeUrl={storeUrl} icon={APP.icon} />
+        <StoreSplash then={{ store: platform, url: storeUrl }} icon={APP.icon} />
       </>
     );
   }
@@ -84,6 +84,8 @@ export default async function TkpsAppPage({ searchParams }: PageProps<"/app/tkps
   return (
     <div className="px-5 pt-32 pb-20 sm:px-8 sm:pt-40 sm:pb-28">
       {!ua.isBot && <StoreRedirect appStoreUrl={APP.appStoreUrl} playStoreUrl={APP.playStoreUrl} icon={APP.icon} />}
+      {/* Desktops: the same TKPS animation, then it fades away to show this page. */}
+      {!ua.isBot && <StoreSplash then={{ page: true, subtitle: APP.community }} icon={APP.icon} />}
 
       <div className="mx-auto max-w-[1200px]">
         {/* App intro beside the QR code. */}

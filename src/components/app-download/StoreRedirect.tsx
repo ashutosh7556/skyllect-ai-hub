@@ -29,5 +29,5 @@ export function StoreRedirect({
   }, []);
 
   if (!platform) return null;
-  return <StoreSplash platform={platform} storeUrl={platform === "ios" ? appStoreUrl : playStoreUrl} icon={icon} />;
+  return <StoreSplash then={{ store: platform, url: platform === "ios" ? appStoreUrl : playStoreUrl }} icon={icon} />;
 }

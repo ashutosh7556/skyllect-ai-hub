@@ -461,6 +461,13 @@ body {
   animation: tkps-splash-in 0.35s ease-out both;
 }
 
+/* Desktop: fade away once the animation is done, revealing the page. */
+.tkps-splash--out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
 .tkps-splash-bg {
   position: absolute;
   inset: 0;
