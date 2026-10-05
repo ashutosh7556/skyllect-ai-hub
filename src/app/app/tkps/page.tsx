@@ -51,15 +51,17 @@ export default async function TkpsAppPage({ searchParams }: PageProps<"/app/tkps
   const platform = ua.isBot ? null : detectPlatform(ua.ua);
   if (platform) {
     // A code shown on a desktop carries its session id; tell that desktop.
+    // A failure here must never stop the phone reaching its store.
     const { s } = await searchParams;
-    markScanned(typeof s === "string" ? s : undefined, platform);
+    await markScanned(typeof s === "string" ? s : undefined, platform).catch(() => {});
     redirect(platform === "ios" ? APP.appStoreUrl : APP.playStoreUrl);
   }
 
   // Each desktop view gets its own code, so it can see when that code is scanned.
   // Bots get the plain address, and no session is stored for them.
   const url = pageUrl(h);
-  const sessionId = ua.isBot ? null : createScanSession();
+  // If the session store is down, fall back to a plain code.
+  const sessionId = ua.isBot ? null : await createScanSession().catch(() => null);
   const qrUrl = sessionId ? `${url}?s=${sessionId}` : url;
 
   // High error correction so the app icon can sit over the middle of the code.
