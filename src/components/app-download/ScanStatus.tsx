@@ -1,8 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
-import { AppOpening } from "@/components/app-download/AppOpening";
+import { useEffect, useState } from "react";
 import type { MobilePlatform } from "@/lib/app-platform";
 
 const POLL_MS = 2000;
@@ -30,8 +29,7 @@ type Status = { state: "waiting" } | { state: "scanned"; platform: MobilePlatfor
 
 /**
  * The QR code and the line under it. Polls the server until a phone scans
- * this view's code, then plays the full-screen opening animation over the
- * page and swaps the code for the glowing icon scene. Nothing moves
+ * this view's code, then swaps the code for an animated tick. Nothing moves
  * or changes before a scan: if the server cannot find the session, the card
  * simply stays a plain QR code.
  */
@@ -81,18 +79,8 @@ export function ScanStatus({
 
   const scanned = status.state === "scanned" ? PLATFORM_COPY[status.platform] : null;
 
-  // Back to the code; remember this scan so only a newer one reopens the screen.
-  const dismiss = useCallback(() => {
-    setStatus((current) => {
-      if (current.state === "scanned") setSeenAt(current.at);
-      return { state: "waiting" };
-    });
-  }, []);
-
   return (
     <>
-      {status.state === "scanned" && <AppOpening platform={status.platform} appIcon={icon} onClose={dismiss} />}
-
       <div className="relative mx-auto mt-5 aspect-square w-full max-w-[260px] overflow-hidden rounded-2xl bg-white p-4">
         <div
           className={`relative h-full w-full transition-[opacity,filter,transform] duration-500 motion-reduce:transition-none ${
@@ -148,7 +136,10 @@ export function ScanStatus({
             </p>
             <button
               type="button"
-              onClick={dismiss}
+              onClick={() => {
+                if (status.state === "scanned") setSeenAt(status.at);
+                setStatus({ state: "waiting" });
+              }}
               className="mt-3 text-sm font-medium text-indigo-300 hover:underline"
             >
               Show the code again
