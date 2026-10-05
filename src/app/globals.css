@@ -164,3 +164,85 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * App download QR card. While waiting, a soft line sweeps the code like a
+ * scanner. Once a phone scans it, a tick pops in with two rings pulsing out,
+ * and the message fades up with trailing dots.
+ */
+@keyframes scan-sweep {
+  0%, 100% { top: 6%; }
+  50% { top: 90%; }
+}
+
+@keyframes scan-pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.12); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes scan-ring-out {
+  0% { transform: scale(0.6); opacity: 0.55; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes scan-fade-up {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@keyframes scan-dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75%, 100% { content: "..."; }
+}
+
+.scan-line {
+  position: absolute;
+  inset-inline: 6%;
+  height: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, #6366f1, transparent);
+  box-shadow: 0 0 14px 3px rgba(99, 102, 241, 0.45);
+  animation: scan-sweep 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.scan-tick {
+  animation: scan-pop 0.55s cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+}
+
+.scan-ring {
+  position: absolute;
+  height: 6rem;
+  width: 6rem;
+  border-radius: 9999px;
+  border: 3px solid #16a34a;
+  animation: scan-ring-out 1.4s ease-out infinite;
+}
+
+.scan-fade-in {
+  animation: scan-fade-up 0.45s ease-out both;
+}
+
+.scan-dots::after {
+  content: "...";
+  display: inline-block;
+  width: 1.2em;
+  text-align: left;
+  animation: scan-dots 1.2s steps(1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-line,
+  .scan-ring {
+    display: none;
+  }
+
+  .scan-tick,
+  .scan-fade-in,
+  .scan-dots::after {
+    animation: none;
+  }
+}

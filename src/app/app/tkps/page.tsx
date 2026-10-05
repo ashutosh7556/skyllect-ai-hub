@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 import { userAgent } from "next/server";
 import QRCode from "qrcode";
 import { siApple, siGoogleplay } from "simple-icons";
+import { ScanStatus } from "@/components/app-download/ScanStatus";
 import { StoreRedirect } from "@/components/app-download/StoreRedirect";
 import { AccentHeading } from "@/components/technology/SectionShell";
 import { TKPS_APP as APP } from "@/data/apps/tkps";
 import { detectPlatform } from "@/lib/app-platform";
+import { createScanSession, markScanned } from "@/lib/scan-sessions";
 
 export async function generateMetadata(): Promise<Metadata> {
   const url = pageUrl(await headers());
@@ -41,18 +43,27 @@ function pageUrl(h: Headers) {
   return `${proto}://${host}/app/tkps`;
 }
 
-export default async function TkpsAppPage() {
+export default async function TkpsAppPage({ searchParams }: PageProps<"/app/tkps">) {
   // Phones that scan the QR code land here and go straight to their store.
   // Desktops, and link-preview bots, get the page itself.
   const h = await headers();
   const ua = userAgent({ headers: h });
   const platform = ua.isBot ? null : detectPlatform(ua.ua);
-  if (platform === "ios") redirect(APP.appStoreUrl);
-  if (platform === "android") redirect(APP.playStoreUrl);
+  if (platform) {
+    // A code shown on a desktop carries its session id; tell that desktop.
+    const { s } = await searchParams;
+    markScanned(typeof s === "string" ? s : undefined, platform);
+    redirect(platform === "ios" ? APP.appStoreUrl : APP.playStoreUrl);
+  }
 
+  // Each desktop view gets its own code, so it can see when that code is scanned.
+  // Bots get the plain address, and no session is stored for them.
   const url = pageUrl(h);
+  const sessionId = ua.isBot ? null : createScanSession();
+  const qrUrl = sessionId ? `${url}?s=${sessionId}` : url;
+
   // High error correction so the app icon can sit over the middle of the code.
-  const qrSvg = await QRCode.toString(url, {
+  const qrSvg = await QRCode.toString(qrUrl, {
     type: "svg",
     errorCorrectionLevel: "H",
     margin: 0,
@@ -117,22 +128,17 @@ export default async function TkpsAppPage() {
           >
             <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/60">Scan to download</p>
 
-            <div className="relative mx-auto mt-5 aspect-square w-full max-w-[260px] rounded-2xl bg-white p-4">
-              <div aria-hidden="true" className="[&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
-              <Image
-                src={APP.icon}
-                alt=""
-                width={256}
-                height={256}
-                className="absolute top-1/2 left-1/2 h-[22%] w-[22%] -translate-x-1/2 -translate-y-1/2 rounded-lg border-[3px] border-white"
-              />
-              <span className="sr-only">QR code linking to {url}</span>
-            </div>
-
-            <p className="mt-6 font-display text-lg font-medium text-white">Point your phone camera here</p>
-            <p className="mt-1.5 text-sm leading-relaxed text-white/55">
-              Works on iPhone and Android. Your phone opens the right store automatically.
-            </p>
+            {sessionId ? (
+              <ScanStatus sessionId={sessionId} qrSvg={qrSvg} qrUrl={qrUrl} icon={APP.icon} />
+            ) : (
+              <>
+                <div className="relative mx-auto mt-5 aspect-square w-full max-w-[260px] rounded-2xl bg-white p-4">
+                  <div aria-hidden="true" className="[&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+                  <span className="sr-only">QR code linking to {qrUrl}</span>
+                </div>
+                <p className="mt-6 font-display text-lg font-medium text-white">Point your phone camera here</p>
+              </>
+            )}
 
             <div className="mt-5 flex items-center justify-center gap-5 border-t border-white/10 pt-5 text-sm text-white/45">
               {STORES.map((store) => (
