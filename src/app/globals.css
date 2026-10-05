@@ -387,3 +387,265 @@ body {
     display: none;
   }
 }
+
+/*
+ * TKPS opening splash for phones on /app/tkps: deep red with warm gold
+ * light, the logo rising and floating inside gold orbits over a glowing
+ * platform, and a progress bar that fills before the store opens.
+ * It covers the whole screen, site header included.
+ */
+@keyframes tkps-splash-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tkps-splash-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes tkps-splash-logo-in {
+  0% { opacity: 0; transform: translate(-50%, -20%) scale(0.45) rotateY(-12deg); }
+  70% { opacity: 1; transform: translate(-50%, -55%) scale(1.05) rotateY(-12deg); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotateY(-12deg); }
+}
+
+@keyframes tkps-splash-float {
+  0%, 100% { margin-top: 0; }
+  50% { margin-top: -8px; }
+}
+
+@keyframes tkps-splash-spin {
+  from { transform: translate(-50%, -50%) rotate(var(--tilt)) rotateX(74deg) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(var(--tilt)) rotateX(74deg) rotate(360deg); }
+}
+
+@keyframes tkps-splash-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tkps-splash-pulse {
+  0%, 100% { opacity: 0.75; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes tkps-splash-twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tkps-splash-fill {
+  from { width: 6%; }
+  to { width: 100%; }
+}
+
+@keyframes tkps-splash-dots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75%, 100% { content: "..."; }
+}
+
+.tkps-splash {
+  position: fixed;
+  inset: 0;
+  /* Above any site-wide loading screen, and shown even while the page
+     content around it is still hidden. */
+  z-index: 110;
+  visibility: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  animation: tkps-splash-in 0.35s ease-out both;
+}
+
+.tkps-splash-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(45% 32% at 50% 36%, rgba(255, 150, 70, 0.4) 0%, rgba(255, 150, 70, 0) 70%),
+    radial-gradient(35% 25% at 95% 0%, rgba(255, 170, 110, 0.35) 0%, rgba(255, 170, 110, 0) 70%),
+    radial-gradient(100% 80% at 50% 40%, #8e1219 0%, #5a0a10 52%, #2b0407 100%);
+}
+
+/* Faint mandala rings behind the logo. */
+.tkps-splash-bg::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: min(130vw, 760px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, rgba(255, 190, 140, 0.08) 0 1px, transparent 1px 30px);
+  mask-image: radial-gradient(closest-side, #000 35%, transparent);
+}
+
+.tkps-splash-stage {
+  position: relative;
+  width: min(82vw, 320px);
+  aspect-ratio: 1.15;
+  margin-bottom: 0.5rem;
+  perspective: 700px;
+}
+
+.tkps-splash-logo {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 54%;
+  aspect-ratio: 1;
+  border-radius: 22%;
+  box-shadow:
+    0 0 0 2px rgba(255, 210, 160, 0.6),
+    0 0 28px 6px rgba(255, 120, 40, 0.65),
+    0 0 70px 14px rgba(255, 90, 40, 0.35);
+  animation:
+    tkps-splash-logo-in 0.8s cubic-bezier(0.2, 0.8, 0.3, 1.1) both,
+    tkps-splash-float 3s ease-in-out 0.8s infinite;
+}
+
+.tkps-splash-beam {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: 30%;
+  height: 34%;
+  transform: translateX(-50%);
+  background: linear-gradient(to top, rgba(255, 210, 150, 0.75), rgba(255, 210, 150, 0));
+  filter: blur(8px);
+}
+
+.tkps-splash-platform {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: 100%;
+  aspect-ratio: 5 / 1;
+  transform: translateX(-50%);
+}
+
+.tkps-splash-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 190, 120, 0.85);
+  box-shadow: 0 0 16px 2px rgba(255, 140, 60, 0.6);
+  animation: tkps-splash-pulse 2.2s ease-in-out infinite;
+}
+
+.tkps-splash-ring--inner {
+  width: 64%;
+  height: 64%;
+  animation-delay: 0.4s;
+}
+
+.tkps-splash-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 38%;
+  height: 38%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 238, 205, 0.95), rgba(255, 160, 80, 0.3) 70%, transparent);
+}
+
+.tkps-splash-orbit {
+  --tilt: -14deg;
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 98%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #ffc27a;
+  border-left-color: rgba(255, 194, 122, 0.4);
+  filter: drop-shadow(0 0 5px #ff8a2a);
+  animation:
+    tkps-splash-fade 0.5s ease-out 0.3s both,
+    tkps-splash-spin 3.6s linear infinite;
+}
+
+.tkps-splash-orbit--back {
+  opacity: 0.5;
+}
+
+.tkps-splash-orbit--front {
+  border-top-color: transparent;
+  border-bottom-color: #ffd29a;
+}
+
+.tkps-splash-orbit--wide {
+  --tilt: 18deg;
+  width: 120%;
+  border-top-color: transparent;
+  border-right-color: rgba(255, 214, 160, 0.5);
+  border-bottom-color: #ffb36b;
+  animation-duration: 0.5s, 5s;
+  animation-direction: normal, reverse;
+}
+
+.tkps-splash-sparkle {
+  position: absolute;
+  border-radius: 9999px;
+  background: #ffd9a8;
+  box-shadow: 0 0 6px 2px rgba(255, 190, 120, 0.8);
+  animation: tkps-splash-twinkle 1.6s ease-in-out infinite;
+}
+
+.tkps-splash-rise {
+  animation: tkps-splash-rise 0.5s ease-out 0.2s both;
+}
+
+.tkps-splash-dots::after {
+  content: "...";
+  display: inline-block;
+  width: 1.1em;
+  text-align: left;
+  animation: tkps-splash-dots 1.2s steps(1) infinite;
+}
+
+/* Red-to-white fill with a bright tip, timed to the redirect. */
+.tkps-splash-progress {
+  width: 6%;
+  background: linear-gradient(90deg, #d4141f 0%, #ff4a52 70%, #ffffff 100%);
+  box-shadow: 0 0 12px rgba(255, 80, 90, 0.8);
+  animation: tkps-splash-fill 2.3s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+}
+
+/* Reduced motion: a still splash with a full bar; the redirect still runs. */
+@media (prefers-reduced-motion: reduce) {
+  .tkps-splash,
+  .tkps-splash-rise,
+  .tkps-splash-ring,
+  .tkps-splash-orbit,
+  .tkps-splash-dots::after {
+    animation: none;
+  }
+
+  .tkps-splash-logo {
+    animation: none;
+    transform: translate(-50%, -50%) rotateY(-12deg);
+  }
+
+  .tkps-splash-orbit {
+    transform: translate(-50%, -50%) rotate(var(--tilt)) rotateX(74deg);
+  }
+
+  .tkps-splash-progress {
+    animation: none;
+    width: 100%;
+  }
+
+  .tkps-splash-sparkle {
+    display: none;
+  }
+}

@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { userAgent } from "next/server";
 import QRCode from "qrcode";
 import { siApple, siGoogleplay } from "simple-icons";
 import { ScanStatus } from "@/components/app-download/ScanStatus";
 import { StoreRedirect } from "@/components/app-download/StoreRedirect";
+import { StoreSplash } from "@/components/app-download/StoreSplash";
 import { AccentHeading } from "@/components/technology/SectionShell";
 import { TKPS_APP as APP } from "@/data/apps/tkps";
 import { detectPlatform } from "@/lib/app-platform";
@@ -44,8 +44,8 @@ function pageUrl(h: Headers) {
 }
 
 export default async function TkpsAppPage({ searchParams }: PageProps<"/app/tkps">) {
-  // Phones that scan the QR code land here and go straight to their store.
-  // Desktops, and link-preview bots, get the page itself.
+  // Phones that open this page see a short TKPS opening animation, then go
+  // to their store. Desktops, and link-preview bots, get the page itself.
   const h = await headers();
   const ua = userAgent({ headers: h });
   const platform = ua.isBot ? null : detectPlatform(ua.ua);
@@ -54,7 +54,16 @@ export default async function TkpsAppPage({ searchParams }: PageProps<"/app/tkps
     // A failure here must never stop the phone reaching its store.
     const { s } = await searchParams;
     await markScanned(typeof s === "string" ? s : undefined, platform).catch(() => {});
-    redirect(platform === "ios" ? APP.appStoreUrl : APP.playStoreUrl);
+    const storeUrl = platform === "ios" ? APP.appStoreUrl : APP.playStoreUrl;
+    return (
+      <>
+        {/* Without JavaScript, still reach the store. */}
+        <noscript>
+          <meta httpEquiv="refresh" content={`3;url=${storeUrl}`} />
+        </noscript>
+        <StoreSplash platform={platform} storeUrl={storeUrl} icon={APP.icon} />
+      </>
+    );
   }
 
   // Each desktop view gets its own code, so it can see when that code is scanned.
@@ -74,7 +83,7 @@ export default async function TkpsAppPage({ searchParams }: PageProps<"/app/tkps
 
   return (
     <div className="px-5 pt-32 pb-20 sm:px-8 sm:pt-40 sm:pb-28">
-      {!ua.isBot && <StoreRedirect appStoreUrl={APP.appStoreUrl} playStoreUrl={APP.playStoreUrl} />}
+      {!ua.isBot && <StoreRedirect appStoreUrl={APP.appStoreUrl} playStoreUrl={APP.playStoreUrl} icon={APP.icon} />}
 
       <div className="mx-auto max-w-[1200px]">
         {/* App intro beside the QR code. */}

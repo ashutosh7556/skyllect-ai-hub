@@ -1,20 +1,33 @@
 "use client";
 
-import { useEffect } from "react";
-import { detectPlatform } from "@/lib/app-platform";
+import { useEffect, useState } from "react";
+import { StoreSplash } from "@/components/app-download/StoreSplash";
+import { detectPlatform, type MobilePlatform } from "@/lib/app-platform";
 
 /**
- * In-browser backup for the server redirect. iPads on iPadOS 13+ send a desktop
- * Mac user agent, so the server shows them the page; here they are recognised
- * by their touch screen and sent to the App Store.
+ * In-browser backup for the server's phone detection. iPads on iPadOS 13+
+ * send a desktop Mac user agent, so the server shows them the page; here they
+ * are recognised by their touch screen and get the same opening animation
+ * before going to the App Store.
  */
-export function StoreRedirect({ appStoreUrl, playStoreUrl }: { appStoreUrl: string; playStoreUrl: string }) {
+export function StoreRedirect({
+  appStoreUrl,
+  playStoreUrl,
+  icon,
+}: {
+  appStoreUrl: string;
+  playStoreUrl: string;
+  icon: string;
+}) {
+  const [platform, setPlatform] = useState<MobilePlatform | null>(null);
+
   useEffect(() => {
     const isIPadOS = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
-    const platform = isIPadOS ? "ios" : detectPlatform(navigator.userAgent);
-    if (platform === "ios") window.location.replace(appStoreUrl);
-    if (platform === "android") window.location.replace(playStoreUrl);
-  }, [appStoreUrl, playStoreUrl]);
+    // Detection needs the browser, so it can only run after the first render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPlatform(isIPadOS ? "ios" : detectPlatform(navigator.userAgent));
+  }, []);
 
-  return null;
+  if (!platform) return null;
+  return <StoreSplash platform={platform} storeUrl={platform === "ios" ? appStoreUrl : playStoreUrl} icon={icon} />;
 }
